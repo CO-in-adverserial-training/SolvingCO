@@ -68,5 +68,5 @@ If you find our work useful, please cite our paper:
 For any questions, feel free to reach out:
 
 - [farzanrahmani70@gmail.com](mailto:farzanrahmani70@gmail.com)
-- [mazdak@gmail.com](mailto:mazdak@gmail.com)
+- [mazdak.tey@gmail.com](mailto:mazdak.tey@gmail.com)
 - [ramtin4moslemi@gmail.com](mailto:ramtin4moslemi@gmail.com)
