@@ -28,10 +28,10 @@ This folder contains our codes and experiments in thte Jupyter notebooks format.
 ### **2. `Results/`**
 This folder includes the results of our expreiments in different documents and slides.
 
-### **3. `Related Works/`**
+### **3. `Related_Works/`**
 Here you can find previous papers and works that was done to overcome catastrophic overfitting in adversarial training.
 
-### **4. `Paper Materials/`**
+### **4. `Paper_Materials/`**
 In this directory there are our accepted paper, our sildes for conference presentation, and our presentation video at the conference.
 
 
