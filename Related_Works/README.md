@@ -17,3 +17,4 @@ What follows is a list of papers on **Catastrophic Overfitting** and their GitHu
 | [Efficient Local Linearity Regularization to Overcome Catastrophic Overfitting](https://arxiv.org/abs/2401.11618) | [ELLE](https://github.com/LIONS-EPFL/ELLE) |
 | [Eliminating Catastrophic Overfitting Via Abnormal Adversarial Examples Regularization](https://arxiv.org/abs/2404.08154) | [AAER](https://github.com/tmllab/2023_NeurIPS_AAER) |
 | [Improving Fast Adversarial Training Paradigm: An Example Taxonomy Perspective](https://arxiv.org/abs/2408.03944) | None :( |
+| [Improving Fast Adversarial Training via Self-Knowledge Guidance](https://arxiv.org/abs/2409.17589) | None :( |
