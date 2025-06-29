@@ -17,10 +17,12 @@ What follows is a list of papers on **Catastrophic Overfitting** and their GitHu
 | [Prior-Guided Adversarial Initialization for Fast Adversarial Training](https://arxiv.org/abs/2207.08859) | [FGSM-PGI](https://github.com/jiaxiaojunQAQ/FGSM-PGI.) | 
 | [Bag of Tricks for FGSM Adversarial Training](https://arxiv.org/abs/2209.02684) | [Bag-of-Tricks](https://github.com/UCSC-VLAA/Bag-of-Tricks-for-FGSM-AT) |
 | [Fast Adversarial Training with Smooth Convergence](https://arxiv.org/abs/2308.12857) | [Smooth Convergence](https://github.com/FAT-CS/ConvergeSmooth) |
+| [On the Over-Memorization During Natural, Robust and Catastrophic Overfitting](https://arxiv.org/abs/2310.08847) | [DOM](https://github.com/tmllab/2024_ICLR_DOM) | 
 | [Learn from the Past: A Proxy Guided Adversarial Defense Framework with Self Distillation Regularization](https://arxiv.org/abs/2310.12713) | [LAST](https://github.com/callous-youth/LAST) |
 | [Fast Propagation is Better: Accelerating Single-Step Adversarial Training via Sampling Subnetworks](https://arxiv.org/abs/2310.15444) | [FP-Better](https://github.com/jiaxiaojunQAQ/FP-Better) |
 | [Blacksmith: Fast Adversarial Training of Vision Transformers via a Mixture of Single-step and Multi-step Methods](https://arxiv.org/abs/2310.18975) | [ViT](https://github.com/mahdisalmani/Blacksmith) |
 | [Efficient Local Linearity Regularization to Overcome Catastrophic Overfitting](https://arxiv.org/abs/2401.11618) | [ELLE](https://github.com/LIONS-EPFL/ELLE) |
 | [Eliminating Catastrophic Overfitting Via Abnormal Adversarial Examples Regularization](https://arxiv.org/abs/2404.08154) | [AAER](https://github.com/tmllab/2023_NeurIPS_AAER) |
+| [Layer-Aware Analysis of Catastrophic Overfitting: Revealing the Pseudo-Robust Shortcut Dependency](https://arxiv.org/abs/2405.16262) | [LAP](https://github.com/tmllab/2024_ICML_LAP) |
 | [Improving Fast Adversarial Training Paradigm: An Example Taxonomy Perspective](https://arxiv.org/abs/2408.03944) | None :( |
 | [Improving Fast Adversarial Training via Self-Knowledge Guidance](https://arxiv.org/abs/2409.17589) | None :( |
