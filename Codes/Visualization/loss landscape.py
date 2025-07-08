@@ -1,4 +1,7 @@
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import torchhk
+from torchhk.vis import cal_perturb_x ,plot_perturb_plt
 from IPython.display import HTML
 from base64 import b64encode
 
