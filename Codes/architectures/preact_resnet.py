@@ -1,3 +1,9 @@
+'''Pre-activation ResNet in PyTorch.
+
+Reference:
+[1] Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
+    Identity Mappings in Deep Residual Networks. arXiv:1603.05027
+'''
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -90,3 +96,15 @@ class PreActResNet(nn.Module):
 
 def PreActResNet18(**kwargs):
     return PreActResNet(PreActBlock, [2,2,2,2], **kwargs)
+
+def PreActResNet34(**kwargs):
+    return PreActResNet(PreActBlock, [3,4,6,3], **kwargs)
+
+def PreActResNet50(**kwargs):
+    return PreActResNet(PreActBottleneck, [3,4,6,3], **kwargs)
+
+def PreActResNet101(**kwargs):
+    return PreActResNet(PreActBottleneck, [3,4,23,3], **kwargs)
+
+def PreActResNet152(**kwargs):
+    return PreActResNet(PreActBottleneck, [3,8,36,3], **kwargs)
