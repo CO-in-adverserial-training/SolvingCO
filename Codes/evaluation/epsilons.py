@@ -61,4 +61,8 @@ def test(architecture, saving_directory, loader, lower_limit, upper_limit, std, 
         f_accs.append(f_acc), p_accs.append(p_acc)
         # Progress bar
         print(f'Epsilon {str(eps).zfill(2)}: Clean {c_acc:.2f}% | FGSM {f_acc:.2f}% | PGD {p_acc:.2f}%')
+    f_auc = (c_acc + sum(f_accs)) / (max_eps + 1)
+    p_auc = (c_acc + sum(p_accs)) / (max_eps + 1)
     plot_accuracies(c_acc, f_accs, p_accs, saving_directory)
+    print(f'FGSM-AUC = {f_auc:.2f} | PGD-AUC {p_auc:.2f}')
+    return f_auc, p_auc
