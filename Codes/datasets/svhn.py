@@ -2,8 +2,9 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import SVHN
 import torchvision.transforms as transforms
+from .index_dataset import IndexDataset
 
-def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True):
+def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
     if normalize_dataset:
         # SVHN mean and std
         svhn_mean = [0.4380, 0.4440, 0.4730] # equals np.mean(train_set.train_data, axis=(0,1,2))/255
@@ -29,6 +30,8 @@ def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda
 
     # Download the dataset
     trainset = SVHN(root='./data', split='train', download=True, transform=train_transform)
+    trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
+
     testset = SVHN(root='./data', split='test', download=True, transform=test_transform)
 
     # Create the loaders
