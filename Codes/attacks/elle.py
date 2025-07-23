@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 #Implement ELLE Regularizer
-def elle(x, y, model, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
+def elle(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
     model_training = model.training
     model.eval()
     
