@@ -17,7 +17,6 @@ def grad_align(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, al
     grad2 = torch.autograd.grad(cost2, x)[0]
     grad2_copy = grad2.clone().detach()
 
-    # grad2 = grad2.detach()
     grad1 = grad1.reshape(grad1.shape[0], -1)
     grad2_copy = grad2_copy.reshape(grad2.shape[0], -1)   
     alignment = F.cosine_similarity(grad1, grad2_copy, dim=1)

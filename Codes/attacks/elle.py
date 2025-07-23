@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+from .fgsm import fgsm
 
 #Implement ELLE Regularizer
 def elle(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
@@ -28,4 +29,6 @@ def elle(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: f
     e_lin = e_lin.detach()
     if model_training:
         model.train()
-    return e_lin
+
+    delta, grad = fgsm(model, x, y, upper_limit, lower_limit, epsilon, alpha)
+    return delta, e_lin, grad

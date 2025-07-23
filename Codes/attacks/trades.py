@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # Implementation of Theoretically Principled Trade-off between Robustness and Accuracy(TRADES)
-def trades_attack(x, y, model, upper_limit, lower_limit, epsilon: float = 8/255, perturb_steps: int=10, step_size: float=0.007, device: str="cuda"):
+def trades_attack(x, y, model, upper_limit, lower_limit, epsilon: float = 8/255, perturb_steps: int=10, step_size: float=0.007):
     batch_size = x.shape[0]
     kl_criterion = nn.KLDivLoss(reduction = "sum")
     model_training = model.training
@@ -11,7 +11,7 @@ def trades_attack(x, y, model, upper_limit, lower_limit, epsilon: float = 8/255,
     with torch.no_grad():
         clean_logits = model(x)
         clean_probs  = F.softmax(clean_logits, dim=1)
-    delta = 0.001 * torch.randn(x.shape).to(device).detach()
+    delta = 0.001 * torch.randn(x.shape).detach()
 
     x_trades = x + delta
     for step in range(perturb_steps):
