@@ -4,13 +4,16 @@ import torchhk
 from torchhk.vis import cal_perturb_x ,plot_perturb_plt
 from IPython.display import HTML
 from base64 import b64encode
+from PIL import Image
+from ..attacks.fgsm import fgsm
+from ..attacks.pgd import pgd
 
 #3D Plot Loss Surface
-def loss_plot(images, labels, model, image_index, use_directions=False, directions=None,
+def loss_plot(images, labels, model, image_index, classes, attack_params, use_directions=False, directions=None,
               return_directions=False, bigger_plot_range=False):
     j = image_index
-    fgsm_images = fgsm_attack(images, labels, model, EPSILON, ALPHA)
-    pgd_images = pgd_attack(images, labels, model, EPSILON, ALPHA / 8)
+    fgsm_images = fgsm(model, images, labels, **attack_params)
+    pgd_images = pgd(model, images, labels, **attack_params)
     if bigger_plot_range:
         range_x = (-2, 2)
         range_y = (-2, 2)
