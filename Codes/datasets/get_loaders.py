@@ -3,6 +3,7 @@ from .cifar100 import get_loaders as cifar100_loaders
 from .svhn import get_loaders as svhn_loaders
 from .cinic10 import get_loaders as cinic10_loaders
 from .tinyimagenet import get_loaders as tinyimagenet_loaders
+from .pathmnist import get_loaders as pathmnist_loaders
 
 def get_loaders(dataset_name: str, batch_size: int = 128, num_workers: int = 2,
                  device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
@@ -17,5 +18,7 @@ def get_loaders(dataset_name: str, batch_size: int = 128, num_workers: int = 2,
             return cinic10_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
         case "Tiny ImageNet":
             return tinyimagenet_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+        case "PathMNIST":
+            return pathmnist_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
         case _:
             raise "Invalid Dataset!"
