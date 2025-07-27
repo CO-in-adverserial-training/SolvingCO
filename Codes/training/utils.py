@@ -1,12 +1,36 @@
 import torch
+from collections import defaultdict
 
+# Class for tracking metrics for visualization and other processing
+class MetricTracker:
+    def __init__(self):
+        self.data = defaultdict(list)
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            self.data[key].append(value)
+
+    def average(self, key):
+        return sum(self.data[key]) / len(self.data[key]) if self.data[key] else 0.0
+
+    def result(self):
+        return {k: self.average(k) for k in self.data}
+
+    def reset(self):
+        self.data = defaultdict(list)
+
+    def get_history(self):
+        return dict(self.data)
+
+# Get optimizer for model given name
 def get_optimizer(args, model):
     match args.optimizer:
         case "SGD":
             return torch.optim.SGD(model.parameters(), lr=args.initial_lr, momentum=args.momentum, weight_decay=args.weight_decay)
         case _:
             raise "Invalid Optimizer!"
-
+        
+# Get scheduler for learning rate given name
 def get_scheduler(args, optimizer, len_trainloader):
     match args.scheduler:
         case "Cyclic": # Default

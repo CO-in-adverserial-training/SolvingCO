@@ -1,6 +1,6 @@
 from .training.train import train
 from .evaluation.evaluation import evaluate
-from .utils import create_directories, get_device
+from .utils import create_directories, get_device, set_seeds
 import argparse
 
 def parse_args():
@@ -28,8 +28,10 @@ def main():
     args = parse_args()
     # Create nescessary directories
     create_directories(args.root_path)
-    # Get Device
+    # Get device
     device = get_device(args.device)
+    # Set seed
+    set_seeds()
     # Train model
     train(args, device)
     # Evaluate training
