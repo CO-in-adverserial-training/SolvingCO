@@ -1,3 +1,4 @@
+import torch
 import torch.nn.functional as F
 from datasets.get_loaders import get_loaders
 from architectures.get_model import get_model
@@ -5,15 +6,13 @@ from attacks.get_attack import get_attack
 from ..attacks.attack_params import attack_params_dict, regularizer_params_dict
 from .alignment import calc_alignment
 from ..utils import save_checkpoint, get_device
-from .utils import get_optimizer, get_scheduler
+from .utils import get_optimizer, get_scheduler, get_input_dimensions
 
-def train(args):
+def train(args, device):
     # Get dataset loaders
-    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes = get_loaders(args.dataset)
+    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset)
     # Get model
     model = get_model(args.model, num_classes)
-    # Set device
-    device = get_device()
     # Get optimizer
     optimizer = get_optimizer(args.optimizer, model)
     # Get scheduler
@@ -24,10 +23,15 @@ def train(args):
     attack_params = attack_params_dict.get(args.attack, {}).copy()
     # Get regularization coefficient if needed
     use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
-    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     if use_regularizer:
         reg_params = regularizer_params_dict.get(args.attack, {}).copy()
 
+    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
+    if index_dataset:
+        _, C, H, W = get_input_dimensions(trainloader, index_dataset)
+        delta = torch.zeros((num_train_samples, C, H, W), device=device)
+        delta.uniform_(-args.epsilon, args.epsilon)
+        attack_params["delta"] = delta
 
     for epoch in range(args.epochs):
         for i, data in enumerate(trainloader):
@@ -44,10 +48,10 @@ def train(args):
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case "ATAS":
                     delta, grad = attack(model, images, labels, index, upper_limit, lower_limit, **attack_params)
-                    delta_atas[index] = delta.clone().detach()
+                    delta[index] = delta.clone().detach()
                 case "FGSM-EP":
                     delta, reg, grad = attack(model, images, labels, index, upper_limit, lower_limit, **attack_params)
-                    delta_fgsm_ep[index] = delta.clone().detach()
+                    delta[index] = delta.clone().detach()
                 case _:
                     raise "Invalid Attack Method!"
             

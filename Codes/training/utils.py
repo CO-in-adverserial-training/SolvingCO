@@ -20,3 +20,14 @@ def get_scheduler(args, optimizer, len_trainloader):
             return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=gamma)
         case _:
             raise "Invalid Scheduler!"
+
+# Returns dimensions of the data
+def get_input_dimensions(dataloader, index_dataset):
+    detailer = iter(dataloader)
+    data = next(detailer)
+    if index_dataset:
+        images, labels, index = data
+    else:
+        images, labels = data
+
+    return images.shape

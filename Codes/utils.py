@@ -1,6 +1,7 @@
 import torch
 from pathlib import Path
 from .architectures import get_model
+from .training.utils import get_optimizer, get_scheduler
 
 # Save model checkpoint
 def save_checkpoint(model, optimizer, scheduler, path:str):
@@ -10,13 +11,12 @@ def save_checkpoint(model, optimizer, scheduler, path:str):
                    }, path)
 
 # Load model checkpoint
-def load_checkpoint(model_name, num_classes: int=10, path: str=None, device: str = 'cuda'):
-    model = get_model(model_name, num_classes)
-        
+def load_checkpoint(args, num_classes:int, path:str, device):
+    model = get_model(args.model, num_classes)
     model.to(device)
     
-    optimizer = ... # TODO Implement a good method for retrieving optimizer
-    scheduler = ... # TODO Implement a good method for retrieving scheduler
+    optimizer = get_optimizer(args.optimizer, model)
+    scheduler = get_scheduler(args.scheduler, optimizer)
 
     checkpoint = torch.load(path, weights_only=True)
     model.load_state_dict(checkpoint['model_state_dict'])
@@ -36,5 +36,11 @@ def create_directories(root_path: str):
     Path(f'{root_path}/data').mkdir(parents=True, exist_ok=True)
 
 # Get device
-def get_device():
-    return torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+def get_device(device_name):
+    match device_name:
+        case "cuda":
+            return torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        case "cpu":
+            return torch.device('cpu')
+        case _:
+            raise "Invalid Device!"

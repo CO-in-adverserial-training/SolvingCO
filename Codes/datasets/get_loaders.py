@@ -6,20 +6,19 @@ from .tinyimagenet import get_loaders as tinyimagenet_loaders
 from .pathmnist import get_loaders as pathmnist_loaders
 
 # Returns trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
-def get_loaders(dataset_name: str, batch_size: int = 128, num_workers: int = 2,
-                 device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
-    match dataset_name:
+def get_loaders(args, index_dataset: bool, device):
+    match args.dataset:
         case "CIFAR10":
-            return cifar10_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+            return cifar10_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case "CIFAR100":
-            return cifar100_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+            return cifar100_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case "SVHN":
-            return svhn_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+            return svhn_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case "CINIC10":
-            return cinic10_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+            return cinic10_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case "Tiny ImageNet":
-            return tinyimagenet_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+            return tinyimagenet_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case "PathMNIST":
-            return pathmnist_loaders(batch_size, num_workers, device, normalize_dataset, index_dataset)
+            return pathmnist_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case _:
             raise "Invalid Dataset!"
