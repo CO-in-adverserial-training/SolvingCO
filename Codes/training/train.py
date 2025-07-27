@@ -6,13 +6,14 @@ from attacks.get_attack import get_attack
 from ..attacks.attack_params import attack_params_dict, regularizer_params_dict
 from .alignment import calc_alignment
 from ..utils import save_checkpoint
-from .utils import get_optimizer, get_scheduler, get_input_dimensions
+from .utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions
 
 def train(args, device):
     # Get dataset loaders
     trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset)
     # Get model
     model = get_model(args.model, num_classes)
+    model.train()
     # Get optimizer
     optimizer = get_optimizer(args.optimizer, model)
     # Get scheduler
@@ -32,6 +33,13 @@ def train(args, device):
         delta = torch.zeros((num_train_samples, C, H, W), device=device)
         delta.uniform_(-args.epsilon, args.epsilon)
         attack_params["delta"] = delta
+
+    # Save initial checkpoint
+    save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/checkpoints/model{str(0).zfill(3)}.pt")
+    # Setup metric trackers
+    loss_tracker = MetricTracker() # Track training loss
+    alignment_tracker = MetricTracker() # Track alignment
+    alpha_tracker = MetricTracker() # Track attack step sizes
 
     for epoch in range(args.epochs):
         for i, data in enumerate(trainloader):
@@ -69,12 +77,16 @@ def train(args, device):
             loss.backward()
             # Update weights
             optimizer.step()
-            # Update Scheduler # TODO this is only for Cyclic LR not for MultiStep
-            scheduler.step()
+            # Update scheduler # TODO this is not for MultiStep
+            if args.scheduler in ["Cyclic", "CosineAnnealing"]:
+                scheduler.step()
             if args.track_alignment:
                 alignment = calc_alignment(grad, adv_images)
                 if args.attack == "SIA":
                     attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
+                alignment_tracker.update(batch_alignment=alignment)
+            loss_tracker.update(batch_loss=loss)
+            alpha_tracker.update(batch_alpha=attack_params["alpha"])
     # Save training checkpoint
     save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt")
 

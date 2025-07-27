@@ -21,7 +21,7 @@ attack_params_dict = {
     },
     "PGD": {
         "epsilon": 8 / 255,
-        "step_size": 2 / 255,
+        "alpha": 2 / 255,
         "attack_iters": 10,
         "k": 1.0,
         "clip": True
@@ -43,7 +43,7 @@ attack_params_dict = {
     },
     "ATAS": {
         "epsilon": 8 / 255,
-        "step_size": 2 / 255,
+        "alpha": 2 / 255,
         "topk": 3,
         "num_steps": 5
     },
