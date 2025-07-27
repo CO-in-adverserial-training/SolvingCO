@@ -17,7 +17,7 @@ def train(args):
     # Get optimizer
     optimizer = get_optimizer(args.optimizer, model)
     # Get scheduler
-    scheduler = get_scheduler(args.scheduler, optimizer)
+    scheduler = get_scheduler(args.scheduler, optimizer, len(trainloader))
     # Determine attack
     attack = get_attack(args.attack)
     # Get attack parameters
