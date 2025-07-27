@@ -54,4 +54,4 @@ def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda
         'squirrel','streetcar','sunflower','sweet_pepper','table','tank','telephone','television','tiger','tractor','train','trout',
         'tulip','turtle','wardrobe','whale','willow_tree','wolf','woman','worm')
 
-    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
+    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes), len(trainset), len(testset)

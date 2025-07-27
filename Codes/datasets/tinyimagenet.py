@@ -52,7 +52,7 @@ def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda
     
     # Get Class Names (simplified - actual class names would be from the wnids.txt file)
     classes = [f'class_{i}' for i in range(len(classes))]  # Replace with actual class names if needed
-    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
+    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes), len(trainset), len(testset)
 
 
 # Custom Dataset Class for Tiny ImageNet

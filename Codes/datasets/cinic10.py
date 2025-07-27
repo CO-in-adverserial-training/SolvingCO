@@ -79,4 +79,4 @@ def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda
 
     classes = ('airplane', 'automobile', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-    return trainset, testset, trainloader, testloader, mu, std, upper_limit, lower_limit, classes, len(classes)
+    return trainset, testset, trainloader, testloader, mu, std, upper_limit, lower_limit, classes, len(classes), len(trainset), len(testset)

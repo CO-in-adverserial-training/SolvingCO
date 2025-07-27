@@ -45,6 +45,6 @@ def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda
     # Name of Classes
     classes = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
 
-    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
+    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes), len(trainset), len(testset)
 
 
