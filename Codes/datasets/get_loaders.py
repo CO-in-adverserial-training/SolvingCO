@@ -5,6 +5,7 @@ from .cinic10 import get_loaders as cinic10_loaders
 from .tinyimagenet import get_loaders as tinyimagenet_loaders
 from .pathmnist import get_loaders as pathmnist_loaders
 
+# Returns trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
 def get_loaders(dataset_name: str, batch_size: int = 128, num_workers: int = 2,
                  device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
     match dataset_name:
