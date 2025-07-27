@@ -1,12 +1,11 @@
+import torch.nn.functional as F
 from datasets.get_loaders import get_loaders
 from ..utils import load_checkpoint
 from attacks.get_attack import get_attack
 from ..attacks.attack_params import attack_params_dict
-import torch.nn.functional as F
+from ..training.utils import MetricTracker
 
 def evaluate(args, device):
-    reg_list_test = []
-    
     # Get dataset loaders
     _, testloader, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset)
     # Get attack parameters
@@ -14,6 +13,10 @@ def evaluate(args, device):
 
     use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
+
+    # Setup metric trackers
+    regularizer_tracker = MetricTracker()
+
     for epoch in range(args.epochs + 1):
         model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt")
         model.eval()
@@ -45,4 +48,4 @@ def evaluate(args, device):
             if use_regularizer:
                 reg = reg.cpu() if reg is not None else None
                 reg = reg.item()
-                reg_list_test.append(reg)
+                regularizer_tracker.update(reg)
