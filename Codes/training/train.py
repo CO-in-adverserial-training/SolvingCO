@@ -5,7 +5,7 @@ from architectures.get_model import get_model
 from attacks.get_attack import get_attack
 from ..attacks.attack_params import attack_params_dict, regularizer_params_dict
 from .alignment import calc_alignment
-from ..utils import save_checkpoint, get_device
+from ..utils import save_checkpoint
 from .utils import get_optimizer, get_scheduler, get_input_dimensions
 
 def train(args, device):

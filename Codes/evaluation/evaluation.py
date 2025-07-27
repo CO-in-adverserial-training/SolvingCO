@@ -1,33 +1,39 @@
+from datasets.get_loaders import get_loaders
 from ..utils import load_checkpoint
 from attacks.get_attack import get_attack
+from ..attacks.attack_params import attack_params_dict
 import torch.nn.functional as F
 
-def evaluate(dataloader, checkpoints_path: str, model_name: str, num_classes: int, attack_name: str, attack_params, num_epochs: int=30, device:str="cuda"):
+def evaluate(args, device):
     reg_list_test = []
     
-    use_regularizer = attack_name in ["TRADES", "GradAlign", "ELLE"]
-    for epoch in range(num_epochs + 1):
-        model, _, _ = load_checkpoint(model_name, num_classes, f"{checkpoints_path}/model{str(epoch).zfill(3)}.pt")
+    # Get dataset loaders
+    _, testloader, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset)
+    # Get attack parameters
+    attack_params = attack_params_dict.get(args.attack, {}).copy()
+
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
+    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
+    for epoch in range(args.epochs + 1):
+        model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt")
         model.eval()
 
-        for i, data in enumerate(dataloader):
+        for i, data in enumerate(testloader):
             if index_dataset:
                 images, labels, index = data[0].to(device), data[1].to(device), data[2]
             else:
                 images, labels = data[0].to(device), data[1].to(device)
             # Determine attack
-            attack = get_attack(attack_name)
-            match attack_name:
+            attack = get_attack(args.attack)
+            match args.attack:
                 case attack if attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
-                    delta, grad = attack(model, images, labels, **attack_params)
+                    delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case attack if attack in ["TRADES", "GradAlign", "ELLE"]:
-                    delta, reg, grad = attack(model, images, labels, **attack_params)
+                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case "ATAS":
-                    delta, grad = attack(model, images, labels, index, **attack_params)
-                    delta_atas[index] = delta.clone().detach()
+                    delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case "FGSM-EP":
-                    delta, reg, grad = attack(model, images, labels, index, **attack_params)
-                    delta_fgsm_ep[index] = delta.clone().detach()
+                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case _:
                     raise "Invalid Attack Method!"
             # Add perturbation to original images

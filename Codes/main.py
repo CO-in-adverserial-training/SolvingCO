@@ -33,4 +33,4 @@ def main():
     # Train model
     train(args, device)
     # Evaluate training
-    evaluate(args)
+    evaluate(args, device)

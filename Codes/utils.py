@@ -16,7 +16,7 @@ def load_checkpoint(args, num_classes:int, path:str, device):
     model.to(device)
     
     optimizer = get_optimizer(args.optimizer, model)
-    scheduler = get_scheduler(args.scheduler, optimizer)
+    scheduler = get_scheduler(args.scheduler, optimizer, len_trainloader)
 
     checkpoint = torch.load(path, weights_only=True)
     model.load_state_dict(checkpoint['model_state_dict'])
