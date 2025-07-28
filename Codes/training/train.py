@@ -130,5 +130,5 @@ def train(args, device):
     with open(f"train_metrics_{args.attack}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
 
-    print('Finished Evaluating')
-    print("Total Evaluation Time: ", total_train_time)
+    print('Finished Training')
+    print("Total Training Time: ", total_train_time)
