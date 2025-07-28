@@ -15,7 +15,8 @@ def evaluate(args, device):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
 
     # Setup metric trackers
-    regularizer_tracker = MetricTracker()
+    test_loss_tracker = MetricTracker() # Track test loss
+    test_regularizer_tracker = MetricTracker()
 
     for epoch in range(args.epochs + 1):
         model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt")
@@ -44,8 +45,10 @@ def evaluate(args, device):
             # Forward pass with adversarial examples
             preds = model(adv_images)
             loss = F.cross_entropy(preds, labels)
+
             #Track Regularizer Value Per Batch
             if use_regularizer:
                 reg = reg.cpu() if reg is not None else None
                 reg = reg.item()
-                regularizer_tracker.update(reg)
+                test_regularizer_tracker.update(batch_test_reg=reg)
+            test_loss_tracker.update(batch_test_loss=loss)

@@ -32,4 +32,4 @@ def get_model(model_name: str, num_classes: int=10):
         case "SENet18":
             return SENet18(num_classes=num_classes)
         case _:
-            raise "Invalid Model!"
+            raise ValueError("Invalid Model!")

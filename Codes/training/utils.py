@@ -21,6 +21,9 @@ class MetricTracker:
 
     def get_history(self):
         return dict(self.data)
+    
+    def to_dict(self):
+        return {key: self.history[key] for key in self.history}
 
 # Get optimizer for model given name
 def get_optimizer(args, model):
@@ -28,7 +31,7 @@ def get_optimizer(args, model):
         case "SGD":
             return torch.optim.SGD(model.parameters(), lr=args.initial_lr, momentum=args.momentum, weight_decay=args.weight_decay)
         case _:
-            raise "Invalid Optimizer!"
+            raise ValueError("Invalid Optimizer!")
         
 # Get scheduler for learning rate given name
 def get_scheduler(args, optimizer, len_trainloader):
@@ -43,15 +46,20 @@ def get_scheduler(args, optimizer, len_trainloader):
         case "MultiStep": # For Runs With 110 Epochs
             return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=gamma)
         case _:
-            raise "Invalid Scheduler!"
+            raise ValueError("Invalid Scheduler!")
 
 # Returns dimensions of the data
 def get_input_dimensions(dataloader, index_dataset):
     detailer = iter(dataloader)
     data = next(detailer)
     if index_dataset:
-        images, labels, index = data
+        images, _, _ = data
     else:
-        images, labels = data
+        images, _ = data
 
     return images.shape
+
+def calculate_batch_accuracy(logits, labels):
+    indices = torch.argmax(logits, 1)
+    correct_count = (indices == labels).sum()
+    return correct_count / labels.size(0)

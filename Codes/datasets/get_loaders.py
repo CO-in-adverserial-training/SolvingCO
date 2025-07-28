@@ -21,4 +21,4 @@ def get_loaders(args, index_dataset: bool, device):
         case "PathMNIST":
             return pathmnist_loaders(args.batch_size, args.num_workers, device, args.normalize_dataset, index_dataset)
         case _:
-            raise "Invalid Dataset!"
+            raise ValueError("Invalid Dataset!")

@@ -25,7 +25,7 @@ def get_device(device_name):
         case "cpu":
             return torch.device('cpu')
         case _:
-            raise "Invalid Device!"
+            raise ValueError("Invalid Device!")
 
 # Save model checkpoint
 def save_checkpoint(model, optimizer, scheduler, path:str):
