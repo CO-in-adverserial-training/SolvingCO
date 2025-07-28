@@ -47,7 +47,7 @@ def train(args, device):
     regularizer_tracker = MetricTracker() # Track regularizer vlue
 
     total_train_time = 0
-    for epoch in range(args.epochs):
+    for epoch in range(1, args.epochs + 1):
         start_time = time.time()
         for i, data in enumerate(trainloader):
             if index_dataset:

@@ -28,7 +28,7 @@ def evaluate(args, device):
     }
 
     total_evaluation_time = 0
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(args.epochs + 1):
         start_time = time.time()
         model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt", device)
         model.eval()
