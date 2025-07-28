@@ -1,9 +1,13 @@
+import torch
 import torch.nn.functional as F
+import json
 from datasets.get_loaders import get_loaders
 from ..utils import load_checkpoint
 from attacks.get_attack import get_attack
+from attacks.fgsm import fgsm
+from attacks.pgd import pgd
 from ..attacks.attack_params import attack_params_dict
-from ..training.utils import MetricTracker
+from ..training.utils import MetricTracker, calculate_batch_accuracy
 
 def evaluate(args, device):
     # Get dataset loaders
@@ -11,24 +15,29 @@ def evaluate(args, device):
     # Get attack parameters
     attack_params = attack_params_dict.get(args.attack, {}).copy()
 
-    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "FGSM-EP"]
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
 
     # Setup metric trackers
-    test_loss_tracker = MetricTracker() # Track test loss
-    test_regularizer_tracker = MetricTracker()
+    trackers = {
+        "attack": {"batch": MetricTracker(), "epoch": MetricTracker()},
+        "fgsm": {"batch": MetricTracker(), "epoch": MetricTracker()},
+        "pgd": {"batch": MetricTracker(), "epoch": MetricTracker()},
+        "reg": MetricTracker()
+    }
 
     for epoch in range(args.epochs + 1):
-        model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt")
+        model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt", device)
         model.eval()
 
+        # Determine attack
+        attack = get_attack(args.attack)
         for i, data in enumerate(testloader):
             if index_dataset:
-                images, labels, index = data[0].to(device), data[1].to(device), data[2]
+                images, labels, _ = data[0].to(device), data[1].to(device), data[2]
             else:
                 images, labels = data[0].to(device), data[1].to(device)
-            # Determine attack
-            attack = get_attack(args.attack)
+
             match args.attack:
                 case attack if attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
@@ -39,7 +48,7 @@ def evaluate(args, device):
                 case "FGSM-EP":
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case _:
-                    raise "Invalid Attack Method!"
+                    raise ValueError("Invalid Attack Method!")
             # Add perturbation to original images
             adv_images = images + delta
             # Forward pass with adversarial examples
@@ -48,7 +57,51 @@ def evaluate(args, device):
 
             #Track Regularizer Value Per Batch
             if use_regularizer:
-                reg = reg.cpu() if reg is not None else None
-                reg = reg.item()
-                test_regularizer_tracker.update(batch_test_reg=reg)
-            test_loss_tracker.update(batch_test_loss=loss)
+                reg = float(reg) if reg is not None else 0.0
+                trackers["reg"].update(batch_test_reg=reg)
+            
+            # Calculate attack accuracy
+            batch_accuracy = calculate_batch_accuracy(preds, labels)
+            trackers["attack"]["batch"].update(loss=loss.item(), accuracy=batch_accuracy.item())
+            # Calculate FGSM accuracy
+            delta_fgsm = fgsm(model, images, labels, upper_limit, lower_limit, args.epsilon, 2 * args.epsilon)
+            eval_and_track(model, images, labels, delta_fgsm, trackers["fgsm"]["batch"])
+            
+            # Calculate PGD accuracy
+            delta_pgd = pgd(model, images, labels, upper_limit, lower_limit, args.epsilon, args.epsilon / 8, 10, 1)
+            eval_and_track(model, images, labels, delta_pgd, trackers["pgd"]["batch"])
+
+        
+        attack_epoch_loss = trackers["attack"]["batch"].average("loss")
+        attack_epoch_accuracy = trackers["attack"]["batch"].average("accuracy")
+        fgsm_epoch_loss = trackers["fgsm"]["batch"].average("loss")
+        fgsm_epoch_accuracy = trackers["fgsm"]["batch"].average("accuracy")
+        pgd_epoch_loss = trackers["pgd"]["batch"].average("loss")
+        pgd_epoch_accuracy = trackers["pgd"]["batch"].average("accuracy")
+        # Print epoch loss and accuracy
+        print(f"Epoch {epoch} - {args.attack} Accuracy: {attack_epoch_accuracy:.2%}, FGSM Accuracy: {fgsm_epoch_accuracy:.2%}, PGD Accuracy: {pgd_epoch_accuracy:.2%}")
+        trackers["attack"]["epoch"].update(loss=attack_epoch_loss, accuracy=attack_epoch_accuracy)
+        trackers["fgsm"]["epoch"].update(loss=fgsm_epoch_loss, accuracy=fgsm_epoch_accuracy)
+        trackers["pgd"]["epoch"].update(loss=pgd_epoch_loss, accuracy=pgd_epoch_accuracy)
+        trackers["attack"]["batch"].reset()
+        trackers["fgsm"]["batch"].reset()
+        trackers["pgd"]["batch"].reset()
+    
+    # Save training metrics for processing and visualization
+    metrics_to_save = {
+        "attack_epoch_metrics": trackers["attack"]["epoch"].to_dict(),
+        "fgsm_epoch_metrics": trackers["fgsm"]["epoch"].to_dict(),
+        "pgd_epoch_metrics": trackers["pgd"]["epoch"].to_dict(),
+        "regularizer_values": trackers["reg"].to_dict()
+    }
+
+    with open(f"evaluation_metrics_{args.attack}.json", "w") as f:
+        json.dump(metrics_to_save, f, indent=4)
+
+
+def eval_and_track(model, images, labels, delta, tracker):
+    with torch.no_grad():
+        preds = model(images + delta)
+        loss = F.cross_entropy(preds, labels)
+        acc = calculate_batch_accuracy(preds, labels)
+        tracker.update(loss=loss.item(), accuracy=acc.item())

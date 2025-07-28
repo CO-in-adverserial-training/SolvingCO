@@ -25,7 +25,7 @@ def train(args, device):
     # Get attack parameters
     attack_params = attack_params_dict.get(args.attack, {}).copy()
     # Get regularization coefficient if needed
-    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "FGSM-EP"]
     if use_regularizer:
         reg_params = regularizer_params_dict.get(args.attack, {}).copy()
 
@@ -120,6 +120,6 @@ def train(args, device):
         "regularizer_values": regularizer_tracker.to_dict()
     }
 
-    with open("train_metrics.json", "w") as f:
+    with open(f"train_metrics_{args.attack}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
 
