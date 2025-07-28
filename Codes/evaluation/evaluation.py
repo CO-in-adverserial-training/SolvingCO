@@ -42,9 +42,9 @@ def evaluate(args, device):
                 images, labels = data[0].to(device), data[1].to(device)
 
             match args.attack:
-                case attack if attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
+                case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
-                case attack if attack in ["TRADES", "GradAlign", "ELLE"]:
+                case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case "ATAS":
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
