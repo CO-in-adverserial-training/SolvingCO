@@ -4,7 +4,7 @@ from torchvision.datasets import SVHN
 import torchvision.transforms as transforms
 from datasets.index_dataset import IndexDataset
 
-def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
     if normalize_dataset:
         # SVHN mean and std
         svhn_mean = [0.4380, 0.4440, 0.4730] # equals np.mean(train_set.train_data, axis=(0,1,2))/255

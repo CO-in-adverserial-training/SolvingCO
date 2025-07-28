@@ -27,7 +27,7 @@ def download_and_extract_cinic10(dest_path):
     print("Download and extraction completed.")
 
 # CINIC10 Dataset
-def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
     
     # CINIC-10 channel stats
     if normalize_dataset:

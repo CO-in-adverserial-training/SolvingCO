@@ -4,7 +4,7 @@ from torchvision.datasets import CIFAR100
 import torchvision.transforms as transforms
 from datasets.index_dataset import IndexDataset
 
-def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
     if normalize_dataset:
         cifar100_mean = [0.5071, 0.4865, 0.4409] # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         cifar100_std =  [0.2673, 0.2564, 0.2762] # equals np.std(train_set.train_data, axis=(0,1,2))/255

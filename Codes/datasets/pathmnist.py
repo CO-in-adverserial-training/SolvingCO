@@ -19,7 +19,7 @@ class PathMNISTWrapper(torch.utils.data.Dataset):
         return img, label
 
 # MedMNIST Dataset
-def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
     if normalize_dataset:
         pathmnist_mean = ... # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         pathmnist_std = ... # equals np.std(train_set.train_data, axis=(0,1,2))/255
