@@ -4,7 +4,7 @@ from torchvision.datasets import CIFAR100
 import torchvision.transforms as transforms
 from datasets.index_dataset import IndexDataset
 
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
     if normalize_dataset:
         cifar100_mean = [0.5071, 0.4865, 0.4409] # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         cifar100_std =  [0.2673, 0.2564, 0.2762] # equals np.std(train_set.train_data, axis=(0,1,2))/255
@@ -29,10 +29,10 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
     
 
     # Download the dataset
-    trainset = CIFAR100(root='./data', train=True, download=True, transform=train_transform)
+    trainset = CIFAR100(root=f'{root_path}/data', train=True, download=True, transform=train_transform)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = CIFAR100(root='./data', train=False, download=True, transform=test_transform)
+    testset = CIFAR100(root=f'{root_path}/data', train=False, download=True, transform=test_transform)
 
     # Create the loaders
     trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)

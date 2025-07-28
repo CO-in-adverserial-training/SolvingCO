@@ -1,4 +1,5 @@
 import torch
+from torch.utils.data import DataLoader
 import torchvision
 import torchvision.transforms as transforms
 import tarfile
@@ -27,7 +28,7 @@ def download_and_extract_cinic10(dest_path):
     print("Download and extraction completed.")
 
 # CINIC10 Dataset
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
     
     # CINIC-10 channel stats
     if normalize_dataset:
@@ -57,7 +58,7 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
         transforms.Normalize(cinic10_mean, cinic10_std),
     ])
     
-    local_path = "./data"
+    local_path = f'{root_path}/data'
     if os.path.exists(os.path.join(local_path, 'train')) and os.path.exists(os.path.join(local_path, 'test')):
         print(f"Found local CINIC-10 dataset at: {local_path}")
         trainset = torchvision.datasets.ImageFolder(os.path.join(local_path, 'train'), transform=train_transform)
@@ -72,9 +73,9 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
 
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
     
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+    trainloader = DataLoader(trainset, batch_size=batch_size,
                                            shuffle=True, num_workers=num_workers)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+    testloader = DataLoader(testset, batch_size=batch_size,
                                           shuffle=False, num_workers=num_workers)
 
     classes = ('airplane', 'automobile', 'bird', 'cat',

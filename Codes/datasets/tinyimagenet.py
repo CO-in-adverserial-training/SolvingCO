@@ -8,8 +8,8 @@ import zipfile
 from datasets.index_dataset import IndexDataset
 
 # TinyImageNet Dataset
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
-    dataset_path = './data'
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+    dataset_path = f'{root_path}/data'
     if normalize_dataset:
         # Using standard ImageNet mean and std since TinyImageNet is a subset
         tinyimagenet_mean = [0.485, 0.456, 0.406]

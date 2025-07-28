@@ -11,14 +11,14 @@ def get_loaders(args, index_dataset: bool, device):
         case "CIFAR10":
             return cifar10_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case "CIFAR100":
-            return cifar100_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
+            return cifar100_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case "SVHN":
-            return svhn_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
+            return svhn_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case "CINIC10":
-            return cinic10_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
+            return cinic10_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case "Tiny ImageNet":
-            return tinyimagenet_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
+            return tinyimagenet_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case "PathMNIST":
-            return pathmnist_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
+            return pathmnist_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case _:
             raise ValueError("Invalid Dataset!")

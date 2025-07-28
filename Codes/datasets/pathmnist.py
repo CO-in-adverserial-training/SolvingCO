@@ -19,7 +19,7 @@ class PathMNISTWrapper(torch.utils.data.Dataset):
         return img, label
 
 # MedMNIST Dataset
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, device):
+def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
     if normalize_dataset:
         pathmnist_mean = ... # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         pathmnist_std = ... # equals np.std(train_set.train_data, axis=(0,1,2))/255
@@ -45,19 +45,19 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
     ])
     
     # Load PathMNIST datasets
-    trainset = PathMNIST(split='train', transform=train_transform, download=True, size=28)
+    trainset = PathMNIST(root=f'{root_path}/data', split='train', transform=train_transform, download=True, size=28)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = PathMNIST(split='test', transform=test_transform, download=True, size=28)
+    testset = PathMNIST(root=f'{root_path}/data', split='test', transform=test_transform, download=True, size=28)
     
     # Wrap datasets to fix label shape
     trainset = PathMNISTWrapper(trainset)
     testset = PathMNISTWrapper(testset)
     
     # Create DataLoaders
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+    trainloader = DataLoader(trainset, batch_size=batch_size,
                                              shuffle=True, num_workers=num_workers)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+    testloader = DataLoader(testset, batch_size=batch_size,
                                             shuffle=False, num_workers=num_workers)
 
     # Legal limits of pixles after normalization
