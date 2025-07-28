@@ -69,11 +69,13 @@ def train(args, device):
                     delta[index] = delta.clone().detach()
                 case _:
                     raise ValueError("Invalid Attack Method!")
-            
+
+            optimizer.zero_grad()
+
+            if args.track_alignment:
+                delta.requires_grad = True
             # Add perturbation to original images
             adv_images = images + delta
-            if args.track_alignment:
-                adv_images.requires_grad = True
             # Forward pass with adversarial examples
             preds = model(adv_images)
             loss = F.cross_entropy(preds, labels)
@@ -89,10 +91,10 @@ def train(args, device):
                 scheduler.step()
             
             if args.track_alignment:
-                alignment = calc_alignment(grad, adv_images)
+                alignment = calc_alignment(grad, delta)
                 if args.attack == "SIA":
                     attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
-                alignment_tracker.update(batch_alignment=alignment.item())
+                alignment_tracker.update(batch_alignment=alignment)
             #Track Regularizer Value Per Batch
             if use_regularizer:
                 reg = reg.cpu().item() if reg is not None else 0.0
