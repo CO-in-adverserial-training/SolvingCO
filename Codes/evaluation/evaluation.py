@@ -3,12 +3,12 @@ import torch.nn.functional as F
 import time
 import json
 from datasets.get_loaders import get_loaders
-from ..utils import load_checkpoint
+from utils import load_checkpoint
 from attacks.get_attack import get_attack
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
-from ..attacks.attack_params import attack_params_dict
-from ..training.utils import MetricTracker, calculate_batch_accuracy
+from attacks.attack_params import attack_params_dict
+from training.utils import MetricTracker, calculate_batch_accuracy
 
 def evaluate(args, device):
     # Get dataset loaders

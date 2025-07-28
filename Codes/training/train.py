@@ -5,14 +5,15 @@ import json
 from datasets.get_loaders import get_loaders
 from architectures.get_model import get_model
 from attacks.get_attack import get_attack
-from ..attacks.attack_params import attack_params_dict, regularizer_params_dict
-from .alignment import calc_alignment
-from ..utils import save_checkpoint
-from .utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
+from attacks.attack_params import attack_params_dict, regularizer_params_dict
+from utils import save_checkpoint
+from training.alignment import calc_alignment
+from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
 
 def train(args, device):
+    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
-    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset)
+    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset, index_dataset, device)
     # Get model
     model = get_model(args.model, num_classes)
     model = model.to(device)
@@ -30,7 +31,6 @@ def train(args, device):
     if use_regularizer:
         reg_params = regularizer_params_dict.get(args.attack, {}).copy()
 
-    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     if index_dataset:
         _, C, H, W = get_input_dimensions(trainloader, index_dataset)
         delta = torch.zeros((num_train_samples, C, H, W), device=device)

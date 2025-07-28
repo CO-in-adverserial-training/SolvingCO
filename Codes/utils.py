@@ -1,7 +1,7 @@
 import torch
 from pathlib import Path
-from .architectures import get_model
-from .training.utils import get_optimizer, get_scheduler
+from architectures.get_model import get_model
+from training.utils import get_optimizer, get_scheduler
 
 # Seed setting for result reproducibility
 def set_seeds():

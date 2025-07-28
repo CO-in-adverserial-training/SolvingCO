@@ -1,11 +1,11 @@
 import torch
 from torch.utils.data import DataLoader, Dataset
 import torchvision.transforms as transforms
-from .index_dataset import IndexDataset
 import os
 from PIL import Image
 import urllib.request
 import zipfile
+from datasets.index_dataset import IndexDataset
 
 # TinyImageNet Dataset
 def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):

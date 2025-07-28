@@ -1,6 +1,6 @@
-from .training.train import train
-from .evaluation.evaluation import evaluate
-from .utils import create_directories, get_device, set_seeds
+from training.train import train
+from evaluation.evaluation import evaluate
+from utils import create_directories, get_device, set_seeds
 import argparse
 
 def parse_args():

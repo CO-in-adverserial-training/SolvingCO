@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import CIFAR100
 import torchvision.transforms as transforms
-from .index_dataset import IndexDataset
+from datasets.index_dataset import IndexDataset
 
 def get_loaders(batch_size: int = 128, num_workers: int = 2, device: str = 'cuda', normalize_dataset: bool = True, index_dataset: bool = False):
     if normalize_dataset:

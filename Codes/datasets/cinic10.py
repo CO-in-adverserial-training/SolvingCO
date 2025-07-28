@@ -5,7 +5,7 @@ import tarfile
 import requests
 import os
 from pathlib import Path
-from .index_dataset import IndexDataset
+from datasets.index_dataset import IndexDataset
 
 def download_and_extract_cinic10(dest_path):
     url = "https://datashare.is.ed.ac.uk/bitstream/handle/10283/3192/CINIC-10.tar.gz"

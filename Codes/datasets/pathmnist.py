@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from medmnist import PathMNIST
 import torchvision.transforms as transforms
-from .index_dataset import IndexDataset
+from datasets.index_dataset import IndexDataset
 
 # Custom Dataset Wrapper to Squeeze Labels
 class PathMNISTWrapper(torch.utils.data.Dataset):
