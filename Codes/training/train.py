@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+import time
 import json
 from datasets.get_loaders import get_loaders
 from architectures.get_model import get_model
@@ -45,7 +46,9 @@ def train(args, device):
     alpha_tracker = MetricTracker() # Track attack step sizes
     regularizer_tracker = MetricTracker() # Track regularizer vlue
 
+    total_train_time = 0
     for epoch in range(args.epochs):
+        start_time = time.time()
         for i, data in enumerate(trainloader):
             if index_dataset:
                 images, labels, index = data[0].to(device), data[1].to(device), data[2]
@@ -104,8 +107,12 @@ def train(args, device):
         
         epoch_loss = batch_tracker.average("loss")
         epoch_accuracy = batch_tracker.average("accuracy")
+        
+        finish_time = time.time()
+        epoch_time = finish_time - start_time
+        total_train_time += epoch_time
         # Print epoch loss and accuracy
-        print(f"Epoch {epoch} - Loss {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.2%}")
+        print(f"Epoch {epoch} - Loss {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.2%}, Time {epoch_time:.4f}")
         epoch_tracker.update(loss=epoch_loss, accuracy=epoch_accuracy)
         batch_tracker.reset()
 
@@ -123,3 +130,5 @@ def train(args, device):
     with open(f"train_metrics_{args.attack}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
 
+    print('Finished Evaluating')
+    print("Total Evaluation Time: ", total_train_time)

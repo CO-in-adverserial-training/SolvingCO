@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+import time
 import json
 from datasets.get_loaders import get_loaders
 from ..utils import load_checkpoint
@@ -26,7 +27,9 @@ def evaluate(args, device):
         "reg": MetricTracker()
     }
 
-    for epoch in range(args.epochs + 1):
+    total_evaluation_time = 0
+    for epoch in range(1, args.epochs + 1):
+        start_time = time.time()
         model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt", device)
         model.eval()
 
@@ -78,8 +81,12 @@ def evaluate(args, device):
         fgsm_epoch_accuracy = trackers["fgsm"]["batch"].average("accuracy")
         pgd_epoch_loss = trackers["pgd"]["batch"].average("loss")
         pgd_epoch_accuracy = trackers["pgd"]["batch"].average("accuracy")
+        
+        finish_time = time.time()
+        epoch_time = finish_time - start_time
+        total_evaluation_time += epoch_time
         # Print epoch loss and accuracy
-        print(f"Epoch {epoch} - {args.attack} Accuracy: {attack_epoch_accuracy:.2%}, FGSM Accuracy: {fgsm_epoch_accuracy:.2%}, PGD Accuracy: {pgd_epoch_accuracy:.2%}")
+        print(f"Epoch {epoch} - {args.attack} Accuracy: {attack_epoch_accuracy:.2%}, FGSM Accuracy: {fgsm_epoch_accuracy:.2%}, PGD Accuracy: {pgd_epoch_accuracy:.2%}, , Time {epoch_time:.4f}")
         trackers["attack"]["epoch"].update(loss=attack_epoch_loss, accuracy=attack_epoch_accuracy)
         trackers["fgsm"]["epoch"].update(loss=fgsm_epoch_loss, accuracy=fgsm_epoch_accuracy)
         trackers["pgd"]["epoch"].update(loss=pgd_epoch_loss, accuracy=pgd_epoch_accuracy)
@@ -97,6 +104,9 @@ def evaluate(args, device):
 
     with open(f"evaluation_metrics_{args.attack}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
+    
+    print('Finished Evaluating')
+    print("Total Evaluation Time: ", total_evaluation_time)
 
 
 def eval_and_track(model, images, labels, delta, tracker):
