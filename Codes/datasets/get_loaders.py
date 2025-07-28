@@ -9,7 +9,7 @@ from datasets.pathmnist import get_loaders as pathmnist_loaders
 def get_loaders(args, index_dataset: bool, device):
     match args.dataset:
         case "CIFAR10":
-            return cifar10_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
+            return cifar10_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
         case "CIFAR100":
             return cifar100_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, device)
         case "SVHN":
