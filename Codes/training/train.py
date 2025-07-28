@@ -13,15 +13,15 @@ from training.utils import MetricTracker, get_optimizer, get_scheduler, get_inpu
 def train(args, device):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
-    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset, index_dataset, device)
+    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get model
     model = get_model(args.model, num_classes)
     model = model.to(device)
     model.train()
     # Get optimizer
-    optimizer = get_optimizer(args.optimizer, model)
+    optimizer = get_optimizer(args, model)
     # Get scheduler
-    scheduler = get_scheduler(args.scheduler, optimizer, len(trainloader))
+    scheduler = get_scheduler(args, optimizer, len(trainloader))
     # Determine attack
     attack = get_attack(args.attack)
     # Get attack parameters

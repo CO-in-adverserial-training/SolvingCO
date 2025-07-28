@@ -12,12 +12,12 @@ def parse_args():
     parser.add_argument("--normalize_dataset", type=bool, default=True)
     parser.add_argument("--model", choices=["PreActResNet18", "ResNet18", "WideResNet28", "SENet18"], default="PreActResNet18")
     parser.add_argument("--attack", choices=["SIA", "FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "ATAS", "TRADES", "PGD"], required=True)
-    parser.add_argument("--epsilon", default=8 / 255)
+    parser.add_argument("--epsilon", type=float, default=8 / 255)
     parser.add_argument("--epochs", type=int, default=30)
-    parser.add_argument("--initial_lr", default=0.01, help="May be overwritten by scheduler")
+    parser.add_argument("--initial_lr", type=float, default=0.01, help="May be overwritten by scheduler")
     parser.add_argument("--optimizer", choices=["SGD"], default="SGD")
-    parser.add_argument("--momentum", default=0.9)
-    parser.add_argument("--weight_decay", default=5e-4)
+    parser.add_argument("--momentum", type=float, default=0.9)
+    parser.add_argument("--weight_decay", type=float, default=5e-4)
     parser.add_argument("--scheduler", choices=["Cyclic", "MultiStep", "CosineAnnealing"], default="Cyclic")
     parser.add_argument("--track_alignment", type=bool, default=True)
     parser.add_argument("--device", type=str, default="cuda")
@@ -36,3 +36,6 @@ def main():
     train(args, device)
     # Evaluate training
     evaluate(args, device)
+
+if __name__ == "__main__":
+    main()
