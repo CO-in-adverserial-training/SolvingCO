@@ -8,7 +8,7 @@ def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, 
     
     # Initialize random step
     delta = torch.empty_like(x).uniform_(-k, k) * eps
-    delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
+    delta = torch.clamp(delta, lower_limit - x, upper_limit - x).detach()
     delta.requires_grad = True
 
     for _ in range(attack_iters):

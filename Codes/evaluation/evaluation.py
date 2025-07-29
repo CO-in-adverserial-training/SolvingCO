@@ -71,7 +71,7 @@ def evaluate(args, device):
             eval_and_track(model, images, labels, delta_fgsm, trackers["fgsm"]["batch"])
             
             # Calculate PGD accuracy # TODO adapt for dataset normalization
-            delta_pgd, _ = pgd(model, images, labels, upper_limit, lower_limit, args.epsilon, args.epsilon / 8, 10, 1)
+            delta_pgd, _ = pgd(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, args.epsilon / 8, 10, 1)
             eval_and_track(model, images, labels, delta_pgd, trackers["pgd"]["batch"])
 
         
