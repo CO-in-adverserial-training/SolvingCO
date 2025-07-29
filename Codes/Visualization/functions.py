@@ -15,3 +15,6 @@ def detect_window_range(window_size, alignments, tail_portion=0.25):
         else:
             capture_next = True
     return window_list
+
+def plot_loss_and_accuracy(metrics_path: str):
+    pass

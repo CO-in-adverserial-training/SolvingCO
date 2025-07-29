@@ -11,13 +11,13 @@ from attacks.attack_params import attack_params_dict
 from training.utils import MetricTracker, calculate_batch_accuracy
 
 def evaluate(args, device):
+    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
     _, testloader, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get attack parameters
     attack_params = attack_params_dict.get(args.attack, {}).copy()
 
     use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "FGSM-EP"]
-    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
 
     # Setup metric trackers
     trackers = {
