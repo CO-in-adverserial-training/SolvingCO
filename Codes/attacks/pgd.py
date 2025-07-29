@@ -17,10 +17,10 @@ def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, 
         loss.backward()
         grad = delta.grad.detach()
         with torch.no_grad():
-            delta += alpha * torch.sign(grad)
+            delta.data += alpha * torch.sign(grad)
             if clip:
-                delta = torch.clamp(delta, -eps, eps)
-            delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
+                delta.data.clamp_(-eps, eps)
+            delta.data.clamp_(lower_limit - x, upper_limit - x)
         delta.grad.zero_()
     delta = delta.detach()
 
