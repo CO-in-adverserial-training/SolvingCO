@@ -67,11 +67,11 @@ def evaluate(args, device):
             batch_accuracy = calculate_batch_accuracy(preds, labels)
             trackers["attack"]["batch"].update(loss=loss.item(), accuracy=batch_accuracy.item())
             # Calculate FGSM accuracy
-            delta_fgsm = fgsm(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, 2 * args.epsilon)
+            delta_fgsm, _ = fgsm(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, 2 * args.epsilon)
             eval_and_track(model, images, labels, delta_fgsm, trackers["fgsm"]["batch"])
             
             # Calculate PGD accuracy # TODO adapt for dataset normalization
-            delta_pgd = pgd(model, images, labels, upper_limit, lower_limit, args.epsilon, args.epsilon / 8, 10, 1)
+            delta_pgd, _ = pgd(model, images, labels, upper_limit, lower_limit, args.epsilon, args.epsilon / 8, 10, 1)
             eval_and_track(model, images, labels, delta_pgd, trackers["pgd"]["batch"])
 
         
