@@ -12,7 +12,7 @@ from training.utils import MetricTracker, calculate_batch_accuracy
 
 def evaluate(args, device):
     # Get dataset loaders
-    _, testloader, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args.dataset)
+    _, testloader, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get attack parameters
     attack_params = attack_params_dict.get(args.attack, {}).copy()
 
@@ -43,7 +43,7 @@ def evaluate(args, device):
 
             match args.attack:
                 case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
-                    delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
+                    delta, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case "ATAS":
