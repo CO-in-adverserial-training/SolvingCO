@@ -13,7 +13,7 @@ from training.utils import MetricTracker, get_optimizer, get_scheduler, get_inpu
 def train(args, device):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
-    trainloader, _, upper_limit, lower_limit, _, _, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
+    trainloader, _, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get model
     model = get_model(args.model, num_classes)
     model = model.to(device)
@@ -58,7 +58,7 @@ def train(args, device):
             optimizer.zero_grad()
             match args.attack:
                 case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
-                    delta, grad = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
+                    delta, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
                 case "ATAS":

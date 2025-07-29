@@ -19,12 +19,9 @@ class MetricTracker:
     def reset(self):
         self.data = defaultdict(list)
 
-    def get_history(self):
+    def to_dict(self):
         return dict(self.data)
     
-    def to_dict(self):
-        return {key: self.history[key] for key in self.history}
-
 # Get optimizer for model given name
 def get_optimizer(args, model):
     match args.optimizer:

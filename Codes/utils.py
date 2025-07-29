@@ -21,11 +21,14 @@ def create_directories(root_path: str):
 def get_device(device_name):
     match device_name:
         case "cuda":
-            return torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            print(f"Running on {torch.cuda.get_device_name(0)}")
         case "cpu":
-            return torch.device('cpu')
+            device = torch.device('cpu')
+            print(f"Running on CPU")
         case _:
             raise ValueError("Invalid Device!")
+    return device
 
 # Save model checkpoint
 def save_checkpoint(model, optimizer, scheduler, path:str):
