@@ -38,7 +38,7 @@ def save_checkpoint(model, optimizer, scheduler, path:str):
                    }, path)
 
 # Load model checkpoint
-def load_checkpoint(args, num_classes:int, path:str, device):
+def load_checkpoint(args, path:str, num_classes:int, len_trainloader, device):
     model = get_model(args.model, num_classes)
     model.to(device)
     

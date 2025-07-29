@@ -13,7 +13,7 @@ from training.utils import MetricTracker, calculate_batch_accuracy
 def evaluate(args, device):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
-    _, testloader, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
+    trainloader, testloader, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get attack parameters
     attack_params = attack_params_dict.get(args.attack, {}).copy()
 
@@ -30,7 +30,7 @@ def evaluate(args, device):
     total_evaluation_time = 0
     for epoch in range(args.epochs + 1):
         start_time = time.time()
-        model, _, _ = load_checkpoint(args.model, num_classes, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt", device)
+        model, _, _ = load_checkpoint(args, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt", num_classes, len(trainloader), device)
         model.eval()
 
         # Determine attack
