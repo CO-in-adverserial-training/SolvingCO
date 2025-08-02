@@ -10,12 +10,12 @@ from utils import save_checkpoint
 from training.alignment import calc_alignment
 from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
 
-def train(args, device):
+def train(args, device, img_size=32):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
     trainloader, _, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get model
-    model = get_model(args.model, num_classes)
+    model = get_model(args.model, num_classes, img_size)
     model = model.to(device)
     model.train()
     # Get optimizer
