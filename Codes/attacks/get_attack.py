@@ -9,6 +9,13 @@ from .sia import sia
 from .pgd import pgd
 
 def get_attack(attack_name: str):
+    """
+    Get the attack for the given attack name.
+    
+    Args:
+        attack_name (str): Name of the attack to get.
+    """
+    
     match attack_name:
         case "FGSM":
             return fgsm
