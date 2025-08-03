@@ -5,6 +5,31 @@ from utils import create_directories, get_device, set_seed
 import argparse
 
 def parse_args():
+    """
+    Parse arguments for the main function.
+
+    Args:
+        root_path (str): Path to the root directory of the project.
+        seed (int): Seed for the random number generator.
+        dataset (str): Dataset to use.
+        batch_size (int): Batch size for the data loader.
+        num_workers (int): Number of workers for the data loader.
+        normalize_dataset (bool): Whether to normalize the dataset.
+        model (str): Model to use.
+        attack (str): Attack to use.
+        epsilon (float): Epsilon for the attack.
+        epochs (int): Number of epochs to train for.
+        initial_lr (float): Initial learning rate.
+        optimizer (str): Optimizer to use.
+        momentum (float): Momentum for the optimizer.
+        weight_decay (float): Weight decay for the optimizer.
+        scheduler (str): Scheduler to use.
+        track_alignment (bool): Whether to track alignment.
+        device (str): Device to use.
+
+    Returns:
+        argparse.Namespace: Parsed arguments.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--root_path", required=True)
     parser.add_argument("--seed", type=int, default=42)
@@ -23,9 +48,21 @@ def parse_args():
     parser.add_argument("--scheduler", choices=["Cyclic", "MultiStep", "CosineAnnealing"], default="Cyclic")
     parser.add_argument("--track_alignment", action="store_true")
     parser.add_argument("--device", type=str, default="cuda")
+    
     return parser.parse_args()
 
 def main():
+    """
+    Main function for the project.
+    This function is used to train the model, evaluate the model, and visualize the results.
+    It also sets the seed for the random number generator and creates the necessary directories.
+    It also gets the device to use for the training.
+    It also trains the model, evaluates the model, and visualizes the results.
+    It also sets the seed for the random number generator and creates the necessary directories.
+    It also gets the device to use for the training.
+    It also trains the model, evaluates the model, and visualizes the results.
+    """
+    
     # Parse arguments
     args = parse_args()
     # Set seed

@@ -2,6 +2,13 @@ import json
 from Visualization.functions import plot_loss_and_accuracy, plot_alignment
 
 def visualize(args):
+    """
+    Visualize the results of the training and evaluation.
+    
+    Args:
+        args (argparse.Namespace): Arguments for the training.
+    """
+    
     training_metrics_path = f"{args.root_path}/raw_results/train_metrics_{args.attack}_{args.seed}.json"
     evaluation_metrics_path = f"{args.root_path}/raw_results/evaluation_metrics_{args.attack}_{args.seed}.json"
 

@@ -6,6 +6,15 @@ from .vit_small import VitSmallPatch16_224
 from .vit_base import VitBasePatch16_224
 
 def get_model(model_name: str, num_classes: int=10, img_size: int=32):
+    """
+    Get the model for the given model name.
+    
+    Args:
+        model_name (str): Name of the model to get.
+        num_classes (int): Number of classes in the dataset.
+        img_size (int): Size of the image.
+    """
+    
     match model_name:
         case "ResNet18":
             return ResNet18(num_classes=num_classes)

@@ -1,7 +1,12 @@
 import torch
 
-# A Class To Index Dataset
 class IndexDataset(torch.utils.data.Dataset):
+    """
+    A class to index the dataset.
+    
+    Args:
+        base_dataset (torch.utils.data.Dataset): The base dataset to index.
+    """
     def __init__(self, base_dataset):
         self.dataset = base_dataset
 

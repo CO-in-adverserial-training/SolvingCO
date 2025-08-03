@@ -5,6 +5,18 @@ import torchvision.transforms as transforms
 from datasets.index_dataset import IndexDataset
 
 def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+    """
+    Get the loaders for the SVHN dataset.
+    
+    Args:
+        batch_size (int): Batch size for the data loader.
+        num_workers (int): Number of workers for the data loader.
+        normalize_dataset (bool): Whether to normalize the dataset.
+        index_dataset (bool): Whether to index the dataset.
+        root_path (str): Path to the root directory of the project.
+        device (torch.device): Device to use for the training.
+    """
+    
     if normalize_dataset:
         # SVHN mean and std
         svhn_mean = [0.4380, 0.4440, 0.4730] # equals np.mean(train_set.train_data, axis=(0,1,2))/255

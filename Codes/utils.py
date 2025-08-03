@@ -6,10 +6,13 @@ from pathlib import Path
 from architectures.get_model import get_model
 from training.utils import get_optimizer, get_scheduler
 
-# Seed setting for result reproducibility
 def set_seed(seed: int):
     """
+    Seed setting for result reproducibility. 
     Set the random seed for python, numpy, torch (cpu and cuda).
+    
+    Args:
+        seed (int): Seed for the random number generator.
     """
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
@@ -22,8 +25,13 @@ def set_seed(seed: int):
 
     print(f"Seed set to {seed} for random, numpy, and torch (CPU & CUDA).")
 
-# Create necessary directories
 def create_directories(root_path: str):
+    """
+    Create necessary directories for the project.
+    
+    Args:
+        root_path (str): Path to the root directory of the project.
+    """
     Path(f'{root_path}/raw_results').mkdir(parents=True, exist_ok=True)
     Path(f'{root_path}/plots').mkdir(parents=True, exist_ok=True)
     Path(f'{root_path}/acc_vs_eps_plots').mkdir(parents=True, exist_ok=True)
@@ -31,8 +39,13 @@ def create_directories(root_path: str):
     Path(f'{root_path}/checkpoints').mkdir(parents=True, exist_ok=True)
     Path(f'{root_path}/data').mkdir(parents=True, exist_ok=True)
 
-# Get device
 def get_device(device_name):
+    """
+    Get the device to use for the training.
+    
+    Args:
+        device_name (str): Name of the device to use.
+    """
     match device_name:
         case "cuda":
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -44,15 +57,32 @@ def get_device(device_name):
             raise ValueError("Invalid Device!")
     return device
 
-# Save model checkpoint
 def save_checkpoint(model, optimizer, scheduler, path:str):
+    """
+    Save the model checkpoint.
+    
+    Args:
+        model (torch.nn.Module): Model to save.
+        optimizer (torch.optim.Optimizer): Optimizer to save.
+        scheduler (torch.optim.lr_scheduler._LRScheduler): Scheduler to save.
+        path (str): Path to save the checkpoint.
+    """
     torch.save({"model_state_dict": model.state_dict(),
                     "optimizer_state_dict": optimizer.state_dict(),
                     "scheduler_state_dict": scheduler.state_dict()
                    }, path)
 
-# Load model checkpoint
 def load_checkpoint(args, path:str, num_classes:int, len_trainloader, device):
+    """
+    Load the model checkpoint.
+    
+    Args:
+        args (argparse.Namespace): Arguments for the training.
+        path (str): Path to load the checkpoint.
+        num_classes (int): Number of classes in the dataset.
+        len_trainloader (int): Length of the training data loader.
+        device (torch.device): Device to use for the training.
+    """
     model = get_model(args.model, num_classes)
     model.to(device)
     

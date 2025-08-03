@@ -9,6 +9,18 @@ from datasets.index_dataset import IndexDataset
 
 # TinyImageNet Dataset
 def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+    """
+    Get the loaders for the Tiny ImageNet dataset.
+    
+    Args:
+        batch_size (int): Batch size for the data loader.
+        num_workers (int): Number of workers for the data loader.
+        normalize_dataset (bool): Whether to normalize the dataset.
+        index_dataset (bool): Whether to index the dataset.
+        root_path (str): Path to the root directory of the project.
+        device (torch.device): Device to use for the training.
+    """
+    
     dataset_path = f'{root_path}/data'
     if normalize_dataset:
         # Using standard ImageNet mean and std since TinyImageNet is a subset
@@ -57,6 +69,14 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
 
 # Custom Dataset Class for Tiny ImageNet
 class TinyImageNetDataset(Dataset):
+    """
+    A class to wrap the Tiny ImageNet dataset.
+    
+    Args:
+        root (str): Path to the root directory of the dataset.
+        train (bool): Whether to use the training data.
+        transform (callable, optional): A function/transform that takes in an PIL image and returns a transformed version.
+    """
     def __init__(self, root, train=True, transform=None):
         self.root = root
         self.train = train

@@ -11,6 +11,14 @@ from training.alignment import calc_alignment
 from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
 
 def train(args, device):
+    """
+    Train the model.
+    
+    Args:
+        args (argparse.Namespace): Arguments for the training.
+        device (torch.device): Device to use for the training.
+    """
+    
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
     trainloader, _, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)

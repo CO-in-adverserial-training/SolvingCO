@@ -7,6 +7,14 @@ from datasets.pathmnist import get_loaders as pathmnist_loaders
 
 # Returns trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
 def get_loaders(args, index_dataset: bool, device):
+    """
+    Get the loaders for the dataset.
+    
+    Args:
+        args (argparse.Namespace): Arguments for the training.
+        index_dataset (bool): Whether to index the dataset.
+        device (torch.device): Device to use for the training.
+    """
     match args.dataset:
         case "CIFAR10":
             return cifar10_loaders(args.batch_size, args.num_workers, args.normalize_dataset, index_dataset, args.root_path, device)
