@@ -18,3 +18,7 @@ def detect_window_range(window_size, alignments, tail_portion=0.25):
 
 def plot_loss_and_accuracy(metrics_path: str):
     pass
+
+
+def plot_alignment(metrics_path: str):
+    pass

@@ -1,5 +1,6 @@
 from training.train import train
 from evaluation.evaluation import evaluate
+from Visualization.visualize import visualize
 from utils import create_directories, get_device, set_seed
 import argparse
 
@@ -37,6 +38,8 @@ def main():
     train(args, device)
     # Evaluate training
     evaluate(args, device)
+    # Visualize results
+    visualize(args)
 
 if __name__ == "__main__":
     main()
