@@ -127,7 +127,7 @@ def train(args, device):
         batch_tracker.reset()
 
         # Save training checkpoint
-        save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/checkpoints/model{str(epoch).zfill(3)}.pt")
+        save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(epoch).zfill(3)}.pt")
 
     # Save training metrics for processing and visualization
     metrics_to_save = {
