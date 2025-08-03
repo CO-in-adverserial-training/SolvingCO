@@ -2,7 +2,11 @@ import torch
 import torch.nn.functional as F
 
 #Implementation of GradAlign Regularizer
-def grad_align(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
+def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
+    # Normalize perturbations
+    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    alpha = (alpha / std).view(1, -1, 1, 1)
+    
     x.requires_grad = True
     preds1 = model(x)
     cost1 = F.cross_entropy(preds1, y)
