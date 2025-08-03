@@ -3,11 +3,11 @@ import subprocess
 
 datasets = ["CIFAR10", "CIFAR100", "CINIC10", "SVHN", "TinyImageNet", "PathMNIST"]
 models = ["PreActResNet18", "ResNet18", "WideResNet28", "SENet18", "VitSmall", "VitBase"]
-attacks = ["SIA", "FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "ATAS", "TRADES", "PGD"]
-root_path = "/kaggle/working/results"
+attacks = ["SIA", "FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "TRADES", "PGD"]
+root_path = "results"
 
 os.system(f"mkdir {root_path}")
-os.system(f'cd "catastrophic overfitting in adversarial robustness\SolvingCO\Codes"')
+# os.system(f'cd "catastrophic overfitting in adversarial robustness\SolvingCO\Codes"')
 EPOCHS = 1
 
 for dataset in datasets:
@@ -16,7 +16,7 @@ for dataset in datasets:
             print(f"Evaluating '{dataset}' dataset, '{dataset}' model, '{dataset}' attack.")
 
             # output = os.popen(f"python main.py --root_path {root_path} --dataset {dataset} --model {model} --attack {attack} --epochs {EPOCHS}").read()
-            output = subprocess.check_output(f"python main.py --root_path {root_path} --dataset {dataset} --model {model} --attack {attack} --epochs {EPOCHS}", shell=True, text=True)
+            output = subprocess.check_output(f"python /kaggle/working/SolvingCO/Codes/main.py --root_path {root_path} --dataset {dataset} --model {model} --attack {attack} --epochs {EPOCHS}", shell=True, text=True)
             print(output)
             
             print("=" * 50)
