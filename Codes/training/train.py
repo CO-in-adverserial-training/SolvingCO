@@ -5,7 +5,7 @@ import json
 from datasets.get_loaders import get_loaders
 from architectures.get_model import get_model
 from attacks.get_attack import get_attack
-from attacks.attack_params import attack_params_dict, regularizer_params_dict
+from attacks.attack_params import get_attack_params, get_regularizer_params
 from utils import save_checkpoint
 from training.alignment import calc_alignment
 from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
@@ -26,11 +26,11 @@ def train(args, device):
     # Determine attack
     attack = get_attack(args.attack)
     # Get attack parameters
-    attack_params = attack_params_dict.get(args.attack, {}).copy()
+    attack_params = get_attack_params(args.epsilon).get(args.attack, {}).copy()
     # Get regularization coefficient if needed
     use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "FGSM-EP"]
     if use_regularizer:
-        reg_params = regularizer_params_dict.get(args.attack, {}).copy()
+        reg_params = get_regularizer_params(args.epsilon).get(args.attack, {}).copy()
 
     if index_dataset:
         delta = torch.zeros((num_train_samples, C, H, W), device=device)
