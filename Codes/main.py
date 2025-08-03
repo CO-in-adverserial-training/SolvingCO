@@ -68,7 +68,7 @@ def main():
     # Set seed
     set_seed(args.seed)
     # Create nescessary directories
-    create_directories(args.root_path)
+    create_directories(args)
     # Get device
     device = get_device(args.device)
     # Train model
