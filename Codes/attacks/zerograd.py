@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-def zero_grad(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 10/255, q_val: float = 0.35, k: float = 1.0, clip: bool = True):
+def zero_grad(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 10/255, q_val: float = 0.35, k: float = 1.0, clip: bool = True):
     # Normalize perturbations
     epsilon = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
