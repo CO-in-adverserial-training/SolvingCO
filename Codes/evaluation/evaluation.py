@@ -23,7 +23,7 @@ def evaluate(args, device):
     # Get dataset loaders
     trainloader, testloader, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     # Get attack parameters
-    attack_params = get_attack_params().get(args.attack, {}).copy()
+    attack_params = get_attack_params(args.epsilon).get(args.attack, {}).copy()
 
     use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "FGSM-EP"]
 
