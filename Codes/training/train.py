@@ -129,7 +129,7 @@ def train(args, device):
         "regularizer_values": regularizer_tracker.to_dict()
     }
 
-    with open(f"{args.root_path}/raw_results/train_metrics_{args.attack}.json", "w") as f:
+    with open(f"{args.root_path}/raw_results/train_metrics_{args.attack}_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
 
     print('Finished Training')

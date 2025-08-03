@@ -1,11 +1,12 @@
 from training.train import train
 from evaluation.evaluation import evaluate
-from utils import create_directories, get_device, set_seeds
+from utils import create_directories, get_device, set_seed
 import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root_path", required=True)
+    parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--dataset", choices=["CIFAR10", "CIFAR100", "CINIC10", "SVHN", "TinyImageNet", "PathMNIST"], default="CIFAR10")
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_workers", type=int, default=2)
@@ -26,12 +27,12 @@ def parse_args():
 def main():
     # Parse arguments
     args = parse_args()
+    # Set seed
+    set_seed(args.seed)
     # Create nescessary directories
     create_directories(args.root_path)
     # Get device
     device = get_device(args.device)
-    # Set seed
-    set_seeds()
     # Train model
     train(args, device)
     # Evaluate training

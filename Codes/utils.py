@@ -1,11 +1,26 @@
 import torch
+import numpy as np
+import random
+import os
 from pathlib import Path
 from architectures.get_model import get_model
 from training.utils import get_optimizer, get_scheduler
 
 # Seed setting for result reproducibility
-def set_seeds():
-    pass # TODO
+def set_seed(seed: int):
+    """
+    Set the random seed for python, numpy, torch (cpu and cuda).
+    """
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    print(f"Seed set to {seed} for random, numpy, and torch (CPU & CUDA).")
 
 # Create necessary directories
 def create_directories(root_path: str):
