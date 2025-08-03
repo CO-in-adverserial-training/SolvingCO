@@ -7,7 +7,6 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root_path", required=True)
     parser.add_argument("--dataset", choices=["CIFAR10", "CIFAR100", "CINIC10", "SVHN", "TinyImageNet", "PathMNIST"], default="CIFAR10")
-    parser.add_argument("--dataset_image_size", type=int, default=32)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_workers", type=int, default=2)
     parser.add_argument("--normalize_dataset", action="store_true")
@@ -34,7 +33,7 @@ def main():
     # Set seed
     set_seeds()
     # Train model
-    train(args, device, args.dataset_image_size)
+    train(args, device)
     # Evaluate training
     evaluate(args, device)
 

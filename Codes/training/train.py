@@ -10,12 +10,13 @@ from utils import save_checkpoint
 from training.alignment import calc_alignment
 from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
 
-def train(args, device, img_size=32):
+def train(args, device):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
     trainloader, _, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
+    _, C, H, W = get_input_dimensions(trainloader, index_dataset)
     # Get model
-    model = get_model(args.model, num_classes, img_size)
+    model = get_model(args.model, num_classes, H)
     model = model.to(device)
     model.train()
     # Get optimizer
@@ -32,7 +33,6 @@ def train(args, device, img_size=32):
         reg_params = regularizer_params_dict.get(args.attack, {}).copy()
 
     if index_dataset:
-        _, C, H, W = get_input_dimensions(trainloader, index_dataset)
         delta = torch.zeros((num_train_samples, C, H, W), device=device)
         delta.uniform_(-args.epsilon, args.epsilon)
         attack_params["delta"] = delta
