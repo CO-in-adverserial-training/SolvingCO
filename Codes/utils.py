@@ -25,19 +25,22 @@ def set_seed(seed: int):
 
     print(f"Seed set to {seed} for random, numpy, and torch (CPU & CUDA).")
 
-def create_directories(root_path: str):
+def create_directories(args):
     """
     Create necessary directories for the project.
     
     Args:
         root_path (str): Path to the root directory of the project.
     """
-    Path(f'{root_path}/raw_results').mkdir(parents=True, exist_ok=True)
-    Path(f'{root_path}/plots').mkdir(parents=True, exist_ok=True)
-    Path(f'{root_path}/acc_vs_eps_plots').mkdir(parents=True, exist_ok=True)
-    Path(f'{root_path}/decision_boundry_plots').mkdir(parents=True, exist_ok=True)
-    Path(f'{root_path}/checkpoints').mkdir(parents=True, exist_ok=True)
-    Path(f'{root_path}/data').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}/{args.model}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}/raw_results').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}/plots').mkdir(parents=True, exist_ok=True)
+    # Path(f'{args.root_path}/acc_vs_eps_plots').mkdir(parents=True, exist_ok=True)
+    # Path(f'{args.root_path}/decision_boundry_plots').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/{args.dataset}/data').mkdir(parents=True, exist_ok=True)
 
 def get_device(device_name):
     """

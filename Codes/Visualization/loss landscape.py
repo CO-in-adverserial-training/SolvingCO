@@ -5,8 +5,8 @@ from torchhk.vis import cal_perturb_x ,plot_perturb_plt
 from IPython.display import HTML
 from base64 import b64encode
 from PIL import Image
-from ..attacks.fgsm import fgsm
-from ..attacks.pgd import pgd
+from attacks.fgsm import fgsm
+from attacks.pgd import pgd
 
 #3D Plot Loss Surface
 def loss_plot(images, labels, model, image_index, classes, attack_params, use_directions=False, directions=None,

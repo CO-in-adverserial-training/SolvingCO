@@ -110,7 +110,7 @@ def evaluate(args, device):
         "regularizer_values": trackers["reg"].to_dict()
     }
 
-    with open(f"{args.root_path}/raw_results/evaluation_metrics_{args.attack}_{args.seed}.json", "w") as f:
+    with open(f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/raw_results/evaluation_metrics_{args.attack}_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
     
     print('Finished Evaluating')
