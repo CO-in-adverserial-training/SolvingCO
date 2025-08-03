@@ -2,7 +2,10 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-def sia(model, x, y, upper_limit, lower_limit, epsilon: float=8 / 255, alignment: float=1, prev_batch_alpha: float=None):
+def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, alignment: float=1, prev_batch_alpha: float=None):
+    # Normalize perturbations
+    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    
     # Initialize random step
     k = sia_max_range_noise_function("Inverse", alignment, a=2, b=1.5)
     alpha = sia_max_alpha_function("Prev Batch Update", alignment, 2 * epsilon, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha)
