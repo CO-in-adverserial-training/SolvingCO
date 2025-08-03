@@ -46,7 +46,7 @@ def train(args, device):
         attack_params["delta"] = delta
 
     # Save initial checkpoint
-    save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/checkpoints/model{str(0).zfill(3)}.pt")
+    save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(0).zfill(3)}.pt")
     # Setup metric trackers
     batch_tracker = MetricTracker() # Track each batch accuracy and loss
     epoch_tracker = MetricTracker() # Track each epoch accuracy and loss
