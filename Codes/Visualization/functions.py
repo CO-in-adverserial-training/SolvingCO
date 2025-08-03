@@ -43,7 +43,7 @@ def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evalua
     axis[1].grid(visible=True, which= 'minor', color='k', linestyle='-', alpha=0.4)
     axis[1].grid(visible=True, which= 'major', color='b', linestyle='-', alpha=0.8)
     plt.minorticks_on()
-    plt.savefig(f"{args.root_path}/plots/loss_accuracy_plot.pdf")
+    plt.savefig(f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/plots/loss_accuracy_plot.pdf")
     plt.show()
 
 
@@ -51,5 +51,5 @@ def plot_alignment(args, alignments: list):
     plt.figure(figsize=(15,6))
     plt.plot(alignments)
     plt.grid()
-    plt.savefig(f"{args.root_path}/plots/alignment_plot.pdf")
+    plt.savefig(f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/plots/alignment_plot.pdf")
     plt.show()
