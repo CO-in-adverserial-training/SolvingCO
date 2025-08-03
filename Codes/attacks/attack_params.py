@@ -18,6 +18,13 @@ def get_attack_params(epsilon: float):
             "alpha": epsilon,
             "k": 2.0
         },
+        "ZeroGrad": {
+            "epsilon": epsilon,
+            "alpha": 1.25 * epsilon,
+            "q_val": 0.35,
+            "k": 1.0,
+            "clip": True
+        },
         "PGD": {
             "epsilon": epsilon,
             "alpha": epsilon / 4,
