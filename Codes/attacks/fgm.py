@@ -6,7 +6,11 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import CyclicLR
 
 
-def fgm(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 1.0, k: float = 2.0, clip: bool = False, device: str = 'cuda'):
+def fgm(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 8/255, k: float = 2.0, clip: bool = False, device: str = 'cuda'):
+    # Normalize perturbations
+    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    alpha = (alpha / std).view(1, -1, 1, 1)
+    
     # Get the number of dimensions for scaling
     D = torch.numel(x) / x.shape[0]  # Total input elements per sample
 
@@ -27,7 +31,7 @@ def fgm(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: fl
     # Normalize gradient to L2 unit norm
     grad_norm = torch.norm(grad.view(grad.shape[0], -1), p=2, dim=1).view(-1, 1, 1, 1)  # Compute L2 norm per sample
     grad_scaled = grad / (grad_norm + 1e-8)  # Normalize gradient
-    grad_scaled = grad_scaled * epsilon * torch.sqrt(torch.tensor(D, dtype=torch.float32))  # Scale to epsilon * sqrt(D)
+    grad_scaled = grad_scaled * torch.sqrt(torch.tensor(D, dtype=torch.float32))  # Scale to epsilon * sqrt(D)
 
     # Apply perturbation
     delta = eta + alpha * grad_scaled
