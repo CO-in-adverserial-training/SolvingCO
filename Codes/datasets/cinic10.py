@@ -9,6 +9,13 @@ from pathlib import Path
 from datasets.index_dataset import IndexDataset
 
 def download_and_extract_cinic10(dest_path):
+    """
+    Download and extract the CINIC-10 dataset.
+    
+    Args:
+        dest_path (str): Path to the destination directory.
+    """
+    
     url = "https://datashare.is.ed.ac.uk/bitstream/handle/10283/3192/CINIC-10.tar.gz"
     archive_path = os.path.join(dest_path, "CINIC-10.tar.gz")
     os.makedirs(dest_path, exist_ok=True)
@@ -27,8 +34,18 @@ def download_and_extract_cinic10(dest_path):
     os.remove(archive_path)
     print("Download and extraction completed.")
 
-# CINIC10 Dataset
 def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+    """ 
+    Get the loaders for the CINIC-10 dataset.
+    
+    Args:
+        batch_size (int): Batch size for the data loader.
+        num_workers (int): Number of workers for the data loader.
+        normalize_dataset (bool): Whether to normalize the dataset.
+        index_dataset (bool): Whether to index the dataset.
+        root_path (str): Path to the root directory of the project.
+        device (torch.device): Device to use for the training.
+    """
     
     # CINIC-10 channel stats
     if normalize_dataset:
