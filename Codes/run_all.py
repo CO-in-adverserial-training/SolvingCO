@@ -17,5 +17,6 @@ for dataset in datasets:
 
             # output = os.popen(f"python main.py --root_path {root_path} --dataset {dataset} --model {model} --attack {attack} --epochs {EPOCHS}").read()
             output = subprocess.check_output(f"python main.py --root_path {root_path} --dataset {dataset} --model {model} --attack {attack} --epochs {EPOCHS}", shell=True, text=True)
-
+            print(output)
+            
             print("=" * 50)
