@@ -6,8 +6,11 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import CyclicLR
 
 
-def fgsm(model, x, y, gdnorm, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 1.0, k: float = 1.0, 
-         clip: bool = False, beta: float = 0.5, min_step_size: float = 0.5, max_step_size: float = 1.75, c: float = 0.01, device: str = 'cuda'):
+def fgsm(model, x, y, gdnorm, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 1.0, k: float = 1.0, 
+         clip: bool = False, beta: float = 0.5, min_step_size: float = 0.5, max_step_size: float = 1.75, c: float = 0.01, device: str = 'cuda'):     
+    # Normalize perturbations
+    epsilon = (epsilon / std).view(1, -1, 1, 1)
+                  
     # Initialize random step
     eta = torch.zeros_like(x).to(device)
     if k != 0:
