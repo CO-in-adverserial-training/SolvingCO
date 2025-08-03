@@ -13,9 +13,10 @@ def l2_square(x,y):
     return diff
 
 
-def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 1.0, k: float = 2.0, clip: bool = False, device: str = 'cuda'):
+def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 2.0, clip: bool = False, device: str = 'cuda'):
     # Normalize perturbations
     epsilon = (epsilon / std).view(1, -1, 1, 1)
+    alpha = (alpha / std).view(1, -1, 1, 1)
     
     # Initialize random step
     eta = torch.zeros_like(x).to(device)
@@ -33,7 +34,7 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     loss.backward()
     grad = eta.grad.detach()
 
-    delta = eta + alpha * epsilon * torch.sign(grad)
+    delta = eta + alpha * torch.sign(grad)
     if clip:
         delta = torch.clamp(delta, -epsilon, +epsilon)
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
