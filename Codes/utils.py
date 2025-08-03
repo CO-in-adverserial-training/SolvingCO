@@ -32,6 +32,7 @@ def create_directories(args):
     Args:
         root_path (str): Path to the root directory of the project.
     """
+    Path(f'{args.root_path}').mkdir(parents=True, exist_ok=True)
     Path(f'{args.root_path}/{args.dataset}').mkdir(parents=True, exist_ok=True)
     Path(f'{args.root_path}/{args.dataset}/{args.model}').mkdir(parents=True, exist_ok=True)
     Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}').mkdir(parents=True, exist_ok=True)
