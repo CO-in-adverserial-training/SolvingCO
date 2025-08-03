@@ -6,6 +6,12 @@ from datasets.index_dataset import IndexDataset
 
 # Custom Dataset Wrapper to Squeeze Labels
 class PathMNISTWrapper(torch.utils.data.Dataset):
+    """
+    A class to wrap the PathMNIST dataset.
+    
+    Args:
+        dataset (torch.utils.data.Dataset): The base dataset to wrap.
+    """
     def __init__(self, dataset):
         self.dataset = dataset
 
@@ -20,6 +26,18 @@ class PathMNISTWrapper(torch.utils.data.Dataset):
 
 # MedMNIST Dataset
 def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+    """
+    Get the loaders for the PathMNIST dataset.
+    
+    Args:
+        batch_size (int): Batch size for the data loader.
+        num_workers (int): Number of workers for the data loader.
+        normalize_dataset (bool): Whether to normalize the dataset.
+        index_dataset (bool): Whether to index the dataset.
+        root_path (str): Path to the root directory of the project.
+        device (torch.device): Device to use for the training.
+    """
+    
     if normalize_dataset:
         pathmnist_mean = ... # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         pathmnist_std = ... # equals np.std(train_set.train_data, axis=(0,1,2))/255
