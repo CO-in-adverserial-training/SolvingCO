@@ -42,7 +42,11 @@ In this directory there are our accepted paper, our sildes for conference presen
 **Clone the Repository**:
 ```bash
    git clone https://github.com/CO-in-adverserial-training/SolvingCO.git
-   cd SolvingCO
+   cd SolvingCO/Codes
+```
+**Run Experiments**:
+```bash
+   pyhton main.py --root_path absolute/result/root/path --attack SIA --seed 42
 ```
 Explore experiments or results and run the notebooks.
 
