@@ -18,14 +18,14 @@ def detect_window_range(window_size, alignments, tail_portion=0.25):
             capture_next = True
     return window_list
 
-def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evaluation_loss, attack_evaluation_accuracy,
-                            fgsm_evaluation_loss, fgsm_evaluation_accuracy, pgd_evaluation_loss, pgd_evaluation_accuracy):
+def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evaluation_loss, attack_evaluation_accuracy, benign_evaluation_loss,
+                            benign_evaluation_accuracy, fgsm_evaluation_loss, fgsm_evaluation_accuracy, pgd_evaluation_loss, pgd_evaluation_accuracy):
     figure, axis = plt.subplots(1,2, figsize=(15,5))
     axis[0].plot(np.arange(len(training_loss)) ,training_loss, '-o', label=f'Train Loss {args.attack}')
     axis[0].plot(np.arange(len(attack_evaluation_loss)) ,attack_evaluation_loss, '-o', label=f'Test Loss {args.attack}')
     axis[0].plot(np.arange(len(fgsm_evaluation_loss)) ,fgsm_evaluation_loss, '-o', label='Test Loss FGSM')
     axis[0].plot(np.arange(len(pgd_evaluation_loss)) ,pgd_evaluation_loss, '-o', label='Test Loss PGD')
-    # axis[0].plot(np.arange(len(test_losses_benign)) ,test_losses_benign, '-o', label='Test Loss Benign')
+    axis[0].plot(np.arange(len(benign_evaluation_loss)) ,benign_evaluation_loss, '-o', label='Test Loss Benign')
     axis[0].set_title("Loss vs. Epochs")
     axis[0].set_xlabel("Epochs")
     axis[0].set_ylabel("Loss")
@@ -38,7 +38,7 @@ def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evalua
     axis[1].plot(np.arange(len(attack_evaluation_accuracy)),attack_evaluation_accuracy, '-o', label=f'Test Accuracy {args.attack}')
     axis[1].plot(np.arange(len(fgsm_evaluation_accuracy)),fgsm_evaluation_accuracy, '-o', label='Test Accuracy FGSM')
     axis[1].plot(np.arange(len(pgd_evaluation_accuracy)),pgd_evaluation_accuracy, '-o', label='Test Accuracy PGD')
-    # axis[1].plot(np.arange(len(accs_benign)),accs_benign, '-o', label='Test Accuracy Benign')
+    axis[1].plot(np.arange(len(benign_evaluation_accuracy)),benign_evaluation_accuracy, '-o', label='Test Accuracy Benign')
     axis[1].legend()
     axis[1].grid(visible=True, which= 'minor', color='k', linestyle='-', alpha=0.4)
     axis[1].grid(visible=True, which= 'major', color='b', linestyle='-', alpha=0.8)

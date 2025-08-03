@@ -30,6 +30,7 @@ def evaluate(args, device):
     # Setup metric trackers
     trackers = {
         "attack": {"batch": MetricTracker(), "epoch": MetricTracker()},
+        "benign": {"batch": MetricTracker(), "epoch": MetricTracker()},
         "fgsm": {"batch": MetricTracker(), "epoch": MetricTracker()},
         "pgd": {"batch": MetricTracker(), "epoch": MetricTracker()},
         "reg": MetricTracker()
@@ -74,6 +75,8 @@ def evaluate(args, device):
             # Calculate attack accuracy
             batch_accuracy = calculate_batch_accuracy(preds, labels)
             trackers["attack"]["batch"].update(loss=loss.item(), accuracy=batch_accuracy.item())
+            # Calculate Benign accuracy
+            eval_and_track(model, images, labels, torch.zeros_like(images), trackers["benign"]["batch"])
             # Calculate FGSM accuracy
             delta_fgsm, _ = fgsm(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, 2 * args.epsilon)
             eval_and_track(model, images, labels, delta_fgsm, trackers["fgsm"]["batch"])
@@ -85,6 +88,8 @@ def evaluate(args, device):
         
         attack_epoch_loss = trackers["attack"]["batch"].average("loss")
         attack_epoch_accuracy = trackers["attack"]["batch"].average("accuracy")
+        benign_epoch_loss = trackers["benign"]["batch"].average("loss")
+        benign_epoch_accuracy = trackers["benign"]["batch"].average("accuracy")
         fgsm_epoch_loss = trackers["fgsm"]["batch"].average("loss")
         fgsm_epoch_accuracy = trackers["fgsm"]["batch"].average("accuracy")
         pgd_epoch_loss = trackers["pgd"]["batch"].average("loss")
@@ -94,17 +99,20 @@ def evaluate(args, device):
         epoch_time = finish_time - start_time
         total_evaluation_time += epoch_time
         # Print epoch loss and accuracy
-        print(f"Epoch {epoch} - {args.attack} Accuracy: {attack_epoch_accuracy:.2%}, FGSM Accuracy: {fgsm_epoch_accuracy:.2%}, PGD Accuracy: {pgd_epoch_accuracy:.2%}, , Time {epoch_time:.4f}")
+        print(f"Epoch {epoch} - {args.attack} Accuracy: {attack_epoch_accuracy:.2%}, Benign Accuracy: {benign_epoch_accuracy:.2%}, FGSM Accuracy: {fgsm_epoch_accuracy:.2%}, PGD Accuracy: {pgd_epoch_accuracy:.2%}, , Time {epoch_time:.4f}")
         trackers["attack"]["epoch"].update(loss=attack_epoch_loss, accuracy=attack_epoch_accuracy)
+        trackers["benign"]["epoch"].update(loss=benign_epoch_loss, accuracy=benign_epoch_accuracy)
         trackers["fgsm"]["epoch"].update(loss=fgsm_epoch_loss, accuracy=fgsm_epoch_accuracy)
         trackers["pgd"]["epoch"].update(loss=pgd_epoch_loss, accuracy=pgd_epoch_accuracy)
         trackers["attack"]["batch"].reset()
+        trackers["benign"]["batch"].reset()
         trackers["fgsm"]["batch"].reset()
         trackers["pgd"]["batch"].reset()
     
     # Save training metrics for processing and visualization
     metrics_to_save = {
         "attack_epoch_metrics": trackers["attack"]["epoch"].to_dict(),
+        "benign_epoch_metrics": trackers["benign"]["epoch"].to_dict(),
         "fgsm_epoch_metrics": trackers["fgsm"]["epoch"].to_dict(),
         "pgd_epoch_metrics": trackers["pgd"]["epoch"].to_dict(),
         "regularizer_values": trackers["reg"].to_dict()

@@ -20,6 +20,7 @@ def visualize(args):
 
     plot_loss_and_accuracy(args, training_metrics["epoch_metrics"]["loss"], training_metrics["epoch_metrics"]["accuracy"],
                             evaluation_metrics["attack_epoch_metrics"]["loss"], evaluation_metrics["attack_epoch_metrics"]["accuracy"],
+                            evaluation_metrics["benign_epoch_metrics"]["loss"], evaluation_metrics["benign_epoch_metrics"]["accuracy"],
                             evaluation_metrics["fgsm_epoch_metrics"]["loss"], evaluation_metrics["fgsm_epoch_metrics"]["accuracy"],
                             evaluation_metrics["pgd_epoch_metrics"]["loss"], evaluation_metrics["pgd_epoch_metrics"]["accuracy"])
 
