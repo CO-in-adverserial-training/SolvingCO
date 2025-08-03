@@ -3,9 +3,13 @@ import torch.nn.functional as F
 from .fgsm import fgsm
 
 #Implement ELLE Regularizer
-def elle(model, x, y, upper_limit, lower_limit, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
+def elle(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
     model_training = model.training
     model.eval()
+
+    # Normalize perturbations
+    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    alpha = (alpha / std).view(1, -1, 1, 1)
     
     etaa = torch.empty_like(x).uniform_(-k, k)
     etaa *= epsilon.view(1, -1, 1, 1)  # Reshape epsilon for broadcasting
