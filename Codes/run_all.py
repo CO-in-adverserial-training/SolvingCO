@@ -3,7 +3,7 @@ import subprocess
 
 datasets = ["CIFAR10", "CIFAR100", "CINIC10", "SVHN", "TinyImageNet", "PathMNIST"]
 models = ["PreActResNet18", "ResNet18", "WideResNet28", "SENet18", "VitSmall", "VitBase"]
-attacks = ["SIA", "FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "TRADES", "PGD"]
+attacks = ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "TRADES", "PGD"]
 root_path = "results"
 
 os.system(f"mkdir {root_path}")
