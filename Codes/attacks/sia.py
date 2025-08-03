@@ -38,6 +38,7 @@ def sia_max_range_noise_function(func, alignment, a=2, b=1.5):
 # Function For Mapping Alignment To Max Alpha For SIA Method 
 def sia_max_alpha_function(func, alignment, ALPHA, a=0.1, b=5, moving_avg_alignment=1, prev_batch_alpha=None):
     alignment = 1 if alignment is None else alignment
+    prev_batch_alpha = ALPHA if prev_batch_alpha is None else prev_batch_alpha
     match func:
         case "Linear": # Default a = 0.1, b = 5
             coef = min(1, max(a, b * alignment))
