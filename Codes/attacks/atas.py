@@ -6,10 +6,11 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import CyclicLR
 
 
-def fgsm(model, x, y, gdnorm, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 1.0, k: float = 1.0, 
+def fgsm(model, x, y, gdnorm, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0, 
          clip: bool = False, beta: float = 0.5, min_step_size: float = 0.5, max_step_size: float = 1.75, c: float = 0.01, device: str = 'cuda'):     
     # Normalize perturbations
     epsilon = (epsilon / std).view(1, -1, 1, 1)
+    alpha = (alpha / std).view(1, -1, 1, 1)
                   
     # Initialize random step
     eta = torch.zeros_like(x).to(device)
@@ -26,7 +27,7 @@ def fgsm(model, x, y, gdnorm, upper_limit, lower_limit, mu, std, epsilon: float 
 
     with torch.no_grad():
         cur_gdnorm = torch.norm(grad.view(x.size(0), -1), dim=1).detach() ** 2 * (1 - beta) + gdnorm * beta
-        step_sizes = 1 / (1 + torch.sqrt(cur_gdnorm) / c) * alpha * epsilon
+        step_sizes = 1 / (1 + torch.sqrt(cur_gdnorm) / c) * alpha
         if clip:
             step_sizes = torch.clamp(step_sizes, min_step_size * epsilon, max_step_size * epsilon)
     
