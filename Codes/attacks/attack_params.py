@@ -35,7 +35,7 @@ def get_attack_params(epsilon: float):
         "TRADES": {
             "epsilon": epsilon,
             "perturb_steps": 10,
-            "step_size": 0.007
+            "alpha": 0.007
         },
         "GradAlign": {
             "epsilon": epsilon,
