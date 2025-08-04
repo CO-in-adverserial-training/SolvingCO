@@ -15,7 +15,7 @@ def trades(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/25
     with torch.no_grad():
         clean_logits = model(x)
         clean_probs  = F.softmax(clean_logits, dim=1)
-    delta = 0.001 * torch.randn(x.shape).detach()
+    delta = 0.001 * torch.randn(x.shape, device=x.device).detach()
 
     x_trades = x + delta
     for step in range(perturb_steps):

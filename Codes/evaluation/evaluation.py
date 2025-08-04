@@ -54,11 +54,11 @@ def evaluate(args, device):
                 case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
-                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
+                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
-                    delta, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
+                    delta, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "FGSM-EP":
-                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, **attack_params)
+                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case _:
                     raise ValueError("Invalid Attack Method!")
             # Add perturbation to original images
