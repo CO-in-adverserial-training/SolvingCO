@@ -4,6 +4,7 @@ What follows is a list of papers on **Catastrophic Overfitting** and their GitHu
 
 | Title | Method |
 | :---: | :----: |
+| [Theoretically Principled Trade-off between Robustness and Accuracy](https://arxiv.org/abs/1901.08573) | [TRADES](https://github.com/yaodongyu/TRADES) |
 | [Fast is Better than Free: Revisiting Adversarial Training](https://arxiv.org/abs/2001.03994) | [FGSM-RS](https://github.com/locuslab/fast_adversarial) |
 | [Understanding and Improving Fast Adversarial Training](https://arxiv.org/abs/2007.02617) | [GradAlign](https://github.com/tml-epfl/understanding-fast-adv-training) |
 | [Understanding Catastrophic Overfitting in Single-step Adversarial Training](https://arxiv.org/abs/2010.01799) | [Stable Single-Step Adversarial Training](https://github.com/Harry24k/catastrophic-overfitting) |
