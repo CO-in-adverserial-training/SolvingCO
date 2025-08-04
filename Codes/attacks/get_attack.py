@@ -2,6 +2,7 @@ from .fgsm import fgsm
 from .trades import trades
 from .fgsm_rs import fgsm_rs
 from .grad_align import grad_align
+from .atas import atas
 from .zerograd import zero_grad
 from .nfgsm import nfgsm
 from .elle import elle
@@ -25,6 +26,8 @@ def get_attack(attack_name: str):
             return fgsm_rs
         case "GradAlign":
             return grad_align
+        case "ATAS":
+            return atas
         case "ZeroGrad":
             return zero_grad
         case "NFGSM":
@@ -35,4 +38,6 @@ def get_attack(attack_name: str):
             return sia
         case "PGD":
             return pgd
+        case _:
+            raise ValueError('Invalid Attack!')
         

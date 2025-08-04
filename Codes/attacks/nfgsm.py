@@ -4,12 +4,11 @@ import torch.nn.functional as F
 
 def nfgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 2.0):
     # Normalize perturbations
-    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
     
     # Initialize random step
-    eta = torch.empty_like(x).uniform_(-k, k)
-    eta *= epsilon.view(1, -1, 1, 1)  # Reshape epsilon for broadcasting
+    eta = torch.empty_like(x).uniform_(-k, k) * eps
     eta = torch.clamp(eta, lower_limit - x, upper_limit - x)
     eta.requires_grad = True
     

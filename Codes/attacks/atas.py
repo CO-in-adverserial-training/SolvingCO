@@ -1,42 +1,36 @@
-import os
-import numpy as np
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch.optim.lr_scheduler import CyclicLR
 
 
-def fgsm(model, x, y, gdnorm, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0, 
-         clip: bool = False, beta: float = 0.5, min_step_size: float = 0.5, max_step_size: float = 1.75, c: float = 0.01, device: str = 'cuda'):     
+def atas(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
+          beta: float=0.5, gamma_over_c: float=16/255, c: float=0.01, warm_up_epoch: int=5,
+          delta = None, moving_grad_norm = None, warm_up: bool=False):     
+    model_training = model.training
+    model.eval()
     # Normalize perturbations
-    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
                   
     # Initialize random step
-    eta = torch.zeros_like(x).to(device)
-    if k != 0:
-        for j in range(len(epsilon)):
-            eta[:, j, :, :].uniform_(-k * epsilon[j][0][0].item(), k * epsilon[j][0][0].item())
-        eta = torch.clamp(eta, lower_limit - x, upper_limit - x)
-    eta.requires_grad = True
+    x_adv = x + delta
+    x_adv.requires_grad_()
+    preds = model(x_adv)
+    loss = F.cross_entropy(preds, y)
+    grad = torch.autograd.grad(loss, x_adv)[0].detach()
     
-    output = model(x + eta)
-    loss = F.cross_entropy(output, y)
-    grad = torch.autograd.grad(loss, eta)[0]
-    grad = grad.detach()
-
-    with torch.no_grad():
-        cur_gdnorm = torch.norm(grad.view(x.size(0), -1), dim=1).detach() ** 2 * (1 - beta) + gdnorm * beta
-        step_sizes = 1 / (1 + torch.sqrt(cur_gdnorm) / c) * alpha
-        if clip:
-            step_sizes = torch.clamp(step_sizes, min_step_size * epsilon, max_step_size * epsilon)
+    if not warm_up:
+        with torch.no_grad():
+            grad_norm = torch.norm(grad.view(len(grad), -1), dim=1).detach() ** 2
+            moving_grad_norm = beta * moving_grad_norm + (1 - beta) * grad_norm
+            step_size = gamma_over_c / (1 + torch.sqrt(moving_grad_norm) / c)
+        step_size = step_size.view(-1, 1, 1, 1).expand_as(grad)
+    else:
+        step_size = eps
+    x_adv = x_adv.detach() + step_size * torch.sign(grad.detach())
+    x_adv = torch.min(torch.max(x_adv, x - eps), x + eps)
+    x_adv = torch.clamp(x_adv, min=lower_limit, max=upper_limit)
+    delta = (x_adv - x).detach()
+    if model_training:
+        model.train()
     
-    # Compute perturbation based on sign of gradient
-    step_sizes = step_sizes.view(-1, 3, 1, 1).expand_as(grad)
-    delta = eta + step_sizes * torch.sign(grad.detach())
-    delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
-    if clip:
-        delta = torch.clamp(delta, -epsilon, +epsilon)
-    delta = delta.detach()
-    
-    return delta, grad, torch.mean(cur_gdnorm)
+    return delta, grad, moving_grad_norm

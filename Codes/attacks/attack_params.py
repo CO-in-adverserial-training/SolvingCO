@@ -49,9 +49,10 @@ def get_attack_params(epsilon: float):
         },
         "ATAS": {
             "epsilon": epsilon,
-            "alpha": epsilon / 4,
-            "topk": 3,
-            "num_steps": 5
+            "beta": 0.5,
+            "gamma_over_c": 2 * epsilon,
+            "c": 0.01,
+            "warm_up_epoch": 5
         },
         "FGSM-EP": {
             "epsilon": epsilon,

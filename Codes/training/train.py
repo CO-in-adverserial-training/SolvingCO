@@ -41,9 +41,14 @@ def train(args, device):
         reg_params = get_regularizer_params(args.epsilon).get(args.attack, {}).copy()
 
     if index_dataset:
-        delta = torch.zeros((num_train_samples, C, H, W), device=device)
+        delta = torch.empty((num_train_samples, C, H, W), device=device)
         delta.uniform_(-args.epsilon, args.epsilon)
+        delta = delta / std
         attack_params["delta"] = delta
+
+    if args.attack == "ATAS":
+        moving_grad_norm = torch.zeros(num_train_samples, device=device)
+        attack_params["moving_grad_norm"] = moving_grad_norm
 
     # Save initial checkpoint
     save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(0).zfill(3)}.pt")
@@ -70,11 +75,13 @@ def train(args, device):
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
-                    delta, grad = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
-                    delta[index] = delta.clone().detach()
+                    attack_params["warm_up"] = epoch <= attack_params["warm_up_epoch"]
+                    delta, grad, moving_grad_norm = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
+                    attack_params["delta"][index] = delta.detach()
+                    attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
                 case "FGSM-EP":
                     delta, reg, grad = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
-                    delta[index] = delta.clone().detach()
+                    attack_params["delta"][index] = delta.detach()
                 case _:
                     raise ValueError("Invalid Attack Method!")
 
