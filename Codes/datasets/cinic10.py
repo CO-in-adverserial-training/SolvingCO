@@ -34,7 +34,7 @@ def download_and_extract_cinic10(dest_path):
     os.remove(archive_path)
     print("Download and extraction completed.")
 
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+def get_loaders(args, index_dataset: bool, device):
     """ 
     Get the loaders for the CINIC-10 dataset.
     
@@ -48,7 +48,7 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
     """
     
     # CINIC-10 channel stats
-    if normalize_dataset:
+    if args.normalize_dataset:
         cinic10_mean = [0.47889522, 0.47227842, 0.43047404]
         cinic10_std = [0.24205776, 0.23828046, 0.25874835]
     else:
@@ -75,7 +75,7 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
         transforms.Normalize(cinic10_mean, cinic10_std),
     ])
     
-    local_path = f'{root_path}/data'
+    local_path = f'{args.root_path}/{args.dataset}/data'
     if os.path.exists(os.path.join(local_path, 'train')) and os.path.exists(os.path.join(local_path, 'test')):
         print(f"Found local CINIC-10 dataset at: {local_path}")
         trainset = torchvision.datasets.ImageFolder(os.path.join(local_path, 'train'), transform=train_transform)
@@ -90,10 +90,10 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
 
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
     
-    trainloader = DataLoader(trainset, batch_size=batch_size,
-                                           shuffle=True, num_workers=num_workers)
-    testloader = DataLoader(testset, batch_size=batch_size,
-                                          shuffle=False, num_workers=num_workers)
+    trainloader = DataLoader(trainset, batch_size=args.batch_size,
+                                           shuffle=True, num_workers=args.num_workers)
+    testloader = DataLoader(testset, batch_size=args.batch_size,
+                                          shuffle=False, num_workers=args.num_workers)
 
     classes = ('airplane', 'automobile', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')

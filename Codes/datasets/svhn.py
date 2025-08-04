@@ -4,7 +4,7 @@ from torchvision.datasets import SVHN
 import torchvision.transforms as transforms
 from datasets.index_dataset import IndexDataset
 
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+def get_loaders(args, index_dataset: bool, device):
     """
     Get the loaders for the SVHN dataset.
     
@@ -17,7 +17,7 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
         device (torch.device): Device to use for the training.
     """
     
-    if normalize_dataset:
+    if args.normalize_dataset:
         # SVHN mean and std
         svhn_mean = [0.4380, 0.4440, 0.4730] # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         svhn_std = [0.1751, 0.1771, 0.1744] # equals np.std(train_set.train_data, axis=(0,1,2))/255
@@ -41,14 +41,14 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
     
 
     # Download the dataset
-    trainset = SVHN(root=f'{root_path}/data', split='train', download=True, transform=train_transform)
+    trainset = SVHN(root=f'{args.root_path}/{args.dataset}/data', split='train', download=True, transform=train_transform)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = SVHN(root=f'{root_path}/data', split='test', download=True, transform=test_transform)
+    testset = SVHN(root=f'{args.root_path}/{args.dataset}/data', split='test', download=True, transform=test_transform)
 
     # Create the loaders
-    trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    trainloader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
+    testloader = DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
     # Legal limits of pixles after normalization
     upper_limit = ((1 - mu)/ std).to(device)

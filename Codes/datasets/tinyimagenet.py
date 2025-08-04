@@ -8,7 +8,7 @@ import zipfile
 from datasets.index_dataset import IndexDataset
 
 # TinyImageNet Dataset
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+def get_loaders(args, index_dataset: bool, device):
     """
     Get the loaders for the Tiny ImageNet dataset.
     
@@ -21,8 +21,8 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
         device (torch.device): Device to use for the training.
     """
     
-    dataset_path = f'{root_path}/data'
-    if normalize_dataset:
+    dataset_path = f'{args.root_path}/{args.dataset}/data'
+    if args.normalize_dataset:
         # Using standard ImageNet mean and std since TinyImageNet is a subset
         tinyimagenet_mean = [0.485, 0.456, 0.406]
         tinyimagenet_std = [0.229, 0.224, 0.225]
@@ -57,10 +57,10 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
     testset = TinyImageNetDataset(root=dataset_path, train=False, transform=test_transform)
     
     # Create Dataloaders
-    trainloader = DataLoader(trainset, batch_size=batch_size,
-                                          shuffle=True, num_workers=num_workers)
-    testloader = DataLoader(testset, batch_size=batch_size,
-                                         shuffle=False, num_workers=num_workers)
+    trainloader = DataLoader(trainset, batch_size=args.batch_size,
+                                          shuffle=True, num_workers=args.num_workers)
+    testloader = DataLoader(testset, batch_size=args.batch_size,
+                                         shuffle=False, num_workers=args.num_workers)
     
     # Get Class Names (simplified - actual class names would be from the wnids.txt file)
     classes = [f'class_{i}' for i in range(len(classes))]  # Replace with actual class names if needed

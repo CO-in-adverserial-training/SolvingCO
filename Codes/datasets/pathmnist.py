@@ -25,7 +25,7 @@ class PathMNISTWrapper(torch.utils.data.Dataset):
         return img, label
 
 # MedMNIST Dataset
-def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, index_dataset: bool, root_path: str, device):
+def get_loaders(args, index_dataset: bool, device):
     """
     Get the loaders for the PathMNIST dataset.
     
@@ -38,7 +38,7 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
         device (torch.device): Device to use for the training.
     """
     
-    if normalize_dataset:
+    if args.normalize_dataset:
         pathmnist_mean = ... # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         pathmnist_std = ... # equals np.std(train_set.train_data, axis=(0,1,2))/255
     else:
@@ -63,20 +63,20 @@ def get_loaders(batch_size: int, num_workers: int, normalize_dataset: bool, inde
     ])
     
     # Load PathMNIST datasets
-    trainset = PathMNIST(root=f'{root_path}/data', split='train', transform=train_transform, download=True, size=28)
+    trainset = PathMNIST(root=f'{args.root_path}/{args.dataset}/data', split='train', transform=train_transform, download=True, size=28)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = PathMNIST(root=f'{root_path}/data', split='test', transform=test_transform, download=True, size=28)
+    testset = PathMNIST(root=f'{args.root_path}/{args.dataset}/data', split='test', transform=test_transform, download=True, size=28)
     
     # Wrap datasets to fix label shape
     trainset = PathMNISTWrapper(trainset)
     testset = PathMNISTWrapper(testset)
     
     # Create DataLoaders
-    trainloader = DataLoader(trainset, batch_size=batch_size,
-                                             shuffle=True, num_workers=num_workers)
-    testloader = DataLoader(testset, batch_size=batch_size,
-                                            shuffle=False, num_workers=num_workers)
+    trainloader = DataLoader(trainset, batch_size=args.batch_size,
+                                             shuffle=True, num_workers=args.num_workers)
+    testloader = DataLoader(testset, batch_size=args.batch_size,
+                                            shuffle=False, num_workers=args.num_workers)
 
     # Legal limits of pixles after normalization
     upper_limit = ((1 - mu)/ std).to(device)
