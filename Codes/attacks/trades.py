@@ -3,7 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # Implementation of Theoretically Principled Trade-off between Robustness and Accuracy(TRADES)
-def trades(x, y, model, upper_limit, lower_limit, epsilon: float = 8/255, perturb_steps: int=10, alpha: float=0.007):
+def trades(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, perturb_steps: int=10, alpha: float=0.007):
+    # Normalize perturbations
+    eps = (epsilon / std).view(1, -1, 1, 1)
+    alpha = (alpha / std).view(1, -1, 1, 1)
+
     batch_size = x.shape[0]
     kl_criterion = nn.KLDivLoss(reduction = "sum")
     model_training = model.training
@@ -22,7 +26,7 @@ def trades(x, y, model, upper_limit, lower_limit, epsilon: float = 8/255, pertur
         if step == 0:
             grad = grad.detach()
         x_trades = x_trades.detach() + alpha * torch.sign(grad)
-        x_trades = torch.clamp(x_trades, min=x - epsilon, max=x + epsilon)
+        x_trades = torch.clamp(x_trades, min=x - eps, max=x + eps)
         x_trades = torch.clamp(x_trades, min=lower_limit, max=upper_limit)
     if model_training:
         model.train()
