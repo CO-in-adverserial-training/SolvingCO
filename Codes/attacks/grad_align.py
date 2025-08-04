@@ -4,7 +4,7 @@ import torch.nn.functional as F
 #Implementation of GradAlign Regularizer
 def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
     # Normalize perturbations
-    epsilon = (epsilon / std).view(1, -1, 1, 1)
+    eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
     
     x.requires_grad = True
@@ -12,9 +12,9 @@ def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
     cost1 = F.cross_entropy(preds1, y)
     grad1 = torch.autograd.grad(cost1, x)[0]
     grad1 = grad1.detach()
-    eta = torch.empty_like(x).uniform_(-k, k)
+    eta = torch.empty_like(x).uniform_(-k, k) * eps
     eta = torch.clamp(eta, lower_limit - x, upper_limit - x)
-    eta *= epsilon.view(1, -1, 1, 1)  # Reshape epsilon for broadcasting
+    
     x_aug = x + eta
     preds2 = model(x_aug)
     cost2 = F.cross_entropy(preds2, y)
@@ -27,7 +27,7 @@ def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
     
     # Generate FGSM-RS Sample
     delta = eta + alpha * grad2.sign()
-    delta = torch.clamp(delta, min=-epsilon, max=epsilon)
+    delta = torch.clamp(delta, min=-eps, max=eps)
     delta = delta.detach()
     
     return delta, 1 - alignment.mean(), grad2
