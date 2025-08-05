@@ -83,9 +83,9 @@ class WideResNet(nn.Module):
         return self.fc(out)
     
 
-def WideResNet28(**kwargs):
-    return WideResNet(28, 10, 10, dropRate=0.3)
+def WideResNet28(num_classes: int=10):
+    return WideResNet(28, num_classes, 10, dropRate=0.3)
 
 
-def WideResNet34(**kwargs):
-    return WideResNet(34, 10, 10, dropRate=0.0)
+def WideResNet34(num_classes: int=10):
+    return WideResNet(34, num_classes, 10, dropRate=0.0)
