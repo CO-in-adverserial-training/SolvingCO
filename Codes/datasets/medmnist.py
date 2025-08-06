@@ -43,8 +43,8 @@ def get_loaders(args, index_dataset: bool, device):
             'class': PathMNIST,
             'channels': 3,
             'num_classes': 9,
-            'mean': [0., 0., 0.],
-            'std': [1., 1., 1.],
+            'mean': [0.740545  , 0.53298219, 0.70582885],
+            'std': [0.12368222, 0.17676253, 0.12443067],
             'classes': [
                 'adipose', 'background', 'debris', 'lymphocytes', 'mucus',
                 'smooth muscle', 'normal colon', 'cancer-associated stroma', 'colorectal adenocarcinoma'
@@ -54,8 +54,8 @@ def get_loaders(args, index_dataset: bool, device):
             'class': TissueMNIST,
             'channels': 1,
             'num_classes': 8,
-            'mean': [0.],
-            'std': [1.],
+            'mean': [0.10204512936041181],
+            'std': [0.10002610110235889],
             'classes': [
                 'cortex', 'glomeruli', 'medulla', 'blood vessels',
                 'pelvis', 'calyces', 'fat', 'background'
@@ -65,8 +65,8 @@ def get_loaders(args, index_dataset: bool, device):
             'class': OrganAMNIST,
             'channels': 1,        # single‐channel CT slices
             'num_classes': 11,
-            'mean': [0.],
-            'std': [1.],
+            'mean': [0.46802823658325343],
+            'std': [0.2974209246855977],
             'classes': [
                 'spleen',
                 'right kidney',
@@ -85,8 +85,8 @@ def get_loaders(args, index_dataset: bool, device):
             'class': BloodMNIST,
             'channels': 3,              # blood-cell microscope images are RGB
             'num_classes': 8,
-            'mean': [0., 0., 0.],
-            'std': [1., 1., 1.],
+            'mean': [0.79434784, 0.65965901, 0.69619251],
+            'std': [0.79434784, 0.65965901, 0.69619251],
             'classes': [               # exact names from INFO in medmnist/info.py
                 'erythrocyte',
                 'eosinophil granulocyte',
