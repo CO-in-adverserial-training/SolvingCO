@@ -132,7 +132,7 @@ def get_loaders(args, index_dataset: bool, device):
         medmnist_mean = dataset_map[args.dataset]['mean'] # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         medmnist_std = dataset_map[args.dataset]['std'] # equals np.std(train_set.train_data, axis=(0,1,2))/255
     else:
-        if args.dataset == "TissueMNIST":
+        if args.dataset in ["TissueMNIST", "OrganAMNIST"]:
             medmnist_mean = [0.]
             medmnist_std = [1.]
         else:
