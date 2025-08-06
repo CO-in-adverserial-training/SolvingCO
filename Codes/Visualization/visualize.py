@@ -30,8 +30,8 @@ def visualize(args):
                             evaluation_metrics["pgd_epoch_metrics"]["loss"], evaluation_metrics["pgd_epoch_metrics"]["accuracy"])
 
     if args.track_alignment:
-        plot_alignment(args, training_metrics["alignment_values"])
+        plot_alignment(args, training_metrics["alignment_values"]["batch_alignment"])
 
 
-    plot_accs_vs_eps(args, accs_vs_eps_metrics["accs_vs_epps_metrics"]["fgsm_accs"], accs_vs_eps_metrics["accs_vs_eps_metrics"]["pgd_accs"],
-                      accs_vs_eps_metrics["accs_vs_epps_metrics"]["clean_accs"])
+    plot_accs_vs_eps(args, accs_vs_eps_metrics["accs_vs_eps_metrics"]["fgsm_acc"], accs_vs_eps_metrics["accs_vs_eps_metrics"]["pgd_acc"],
+                      accs_vs_eps_metrics["accs_vs_eps_metrics"]["clean_acc"])

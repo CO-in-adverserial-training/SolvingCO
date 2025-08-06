@@ -45,10 +45,7 @@ def evaluate(args, device):
         # Determine attack
         attack = get_attack(args.attack)
         for i, data in enumerate(testloader):
-            if index_dataset:
-                images, labels, _ = data[0].to(device), data[1].to(device), data[2]
-            else:
-                images, labels = data[0].to(device), data[1].to(device)
+            images, labels = data[0].to(device), data[1].to(device)
 
             match args.attack:
                 case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
@@ -58,7 +55,7 @@ def evaluate(args, device):
                 case "AAER":
                     delta, _, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
-                    delta, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
+                    delta, _, _, _ = attack(model, images, labels, None, upper_limit, lower_limit, mu, std, **attack_params)
                 case "FGSM-EP":
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case _:

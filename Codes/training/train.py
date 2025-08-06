@@ -79,7 +79,7 @@ def train(args, device):
                     delta, grad, clean_logit, loss_before = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
                     attack_params["warm_up"] = epoch <= attack_params["warm_up_epoch"]
-                    delta, grad, moving_grad_norm = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
+                    delta, grad, moving_grad_norm, alpha = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
                     attack_params["delta"][index] = delta.detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
                 case "FGSM-EP":
@@ -124,7 +124,7 @@ def train(args, device):
 
             batch_accuracy = calculate_batch_accuracy(preds, labels)
             batch_tracker.update(loss=loss.item(), accuracy=batch_accuracy.item())
-            alpha_tracker.update(batch_alpha=attack_params["alpha"])
+            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SIA"] else alpha.item())
 
         if args.scheduler in ["MultiStep"]:
             scheduler.step()

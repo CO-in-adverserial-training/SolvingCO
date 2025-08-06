@@ -54,7 +54,7 @@ def test(args, device, max_eps: int = 32):
         print(f'Epsilon {str(eps).zfill(2)}: Clean {clean_acc:.2f}% | FGSM {fgsm_acc:.2f}% | PGD {pgd_acc:.2f}%')
 
     metrics_to_save = {
-        "accs_vs_epps_metrics": accs_vs_epps_tracker.to_dict()
+        "accs_vs_eps_metrics": accs_vs_epps_tracker.to_dict()
     }
     with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_eps_metrics_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
