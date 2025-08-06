@@ -1,5 +1,5 @@
 import json
-from Visualization.functions import plot_loss_and_accuracy, plot_alignment
+from Visualization.functions import plot_loss_and_accuracy, plot_alignment, plot_accs_vs_eps
 
 def visualize(args):
     """
@@ -26,3 +26,6 @@ def visualize(args):
 
     if args.track_alignment:
         plot_alignment(args, training_metrics["alignment_values"])
+
+    if args.plot_accs_vs_eps:
+        plot_accs_vs_eps(args)

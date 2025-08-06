@@ -53,3 +53,7 @@ def plot_alignment(args, alignments: list):
     plt.grid()
     plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/alignment_plot.png")
     plt.show()
+
+# Plot FGSM and PGD accuracies in final checkpoint for different epsilons 
+def plot_accs_vs_eps(args, fgsm_accs: list, pgd_accs: list, clean_acc: float):
+    pass
