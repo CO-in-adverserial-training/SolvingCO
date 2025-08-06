@@ -55,6 +55,8 @@ def evaluate(args, device):
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
+                case "AAER":
+                    delta, _, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
                     delta, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "FGSM-EP":
@@ -118,7 +120,7 @@ def evaluate(args, device):
         "regularizer_values": trackers["reg"].to_dict()
     }
 
-    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/evaluation_metrics_{args.epochs}_{args.seed}.json", "w") as f:
+    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/evaluation_metrics_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
     
     print('Finished Evaluating')
