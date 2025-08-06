@@ -7,7 +7,9 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
 
+    x = x.clone().detach()
     x.requires_grad = True
+    
     output = model(x)
     loss = F.cross_entropy(output, y)
     grad = torch.autograd.grad(loss, x)[0].detach()

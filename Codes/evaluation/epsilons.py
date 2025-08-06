@@ -13,6 +13,7 @@ def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon,
     total, correct = 0, 0
     for img, lbl in loader:
         img, lbl = img.to(device), lbl.to(device)
+        img.requires_grad_(False)
         if attack:
             if attack == "FGSM":
                 delta, _ = fgsm(model, img, lbl, upper_limit, lower_limit, mu, std, epsilon, 2 * epsilon)

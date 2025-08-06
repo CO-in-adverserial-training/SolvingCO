@@ -18,7 +18,7 @@ def visualize(args):
     with open(evaluation_metrics_path, "r") as f:
         evaluation_metrics = json.load(f)
 
-    accs_vs_eps_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_epps_metrics_{args.seed}.json"
+    accs_vs_eps_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_eps_metrics_{args.seed}.json"
     with open(accs_vs_eps_metrics_path, "r") as f:
         accs_vs_eps_metrics = json.load(f)
 
