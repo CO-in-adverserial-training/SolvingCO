@@ -63,10 +63,10 @@ def get_loaders(args, index_dataset: bool, device):
     ])
     
     # Load PathMNIST datasets
-    trainset = PathMNIST(root=f'{args.root_path}/{args.dataset}/data', split='train', transform=train_transform, download=True, size=28)
+    trainset = PathMNIST(root=f'{args.root_path}/Datasets/{args.dataset}', split='train', transform=train_transform, download=True, size=28)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = PathMNIST(root=f'{args.root_path}/{args.dataset}/data', split='test', transform=test_transform, download=True, size=28)
+    testset = PathMNIST(root=f'{args.root_path}/Datasets/{args.dataset}', split='test', transform=test_transform, download=True, size=28)
     
     # Wrap datasets to fix label shape
     trainset = PathMNISTWrapper(trainset)

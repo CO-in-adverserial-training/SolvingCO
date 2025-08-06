@@ -51,7 +51,7 @@ def train(args, device):
         attack_params["moving_grad_norm"] = moving_grad_norm
 
     # Save initial checkpoint
-    save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(0).zfill(3)}.pt")
+    save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(0).zfill(3)}.pt")
     # Setup metric trackers
     batch_tracker = MetricTracker() # Track each batch accuracy and loss
     epoch_tracker = MetricTracker() # Track each epoch accuracy and loss
@@ -134,7 +134,7 @@ def train(args, device):
         batch_tracker.reset()
 
         # Save training checkpoint
-        save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(epoch).zfill(3)}.pt")
+        save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(epoch).zfill(3)}.pt")
 
     # Save training metrics for processing and visualization
     metrics_to_save = {
@@ -144,7 +144,7 @@ def train(args, device):
         "regularizer_values": regularizer_tracker.to_dict()
     }
 
-    with open(f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/raw_results/train_metrics_{args.epochs}_{args.seed}.json", "w") as f:
+    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/train_metrics_{args.epochs}_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
 
     print('Finished Training')

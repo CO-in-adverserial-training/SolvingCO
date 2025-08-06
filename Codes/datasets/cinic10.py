@@ -75,7 +75,7 @@ def get_loaders(args, index_dataset: bool, device):
         transforms.Normalize(cinic10_mean, cinic10_std),
     ])
     
-    local_path = f'{args.root_path}/{args.dataset}/data'
+    local_path = f'{args.root_path}/Datasets/{args.dataset}'
     if os.path.exists(os.path.join(local_path, 'train')) and os.path.exists(os.path.join(local_path, 'test')):
         print(f"Found local CINIC-10 dataset at: {local_path}")
         trainset = torchvision.datasets.ImageFolder(os.path.join(local_path, 'train'), transform=train_transform)

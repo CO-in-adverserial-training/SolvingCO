@@ -21,7 +21,7 @@ def get_loaders(args, index_dataset: bool, device):
         device (torch.device): Device to use for the training.
     """
     
-    dataset_path = f'{args.root_path}/{args.dataset}/data'
+    dataset_path = f'{args.root_path}/Datasets/{args.dataset}'
     if args.normalize_dataset:
         # Using standard ImageNet mean and std since TinyImageNet is a subset
         tinyimagenet_mean = [0.485, 0.456, 0.406]

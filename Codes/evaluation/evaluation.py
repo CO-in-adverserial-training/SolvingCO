@@ -39,7 +39,7 @@ def evaluate(args, device):
     total_evaluation_time = 0
     for epoch in range(args.epochs + 1):
         start_time = time.time()
-        model, _, _ = load_checkpoint(args, f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(epoch).zfill(3)}.pt", num_classes, len(trainloader), device)
+        model, _, _ = load_checkpoint(args, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(epoch).zfill(3)}.pt", num_classes, len(trainloader), device)
         model.eval()
 
         # Determine attack
@@ -118,7 +118,7 @@ def evaluate(args, device):
         "regularizer_values": trackers["reg"].to_dict()
     }
 
-    with open(f"{args.root_path}/{args.dataset}/{args.model}/{args.attack}/raw_results/evaluation_metrics_{args.epochs}_{args.seed}.json", "w") as f:
+    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/evaluation_metrics_{args.epochs}_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
     
     print('Finished Evaluating')

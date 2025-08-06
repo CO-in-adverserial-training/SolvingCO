@@ -41,10 +41,10 @@ def get_loaders(args, index_dataset: bool, device):
     
 
     # Download the dataset
-    trainset = CIFAR100(root=f'{args.root_path}/{args.dataset}/data', train=True, download=True, transform=train_transform)
+    trainset = CIFAR100(root=f'{args.root_path}/Datasets/{args.dataset}', train=True, download=True, transform=train_transform)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = CIFAR100(root=f'{args.root_path}/{args.dataset}/data', train=False, download=True, transform=test_transform)
+    testset = CIFAR100(root=f'{args.root_path}/Datasets/{args.dataset}', train=False, download=True, transform=test_transform)
 
     # Create the loaders
     trainloader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)

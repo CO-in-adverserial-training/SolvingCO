@@ -41,10 +41,10 @@ def get_loaders(args, index_dataset: bool, device):
     
 
     # Download the dataset
-    trainset = SVHN(root=f'{args.root_path}/{args.dataset}/data', split='train', download=True, transform=train_transform)
+    trainset = SVHN(root=f'{args.root_path}/Datasets/{args.dataset}', split='train', download=True, transform=train_transform)
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
-    testset = SVHN(root=f'{args.root_path}/{args.dataset}/data', split='test', download=True, transform=test_transform)
+    testset = SVHN(root=f'{args.root_path}/Datasets/{args.dataset}', split='test', download=True, transform=test_transform)
 
     # Create the loaders
     trainloader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)

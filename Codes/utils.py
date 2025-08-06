@@ -33,15 +33,14 @@ def create_directories(args):
         root_path (str): Path to the root directory of the project.
     """
     Path(f'{args.root_path}').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}/{args.model}').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}/raw_results').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}/plots').mkdir(parents=True, exist_ok=True)
-    # Path(f'{args.root_path}/acc_vs_eps_plots').mkdir(parents=True, exist_ok=True)
-    # Path(f'{args.root_path}/decision_boundry_plots').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}/{args.model}/{args.attack}/checkpoints').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/{args.dataset}/data').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Datasets/{args.dataset}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints').mkdir(parents=True, exist_ok=True)
+    # Path(f'{args.root_path}/{args.dataset}/data').mkdir(parents=True, exist_ok=True)
 
 def get_device(device_name):
     """

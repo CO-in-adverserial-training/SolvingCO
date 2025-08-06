@@ -38,7 +38,7 @@ def parse_args():
     parser.add_argument("--num_workers", type=int, default=2)
     parser.add_argument("--normalize_dataset", action="store_true")
     parser.add_argument("--model", choices=["PreActResNet18", "ResNet18", "WideResNet28", "SENet18", "VitSmall", "VitBase"], default="PreActResNet18")
-    parser.add_argument("--attack", choices=["SIA", "FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "ATAS", "TRADES", "PGD"], required=True)
+    parser.add_argument("--attack", choices=["SIA", "FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "ATAS", "ELLE", "TRADES", "PGD"], required=True)
     parser.add_argument("--epsilon", type=float, default=8 / 255)
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--initial_lr", type=float, default=0.01, help="May be overwritten by scheduler")
