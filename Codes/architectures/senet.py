@@ -77,11 +77,11 @@ class PreActBlock(nn.Module):
 
 
 class SENet(nn.Module):
-    def __init__(self, block, num_blocks, num_classes=10):
+    def __init__(self, block, num_blocks, num_classes: int = 10, in_channels: int = 3):
         super(SENet, self).__init__()
         self.in_planes = 64
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.layer1 = self._make_layer(block,  64, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
@@ -109,13 +109,6 @@ class SENet(nn.Module):
         return out
 
 
-def SENet18(num_classes: int=10):
-    return SENet(PreActBlock, [2,2,2,2], num_classes)
+def SENet18(**kwargs):
+    return SENet(PreActBlock, [2,2,2,2], **kwargs)
 
-
-def test():
-    net = SENet18()
-    y = net(torch.randn(1,3,32,32))
-    print(y.size())
-
-# test()
