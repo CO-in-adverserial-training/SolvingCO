@@ -76,11 +76,11 @@ def train(args, device):
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
                     attack_params["warm_up"] = epoch <= attack_params["warm_up_epoch"]
-                    delta, grad, moving_grad_norm = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
+                    delta, grad, moving_grad_norm = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                     attack_params["delta"][index] = delta.detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
                 case "FGSM-EP":
-                    delta, reg, grad = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
+                    delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                     attack_params["delta"][index] = delta.detach()
                 case _:
                     raise ValueError("Invalid Attack Method!")
