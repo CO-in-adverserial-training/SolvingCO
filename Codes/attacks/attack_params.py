@@ -47,6 +47,12 @@ def get_attack_params(epsilon: float):
             "alpha": epsilon,
             "k": 1.0
         },
+        "AAER": {
+            "epsilon": epsilon,
+            "alpha": epsilon,
+            "k": 2.0,
+            "clip": True
+        },
         "ATAS": {
             "epsilon": epsilon,
             "beta": 0.5,
@@ -70,5 +76,8 @@ def get_regularizer_params(epsilon: float):
         },
         "ELLE": {
             "reg": 1.0 # Lambda ELLE
+        },
+        "AAER": {
+            "reg": 1.0 # Lambda AAER
         },
     }
