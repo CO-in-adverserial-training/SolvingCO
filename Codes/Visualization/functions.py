@@ -56,4 +56,26 @@ def plot_alignment(args, alignments: list):
 
 # Plot FGSM and PGD accuracies in final checkpoint for different epsilons 
 def plot_accs_vs_eps(args, fgsm_accs: list, pgd_accs: list, clean_acc: float):
-    pass
+    epsilons = list(range(1, 1 + len(fgsm_accs)))  # [1, 2, 3,...]
+    
+    plt.figure(figsize=(24, 12))
+    
+    # Plot clean accuracy as horizontal line
+    plt.axhline(y=clean_acc, color='k', linestyle='--', linewidth=2, label='Clean')
+    
+    # Plot adversarial accuracies with markers
+    plt.plot(epsilons, fgsm_accs, 'o-', label='FGSM')
+    plt.plot(epsilons, pgd_accs, 's-', label='PGD')
+    
+    # Formatting
+    plt.ylim(0-5, 100+5)  # Force 0-100% range
+    plt.xticks(epsilons)
+    plt.xlabel(r'Attack Strength ($\epsilon \times 255$)')
+    plt.ylabel('Accuracy (%)')
+    # plt.title('Model Robustness Across Attack Strengths')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/_acc_eps.png", bbox_inches='tight')
+    plt.show()
