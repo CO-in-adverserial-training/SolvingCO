@@ -1,5 +1,6 @@
 from training.train import train
 from evaluation.evaluation import evaluate
+from evaluation.epsilons import test
 from Visualization.visualize import visualize
 from utils import create_directories, get_device, set_seed
 import argparse
@@ -76,6 +77,8 @@ def main():
     train(args, device)
     # Evaluate training
     evaluate(args, device)
+    # Evaluate accuracy vs epsilons
+    test(args, device, max_eps=32)
     # Visualize results
     visualize(args)
 

@@ -3,7 +3,7 @@ from datasets.cifar100 import get_loaders as cifar100_loaders
 from datasets.svhn import get_loaders as svhn_loaders
 from datasets.cinic10 import get_loaders as cinic10_loaders
 from datasets.tinyimagenet import get_loaders as tinyimagenet_loaders
-from Codes.datasets.medmnist import get_loaders as medmnist_loaders
+from datasets.medmnist import get_loaders as medmnist_loaders
 
 # Returns trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes)
 def get_loaders(args, index_dataset: bool, device):

@@ -55,6 +55,6 @@ def test(args, device, max_eps: int = 32):
     metrics_to_save = {
         "accs_vs_epps_metrics": accs_vs_epps_tracker.to_dict()
     }
-    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_epps_metrics_{args.seed}.json", "w") as f:
+    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_eps_metrics_{args.seed}.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
     

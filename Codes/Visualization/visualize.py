@@ -33,5 +33,5 @@ def visualize(args):
         plot_alignment(args, training_metrics["alignment_values"])
 
 
-    plot_accs_vs_eps(args, accs_vs_eps_metrics["accs_vs_epps_metrics"]["fgsm_accs"], accs_vs_eps_metrics["accs_vs_epps_metrics"]["pgd_accs"],
+    plot_accs_vs_eps(args, accs_vs_eps_metrics["accs_vs_epps_metrics"]["fgsm_accs"], accs_vs_eps_metrics["accs_vs_eps_metrics"]["pgd_accs"],
                       accs_vs_eps_metrics["accs_vs_epps_metrics"]["clean_accs"])
