@@ -25,7 +25,7 @@ def train(args, device):
     trainloader, _, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     _, C, H, W = get_input_dimensions(trainloader, index_dataset)
     # Get model
-    model = get_model(args.model, num_classes, H)
+    model = get_model(args.model, num_classes, H, C)
     model = model.to(device)
     model.train()
     # Get optimizer

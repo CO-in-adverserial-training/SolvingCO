@@ -77,5 +77,5 @@ def plot_accs_vs_eps(args, fgsm_accs: list, pgd_accs: list, clean_acc: float):
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/_acc_eps.png", bbox_inches='tight')
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/acc_vs_eps.png", bbox_inches='tight')
     plt.show()
