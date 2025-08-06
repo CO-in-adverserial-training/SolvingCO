@@ -40,7 +40,7 @@ def test(args, device, max_eps: int = 32):
     
     model.eval()
     
-    clean_acc = test_step(model, None, testloader)
+    clean_acc = test_step(model, None, testloader, upper_limit, lower_limit, mu, std, 0, device)
     accs_vs_epps_tracker.update(clean_acc=clean_acc)
 
     for eps in range(1, max_eps + 1):

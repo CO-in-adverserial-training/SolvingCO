@@ -48,7 +48,7 @@ def parse_args():
     parser.add_argument("--weight_decay", type=float, default=5e-4)
     parser.add_argument("--scheduler", choices=["Cyclic", "MultiStep", "CosineAnnealing"], default="Cyclic")
     parser.add_argument("--track_alignment", action="store_true")
-    parser.add_argument("--evaluate_attack", action="store_true")
+    parser.add_argument("--evaluate_aa", action="store_true")
     parser.add_argument("--device", type=str, default="cuda")
     
     return parser.parse_args()
