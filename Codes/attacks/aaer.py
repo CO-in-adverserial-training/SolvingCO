@@ -37,10 +37,10 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
     delta = delta.detach()
     
-    return delta, grad, output_org, loss_before
+    return delta, grad, clean_logit, loss_before
 
 
-def aaer(loss_before, loss_after):
+def aaer(loss_before, loss_after, clean_logit, adv_logit, lambda1: float = 1.0, lambda2: float = 4.0, lambda3: float = 1.5):
     abnormal_example = loss_before > loss_after
     normal_example = loss_before <= loss_after
     abnormal_count = torch.count_nonzero(abnormal_example)
@@ -49,12 +49,12 @@ def aaer(loss_before, loss_after):
 
     # AAE-CE and AAE-L2
     if abnormal_count != 0:
-        abnormal_variation = l2_square(output_org[abnormal_example], pred[abnormal_example])
+        abnormal_variation = l2_square(clean_logit[abnormal_example], adv_logit[abnormal_example])
         abnormal_ce = abnormal_example * (loss_before - loss_after)
         abnormal_ce = abnormal_ce.sum() / abnormal_count
     # NAE-L2
     if normal_count != 0:
-        normal_variation = l2_square(output_org[normal_example], pred[normal_example])
+        normal_variation = l2_square(clean_logit[normal_example], adv_logit[normal_example])
     # AAER
     if abnormal_count != 0 and normal_count != 0:
         constrained_variation = max(abnormal_variation - normal_variation.item(), 0)
