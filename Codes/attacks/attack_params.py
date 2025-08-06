@@ -35,11 +35,11 @@ def get_attack_params(epsilon: float):
         "TRADES": {
             "epsilon": epsilon,
             "perturb_steps": 10,
-            "alpha": 0.007
+            "alpha": epsilon / 4
         },
         "GradAlign": {
             "epsilon": epsilon,
-            "alpha": epsilon,
+            "alpha": 1.25 * epsilon,
             "k": 1.0
         },
         "ELLE": {
@@ -51,7 +51,7 @@ def get_attack_params(epsilon: float):
             "epsilon": epsilon,
             "alpha": epsilon,
             "k": 2.0,
-            "clip": True
+            "clip": False
         },
         "ATAS": {
             "epsilon": epsilon,
