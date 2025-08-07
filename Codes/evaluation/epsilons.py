@@ -35,7 +35,7 @@ def test(args, device, max_eps: int = 32):
     # Get dataset loaders
     trainloader, testloader, upper_limit, lower_limit, mu, std, _, num_classes, _, _ = get_loaders(args, False, device)
     
-    final_checkpoint_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(args.epochs).zfill(3)}.pt"
+    final_checkpoint_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}/model{str(args.epochs).zfill(3)}.pt"
     
     model, _, _ = load_checkpoint(args, final_checkpoint_path, num_classes, len(trainloader), device)
     
@@ -56,6 +56,6 @@ def test(args, device, max_eps: int = 32):
     metrics_to_save = {
         "accs_vs_eps_metrics": accs_vs_epps_tracker.to_dict()
     }
-    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_eps_metrics_{args.seed}.json", "w") as f:
+    with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/accs_vs_eps_metrics.json", "w") as f:
         json.dump(metrics_to_save, f, indent=4)
     

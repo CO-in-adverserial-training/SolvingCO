@@ -37,9 +37,10 @@ def create_directories(args):
     Path(f'{args.root_path}/Results/{args.dataset}').mkdir(parents=True, exist_ok=True)
     Path(f'{args.root_path}/Results/{args.dataset}/{args.model}').mkdir(parents=True, exist_ok=True)
     Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots').mkdir(parents=True, exist_ok=True)
-    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}').mkdir(parents=True, exist_ok=True)
+    Path(f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/final_checkpoints_{args.seed}').mkdir(parents=True, exist_ok=True)
     # Path(f'{args.root_path}/{args.dataset}/data').mkdir(parents=True, exist_ok=True)
 
 def get_device(device_name):

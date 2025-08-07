@@ -10,15 +10,15 @@ def visualize(args):
     """
     
 
-    training_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/train_metrics_{args.seed}.json"
+    training_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/train_metrics.json"
     with open(training_metrics_path, "r") as f:
         training_metrics = json.load(f)
 
-    evaluation_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/evaluation_metrics_{args.seed}.json"
+    evaluation_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/evaluation_metrics.json"
     with open(evaluation_metrics_path, "r") as f:
         evaluation_metrics = json.load(f)
 
-    accs_vs_eps_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results/accs_vs_eps_metrics_{args.seed}.json"
+    accs_vs_eps_metrics_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/accs_vs_eps_metrics.json"
     with open(accs_vs_eps_metrics_path, "r") as f:
         accs_vs_eps_metrics = json.load(f)
 

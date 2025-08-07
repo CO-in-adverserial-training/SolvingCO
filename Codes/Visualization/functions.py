@@ -43,7 +43,7 @@ def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evalua
     axis[1].grid(visible=True, which= 'minor', color='k', linestyle='-', alpha=0.4)
     axis[1].grid(visible=True, which= 'major', color='b', linestyle='-', alpha=0.8)
     plt.minorticks_on()
-    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/loss_accuracy_plot.png")
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/loss_accuracy_plot.png")
     plt.show()
 
 
@@ -51,7 +51,7 @@ def plot_alignment(args, alignments: list):
     plt.figure(figsize=(15,6))
     plt.plot(alignments)
     plt.grid()
-    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/alignment_plot.png")
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/alignment_plot.png")
     plt.show()
 
 # Plot FGSM and PGD accuracies in final checkpoint for different epsilons 
@@ -77,5 +77,5 @@ def plot_accs_vs_eps(args, fgsm_accs: list, pgd_accs: list, clean_acc: float):
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots/acc_vs_eps.png", bbox_inches='tight')
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/acc_vs_eps.png", bbox_inches='tight')
     plt.show()
