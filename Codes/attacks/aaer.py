@@ -35,7 +35,8 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     return delta, grad, clean_logit, loss_before
 
 
-def aaer(loss_before, loss_after, clean_logit, adv_logit, lambda1: float = 1.0, lambda2: float = 4.0, lambda3: float = 1.5):
+def aaer(loss_before, clean_logit, adv_logit, labels, lambda1: float = 1.0, lambda2: float = 4.0, lambda3: float = 1.5):
+    loss_after = F.cross_entropy(adv_logit, labels, reduce=None)
     abnormal_example = loss_before > loss_after
     normal_example = loss_before <= loss_after
     abnormal_count = torch.count_nonzero(abnormal_example)
@@ -53,8 +54,8 @@ def aaer(loss_before, loss_after, clean_logit, adv_logit, lambda1: float = 1.0, 
     # AAER
     if abnormal_count != 0 and normal_count != 0:
         constrained_variation = max(abnormal_variation - normal_variation.item(), 0)
-        reg_loss = (lambda1 * abnormal_count / total_count) * (lambda2 * abnormal_ce + lambda3 * constrained_variation) # '* min((epoch/20), 1)' warm-up for long training schedule
+        loss_after = loss_after + (lambda1 * abnormal_count / total_count) * (lambda2 * abnormal_ce + lambda3 * constrained_variation) # '* min((epoch/20), 1)' warm-up for long training schedule
     
-    return reg_loss
+    return loss_after
 
 

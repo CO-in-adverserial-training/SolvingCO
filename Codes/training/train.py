@@ -37,7 +37,7 @@ def train(args, device):
     # Get attack parameters
     attack_params = get_attack_params(args.epsilon).get(args.attack, {}).copy()
     # Get regularization coefficient if needed
-    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "AAER"]
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
     if use_regularizer:
         reg_params = get_regularizer_params(args.epsilon).get(args.attack, {}).copy()
 
@@ -99,7 +99,7 @@ def train(args, device):
             loss = F.cross_entropy(preds, labels)
         
             if args.attack == "AAER":
-                reg = aaer(loss_before, loss, clean_logit, preds)
+                loss = aaer(loss_before, clean_logit, preds, labels)
         
             # Add regularization term if needed
             if use_regularizer:
