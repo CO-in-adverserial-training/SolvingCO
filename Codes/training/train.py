@@ -145,6 +145,8 @@ def train(args, device):
         # Save training checkpoint
         save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints/model{str(epoch).zfill(3)}.pt")
 
+    # Save last checkpoint separately for fututure evaluation
+    save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/final_checkpoints/model{str(args.epochs).zfill(3)}_{args.seed}.pt")
     # Save training metrics for processing and visualization
     metrics_to_save = {
         "epoch_metrics": epoch_tracker.to_dict(),

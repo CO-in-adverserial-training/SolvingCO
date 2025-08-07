@@ -13,11 +13,11 @@ def multi_grad(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
         x_cat = torch.cat([x for i in range(samples)], dim=0)
         # Initialize random step
         delta_cat = torch.empty_like(x_cat).uniform_(-k, k) * eps
-        delta_cat = torch.clamp(delta_cat, lower_limit - x, upper_limit - x)
+        delta_cat = torch.clamp(delta_cat, lower_limit - x_cat, upper_limit - x_cat)
         delta_cat.requires_grad = True
 
         y_cat = torch.cat([y for i in range(samples)], dim=0)
-        output = model(x + delta_cat)
+        output = model(x_cat + delta_cat)
         F.cross_entropy(output, y_cat).backward()
         grad_cat = delta_cat.grad.detach()
         grads = [grad_cat[i*x.size(0):(i+1)*x.size(0)] for i in range(samples)]
