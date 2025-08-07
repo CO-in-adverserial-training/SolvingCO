@@ -78,7 +78,7 @@ def main():
     # Evaluate training
     evaluate(args, device)
     # Evaluate accuracy vs epsilons
-    test(args, device, max_eps=32)
+    test(args, device, max_eps=5)
     # Visualize results
     visualize(args)
 

@@ -38,5 +38,5 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
     if model_training:
         model.train()
     
-    step_size = step_size.mean().clone().detach()
+    step_size = step_size.mean().item()
     return delta, grad, moving_grad_norm, step_size

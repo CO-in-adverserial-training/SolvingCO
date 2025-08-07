@@ -21,12 +21,12 @@ def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, a
     grad = grad.detach()
     
     # Compute perturbation based on sign of gradient
-    interpolation_coeff = torch.rand(grad.shape).float()
+    interpolation_coeff = torch.rand_like(grad).float()
     delta = eta + alpha * interpolation_coeff * grad.sign()
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
     delta = delta.detach()
     
-    return delta, grad
+    return delta, grad, alpha
 
 # Function For Mapping Alignment To Max Noise For SIA Method 
 def sia_max_range_noise_function(func, alignment, a=2, b=1.5):

@@ -71,10 +71,12 @@ def train(args, device):
             # Zero out previous gradient accumulation
             optimizer.zero_grad()
             match args.attack:
-                case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "SIA", "PGD"]:
+                case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "PGD"]:
                     delta, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
+                case "SIA":
+                    delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "AAER":
                     delta, grad, clean_logit, loss_before = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
@@ -124,7 +126,7 @@ def train(args, device):
 
             batch_accuracy = calculate_batch_accuracy(preds, labels)
             batch_tracker.update(loss=loss.item(), accuracy=batch_accuracy.item())
-            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SIA"] else alpha.item())
+            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SIA"] else alpha)
 
         if args.scheduler in ["MultiStep"]:
             scheduler.step()
