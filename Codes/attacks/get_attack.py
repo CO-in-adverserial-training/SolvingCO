@@ -4,6 +4,7 @@ from .fgsm_rs import fgsm_rs
 from .grad_align import grad_align
 from .atas import atas
 from .zerograd import zero_grad
+from .multigrad import multi_grad
 from .nfgsm import nfgsm
 from .aaer import fgsm as fgsm_aae
 from .elle import elle
@@ -31,6 +32,8 @@ def get_attack(attack_name: str):
             return atas
         case "ZeroGrad":
             return zero_grad
+        case "MultiGrad":
+            return multi_grad
         case "NFGSM":
             return nfgsm
         case "AAER":

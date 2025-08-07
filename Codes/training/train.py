@@ -71,7 +71,7 @@ def train(args, device):
             # Zero out previous gradient accumulation
             optimizer.zero_grad()
             match args.attack:
-                case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "PGD"]:
+                case args.attack if args.attack in  ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "MultiGrad", "PGD"]:
                     delta, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)

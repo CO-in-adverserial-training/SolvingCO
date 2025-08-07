@@ -25,6 +25,14 @@ def get_attack_params(epsilon: float):
             "k": 1.0,
             "clip": True
         },
+        "MultiGrad": {
+            "epsilon": epsilon,
+            "alpha": 1.25 * epsilon,
+            "samples": 3,
+            "zeroing_th": 1.0,
+            "k": 1.0,
+            "parallel": True
+        },
         "PGD": {
             "epsilon": epsilon,
             "alpha": epsilon / 4,
