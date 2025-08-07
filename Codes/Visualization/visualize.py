@@ -1,5 +1,5 @@
 import json
-from Visualization.functions import plot_loss_and_accuracy, plot_alpha_per_batch, plot_alignment, plot_accs_vs_eps
+from Visualization.functions import plot_loss_and_accuracy, plot_regularizer_values, plot_alpha_per_batch, plot_alignment, plot_accs_vs_eps
 
 def visualize(args):
     """
@@ -29,6 +29,9 @@ def visualize(args):
                             evaluation_metrics["fgsm_epoch_metrics"]["loss"], evaluation_metrics["fgsm_epoch_metrics"]["accuracy"],
                             evaluation_metrics["pgd_epoch_metrics"]["loss"], evaluation_metrics["pgd_epoch_metrics"]["accuracy"])
 
+    
+    if args.attack in ["TRADES", "GradAlign", "ELLE"]:
+        plot_regularizer_values(args, training_metrics["regularizer_values"]["batch_train_reg"], evaluation_metrics["regularizer_values"]["batch_test_reg"])
     
     plot_alpha_per_batch(args, training_metrics["alpha_values"]["batch_alpha"])
     

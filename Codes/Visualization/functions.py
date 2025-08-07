@@ -1,5 +1,4 @@
 import numpy as np
-import json
 import matplotlib.pyplot as plt
 
 # A Function For Automatically Detecting The Time Range Of CO Occurance
@@ -20,7 +19,7 @@ def detect_window_range(window_size, alignments, tail_portion=0.25):
 
 def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evaluation_loss, attack_evaluation_accuracy, benign_evaluation_loss,
                             benign_evaluation_accuracy, fgsm_evaluation_loss, fgsm_evaluation_accuracy, pgd_evaluation_loss, pgd_evaluation_accuracy):
-    figure, axis = plt.subplots(1,2, figsize=(15,5))
+    figure, axis = plt.subplots(1,2, figsize=(24,12))
     axis[0].plot(np.arange(len(training_loss)) ,training_loss, '-o', label=f'Train Loss {args.attack}')
     axis[0].plot(np.arange(len(attack_evaluation_loss)) ,attack_evaluation_loss, '-o', label=f'Test Loss {args.attack}')
     axis[0].plot(np.arange(len(fgsm_evaluation_loss)) ,fgsm_evaluation_loss, '-o', label='Test Loss FGSM')
@@ -45,6 +44,24 @@ def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evalua
     plt.minorticks_on()
     plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/loss_accuracy_plot.png")
     plt.show()
+
+def plot_regularizer_values(args, reg_train_values: list, reg_test_values: list):
+    figure, axis = plt.subplots(1,2, figsize=(24,12))
+    axis[0].plot(reg_train_values)
+    axis[0].set_title(f"{args.attack} Regularizer During Training (Train Dataset)")
+    axis[0].set_xlabel("Batch")
+    axis[0].set_ylabel("Regularizer Value")
+    axis[0].grid()
+    
+    axis[1].plot(reg_test_values)
+    axis[1].set_title(f"{args.attack} Regularizer During Training (Test Dataset)")
+    axis[1].set_xlabel("Batch")
+    axis[1].set_ylabel("Regularizer Value")
+    axis[1].grid()
+
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/regularizer_plot.png")
+    plt.show()
+
 
 
 def plot_alpha_per_batch(args, alpha_values: list):
