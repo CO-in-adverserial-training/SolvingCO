@@ -1,5 +1,5 @@
 import json
-from Visualization.functions import plot_loss_and_accuracy, plot_alignment, plot_accs_vs_eps
+from Visualization.functions import plot_loss_and_accuracy, plot_alpha_per_batch, plot_alignment, plot_accs_vs_eps
 
 def visualize(args):
     """
@@ -29,6 +29,9 @@ def visualize(args):
                             evaluation_metrics["fgsm_epoch_metrics"]["loss"], evaluation_metrics["fgsm_epoch_metrics"]["accuracy"],
                             evaluation_metrics["pgd_epoch_metrics"]["loss"], evaluation_metrics["pgd_epoch_metrics"]["accuracy"])
 
+    
+    plot_alpha_per_batch(args, training_metrics["alpha_values"]["batch_alpha"])
+    
     if args.track_alignment:
         plot_alignment(args, training_metrics["alignment_values"]["batch_alignment"])
 

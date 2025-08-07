@@ -47,9 +47,22 @@ def plot_loss_and_accuracy(args, training_loss, training_accuracy, attack_evalua
     plt.show()
 
 
+def plot_alpha_per_batch(args, alpha_values: list):
+    plt.figure(figsize=(24,12))
+    plt.plot(alpha_values)
+    plt.title(f"Alpha During {args.attack} Training Vs. Batch")
+    plt.xlabel("Batch")
+    plt.ylabel("Alpha")
+    plt.grid()
+    plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/alpha_plot.png")
+    plt.show()
+
 def plot_alignment(args, alignments: list):
-    plt.figure(figsize=(15,6))
+    plt.figure(figsize=(24,12))
     plt.plot(alignments)
+    plt.title(f"Alignment During {args.attack} Training Vs. Batch")
+    plt.xlabel("Batch")
+    plt.ylabel("Alignment")
     plt.grid()
     plt.savefig(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/plots_{args.seed}/alignment_plot.png")
     plt.show()

@@ -50,9 +50,11 @@ def sia_max_alpha_function(func, alignment, ALPHA, a=0.1, b=5, moving_avg_alignm
             coef = a + (1 - a) / (1 + np.exp(-b * alignment - 0.2))
         case "Prev Batch Update":
             prev_batch_coef = prev_batch_alpha / ALPHA
-            if alignment < 0.5:
-                coef = max(0.1, 0.95 * prev_batch_coef)
-            else:
+            if alignment < 0.2:
+                coef = max(0.1, 0.999 * prev_batch_coef)
+            elif alignment > 0.4:
                 coef = min(1, (100 / 95) * prev_batch_coef)
+            else:
+                coef = prev_batch_coef
     alpha = coef * ALPHA
     return alpha
