@@ -6,7 +6,6 @@ from .fgsm import fgsm
 def elle(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha = (alpha / std).view(1, -1, 1, 1)
 
     # FGSM-RS random points in the epsilon ball per sample
     etaa = torch.empty_like(x).uniform_(-k, k) * eps
