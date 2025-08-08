@@ -12,6 +12,9 @@ class MetricTracker:
         for key, value in kwargs.items():
             self.data[key].append(value)
 
+    def sum(self, key):
+        return sum(self.data[key]) if self.data[key] else 0.0
+
     def average(self, key):
         return sum(self.data[key]) / len(self.data[key]) if self.data[key] else 0.0
 
@@ -77,9 +80,9 @@ def get_input_dimensions(dataloader, index_dataset):
 
     return images.shape
 
-def calculate_batch_accuracy(logits, labels):
+def calculate_batch_corrects(logits, labels):
     """
-    Calculate the accuracy of the model on a batch of data.
+    Calculate the number of correctly classified samples by the model on a batch of data.
     
     Args:
         logits (torch.Tensor): Logits of the model.
@@ -87,4 +90,4 @@ def calculate_batch_accuracy(logits, labels):
     """
     indices = torch.argmax(logits, 1)
     correct_count = (indices == labels).sum()
-    return correct_count / labels.size(0)
+    return correct_count

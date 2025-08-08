@@ -8,7 +8,7 @@ from attacks.get_attack import get_attack
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
 from attacks.attack_params import get_attack_params
-from training.utils import MetricTracker, calculate_batch_accuracy
+from training.utils import MetricTracker, calculate_batch_corrects
 
 def evaluate(args, device):
     """
@@ -74,8 +74,8 @@ def evaluate(args, device):
                 trackers["reg"].update(batch_test_reg=reg)
             
             # Calculate attack accuracy
-            batch_accuracy = calculate_batch_accuracy(preds, labels)
-            trackers["attack"]["batch"].update(loss=loss.item(), accuracy=batch_accuracy.item())
+            batch_corrects = calculate_batch_corrects(preds, labels)
+            trackers["attack"]["batch"].update(loss=loss.item(), accuracy=batch_corrects.item())
             # Calculate Benign accuracy
             eval_and_track(model, images, labels, torch.zeros_like(images), trackers["benign"]["batch"])
             # Calculate FGSM accuracy
@@ -88,13 +88,13 @@ def evaluate(args, device):
 
         
         attack_epoch_loss = trackers["attack"]["batch"].average("loss")
-        attack_epoch_accuracy = trackers["attack"]["batch"].average("accuracy")
+        attack_epoch_accuracy = trackers["attack"]["batch"].sum("accuracy") / num_test_samples
         benign_epoch_loss = trackers["benign"]["batch"].average("loss")
-        benign_epoch_accuracy = trackers["benign"]["batch"].average("accuracy")
+        benign_epoch_accuracy = trackers["benign"]["batch"].sum("accuracy") / num_test_samples
         fgsm_epoch_loss = trackers["fgsm"]["batch"].average("loss")
-        fgsm_epoch_accuracy = trackers["fgsm"]["batch"].average("accuracy")
+        fgsm_epoch_accuracy = trackers["fgsm"]["batch"].sum("accuracy") / num_test_samples
         pgd_epoch_loss = trackers["pgd"]["batch"].average("loss")
-        pgd_epoch_accuracy = trackers["pgd"]["batch"].average("accuracy")
+        pgd_epoch_accuracy = trackers["pgd"]["batch"].sum("accuracy") / num_test_samples
         
         finish_time = time.time()
         epoch_time = finish_time - start_time
@@ -130,5 +130,5 @@ def eval_and_track(model, images, labels, delta, tracker):
     with torch.no_grad():
         preds = model(images + delta)
         loss = F.cross_entropy(preds, labels)
-        acc = calculate_batch_accuracy(preds, labels)
-        tracker.update(loss=loss.item(), accuracy=acc.item())
+        num_corrects = calculate_batch_corrects(preds, labels)
+        tracker.update(loss=loss.item(), accuracy=num_corrects.item())

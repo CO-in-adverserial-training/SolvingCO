@@ -9,7 +9,7 @@ from attacks.aaer import aaer
 from attacks.attack_params import get_attack_params, get_regularizer_params
 from utils import save_checkpoint
 from training.alignment import calc_alignment
-from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_accuracy
+from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_corrects
 
 def train(args, device):
     """
@@ -124,15 +124,15 @@ def train(args, device):
                 reg = reg.cpu().item() if reg is not None else 0.0
                 regularizer_tracker.update(batch_train_reg=reg)
 
-            batch_accuracy = calculate_batch_accuracy(preds, labels)
-            batch_tracker.update(loss=loss.item(), accuracy=batch_accuracy.item())
+            batch_corrects = calculate_batch_corrects(preds, labels)
+            batch_tracker.update(loss=loss.item(), accuracy=batch_corrects.item())
             alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SIA"] else alpha)
 
         if args.scheduler in ["MultiStep"]:
             scheduler.step()
         
         epoch_loss = batch_tracker.average("loss")
-        epoch_accuracy = batch_tracker.average("accuracy")
+        epoch_accuracy = batch_tracker.sum("accuracy") / num_train_samples
         
         finish_time = time.time()
         epoch_time = finish_time - start_time
