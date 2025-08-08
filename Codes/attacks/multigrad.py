@@ -37,8 +37,8 @@ def multi_grad(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
     grad = torch.where(torch.abs(g) < 
             (zeroing_th - (samples - zeroing_th)),
             torch.zeros_like(g), g)
-    delta = torch.zeros_like(x).cuda() 
-    d = torch.clamp(delta + alpha * torch.sign(grad), min=-epsilon, max=epsilon)
+    
+    d = torch.clamp(alpha * torch.sign(grad), min=-eps, max=eps)
     d = torch.clamp(d, lower_limit - x, upper_limit - x)
     
     avg_grad = sum(grads).detach() / samples
