@@ -5,8 +5,8 @@ import numpy as np
 def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, alignment: float=1, prev_batch_alpha: float=None):
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha = sia_max_alpha_function("Prev Batch Update", alignment, 2 * epsilon, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha)
-    alpha = (alpha / std).view(1, -1, 1, 1)
+    alpha_scalar = sia_max_alpha_function("Prev Batch Update", alignment, 2 * epsilon, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha)
+    alpha = (alpha_scalar / std).view(1, -1, 1, 1)
     
     # Initialize random step
     k = sia_max_range_noise_function("Inverse", alignment, a=2, b=1.5)
@@ -26,7 +26,7 @@ def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, a
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
     delta = delta.detach()
     
-    return delta, grad, alpha
+    return delta, grad, alpha_scalar
 
 # Function For Mapping Alignment To Max Noise For SIA Method 
 def sia_max_range_noise_function(func, alignment, a=2, b=1.5):
