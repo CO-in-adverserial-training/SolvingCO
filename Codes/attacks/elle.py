@@ -27,6 +27,6 @@ def elle(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     e_lin = ((cost_c - (1 - alpha_p.squeeze()) * cost_a - alpha_p.squeeze() * cost_b).pow(2)).mean()
 
     # Generate adversarial example using FGSM
-    delta, grad = fgsm(model, x, y, upper_limit, lower_limit, epsilon, alpha)
+    delta, grad = fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon, alpha)
 
     return delta, e_lin, grad
