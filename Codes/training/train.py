@@ -42,9 +42,7 @@ def train(args, device):
         reg_params = get_regularizer_params(args.epsilon).get(args.attack, {}).copy()
 
     if index_dataset:
-        delta = torch.empty((num_train_samples, C, H, W), device=device)
-        delta.uniform_(-args.epsilon, args.epsilon)
-        delta = delta / std
+        delta = torch.empty((num_train_samples, C, H, W), device=device).uniform_(-1, 1) * (args.epsilon / std).view(1, -1, 1, 1)
         attack_params["delta"] = delta
 
     if args.attack == "ATAS":

@@ -16,7 +16,7 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
         moving_grad_norm = moving_grad_norm[index].clone().detach()
     else:
         delta = torch.empty_like(x).uniform_(-1, 1) * eps
-        moving_grad_norm = 0
+        moving_grad_norm = torch.zeros(x.size(0), device=x.device)
     x_adv = x + delta
     x_adv.requires_grad_()
     preds = model(x_adv)
