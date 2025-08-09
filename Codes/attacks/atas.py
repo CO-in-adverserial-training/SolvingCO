@@ -17,11 +17,11 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
     else:
         delta = torch.empty_like(x).uniform_(-1, 1) * eps
         moving_grad_norm = torch.zeros(x.size(0), device=x.device)
-    x_adv = x + delta
-    x_adv.requires_grad_()
-    preds = model(x_adv)
+
+    delta.requires_grad_()
+    preds = model(x + delta)
     loss = F.cross_entropy(preds, y)
-    grad = torch.autograd.grad(loss, x_adv)[0].detach()
+    grad = torch.autograd.grad(loss, delta)[0].detach()
     
     if not warm_up:
         with torch.no_grad():
@@ -31,10 +31,10 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
         step_size = step_size.view(-1, 1, 1, 1).expand_as(grad)
     else:
         step_size = eps
-    x_adv = x_adv.detach() + step_size * torch.sign(grad.detach())
-    x_adv = torch.min(torch.max(x_adv, x - eps), x + eps)
-    x_adv = torch.clamp(x_adv, min=lower_limit, max=upper_limit)
-    delta = (x_adv - x).detach()
+    delta = delta.detach() + step_size * torch.sign(grad.detach())
+    delta = torch.clamp(delta, min=-eps, max=eps)
+    delta = torch.clamp(delta, min=lower_limit - x, max=upper_limit - x)
+
     if model_training:
         model.train()
     
