@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-def multi_grad(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 10/255, samples: int = 3, zeroing_th: float = 1.0, k: float = 1.0, parallel: bool = True):
+def multi_grad(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 16/255, samples: int = 3, zeroing_th: float = -1, k: float = 1.0, parallel: bool = True):
     if zeroing_th==-1:
         zeroing_th = samples
     # Normalize perturbations

@@ -27,9 +27,9 @@ def get_attack_params(epsilon: float):
         },
         "MultiGrad": {
             "epsilon": epsilon,
-            "alpha": epsilon,
+            "alpha": 2 * epsilon,
             "samples": 3,
-            "zeroing_th": 1.0,
+            "zeroing_th": -1,
             "k": 1.0,
             "parallel": True
         },
