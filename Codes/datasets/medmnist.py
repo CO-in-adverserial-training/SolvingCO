@@ -139,8 +139,8 @@ def get_loaders(args, index_dataset: bool, device):
             medmnist_mean = [0., 0., 0.]
             medmnist_std = [1., 1., 1.]
 
-    mu = torch.tensor(medmnist_mean).view(3,1,1).to(device)
-    std = torch.tensor(medmnist_std).view(3,1,1).to(device)
+    mu = torch.tensor(medmnist_mean).view(-1,1,1).to(device)
+    std = torch.tensor(medmnist_std).view(-1,1,1).to(device)
     
     train_transform = transforms.Compose([
         transforms.ToTensor(),
