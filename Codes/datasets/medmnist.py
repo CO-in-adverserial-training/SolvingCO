@@ -161,14 +161,14 @@ def get_loaders(args, index_dataset: bool, device):
 
     # Load the actual datasets
     trainset = ds_info['class'](
-        root=f'{args.root_med}/Datasets/{args.dataset}',
+        root=f'{args.root_path}/Datasets/{args.dataset}',
         split='train', transform=train_transform,
         download=True, size=28
     )
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
     testset  = ds_info['class'](
-        root=f'{args.root_med}/Datasets/{args.dataset}',
+        root=f'{args.root_path}/Datasets/{args.dataset}',
         split='test',  transform=test_transform,
         download=True, size=28
     )
