@@ -52,7 +52,7 @@ def train(args, device):
     
     if args.attack == "SIA":
         attack_params["linearity_coef"] = 1
-        theta = 0.005
+        theta = 0.01
         alignment = None
 
     # Save initial checkpoint
