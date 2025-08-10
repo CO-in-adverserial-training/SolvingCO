@@ -51,8 +51,8 @@ def train(args, device):
         attack_params["moving_grad_norm"] = moving_grad_norm
     
     if args.attack == "SIA":
-        attack_params["linearity_coef"] = 0
-        theta = 0.05
+        attack_params["linearity_coef"] = 1
+        theta = 0.005
         alignment = None
 
     # Save initial checkpoint

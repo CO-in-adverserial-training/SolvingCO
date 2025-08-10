@@ -9,7 +9,7 @@ def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, m
     alpha = (alpha_scalar / std).view(1, -1, 1, 1)
     
     # Initialize random step
-    k = sia_max_range_noise_function("Inverse", alignment, a=2, b=1.5)
+    k = sia_max_range_noise_function("Fix", alignment, a=2, b=1.5)
     eta = torch.empty_like(x).uniform_(-k, k)
     eta *= eps
     eta = torch.clamp(eta, lower_limit - x, upper_limit - x)
@@ -31,6 +31,8 @@ def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, m
 # Function For Mapping Alignment To Max Noise For SIA Method 
 def sia_max_range_noise_function(func, alignment, a=2, b=1.5):
     match func:
+        case "Fix":
+            k = 1
         case "Inverse":
             k = min(2, 1 / (1.5 * abs(alignment)))
     return k
@@ -58,6 +60,9 @@ def sia_max_alpha_function(func, alignment, max_alpha, a=0.1, b=5, moving_avg_al
             else:
                 coef = prev_batch_coef
         case func if func in ["Second Order Theory", "Second Order Theory Sign"]:
-            coef = min(1, abs(0.5 / (1 - linearity_coef)))
+            if linearity_coef >= 1:
+                coef = 1
+            else:
+                coef = min(1, 0.5 / (1 - linearity_coef))
     alpha = coef * max_alpha
     return alpha
