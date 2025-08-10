@@ -60,9 +60,6 @@ def sia_max_alpha_function(func, alignment, max_alpha, a=0.1, b=5, moving_avg_al
             else:
                 coef = prev_batch_coef
         case func if func in ["Second Order Theory", "Second Order Theory Sign"]:
-            if linearity_coef >= 1:
-                coef = 1
-            else:
-                coef = min(1, 0.1 / (1 - linearity_coef))
+            coef = min(1, abs(0.1 / (1 - linearity_coef)))
     alpha = coef * max_alpha
     return alpha
