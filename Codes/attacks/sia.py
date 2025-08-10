@@ -2,10 +2,10 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, alignment: float=1, prev_batch_alpha: float=None):
+def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, max_alpha: float=16 / 255, method: str="Second Order Theory Sign", alignment: float=1, prev_batch_alpha: float=None, linearity_coef: float=None):
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha_scalar = sia_max_alpha_function("Prev Batch Update", alignment, 2 * epsilon, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha)
+    alpha_scalar = sia_max_alpha_function(method, alignment, max_alpha, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha, linearity_coef=linearity_coef)
     alpha = (alpha_scalar / std).view(1, -1, 1, 1)
     
     # Initialize random step
@@ -36,9 +36,10 @@ def sia_max_range_noise_function(func, alignment, a=2, b=1.5):
     return k
 
 # Function For Mapping Alignment To Max Alpha For SIA Method 
-def sia_max_alpha_function(func, alignment, ALPHA, a=0.1, b=5, moving_avg_alignment=1, prev_batch_alpha=None):
+def sia_max_alpha_function(func, alignment, max_alpha, a=0.1, b=5, moving_avg_alignment=1, prev_batch_alpha=None, linearity_coef=None):
     alignment = 1 if alignment is None else alignment
-    prev_batch_alpha = ALPHA if prev_batch_alpha is None else prev_batch_alpha
+    prev_batch_alpha = max_alpha if prev_batch_alpha is None else prev_batch_alpha
+    linearity_coef = 0 if linearity_coef is None else linearity_coef
     match func:
         case "Linear": # Default a = 0.1, b = 5
             coef = min(1, max(a, b * alignment))
@@ -49,12 +50,14 @@ def sia_max_alpha_function(func, alignment, ALPHA, a=0.1, b=5, moving_avg_alignm
         case "Sigmoid": # Default a = 0.1, b = 5
             coef = a + (1 - a) / (1 + np.exp(-b * alignment - 0.2))
         case "Prev Batch Update":
-            prev_batch_coef = prev_batch_alpha / ALPHA
+            prev_batch_coef = prev_batch_alpha / max_alpha
             if alignment < 0.2:
                 coef = max(0.1, 0.999 * prev_batch_coef)
             elif alignment > 0.4:
                 coef = min(1, (100 / 95) * prev_batch_coef)
             else:
                 coef = prev_batch_coef
-    alpha = coef * ALPHA
+        case func if func in ["Second Order Theory", "Second Order Theory Sign"]:
+            coef = min(1, abs(0.5 / (1 - linearity_coef)))
+    alpha = coef * max_alpha
     return alpha

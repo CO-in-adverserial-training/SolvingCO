@@ -9,6 +9,7 @@ from attacks.aaer import aaer
 from attacks.attack_params import get_attack_params, get_regularizer_params
 from utils import save_checkpoint
 from training.alignment import calc_alignment
+from training.linearity_coef import calc_linearity_coef
 from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_corrects
 
 def train(args, device):
@@ -48,6 +49,11 @@ def train(args, device):
     if args.attack == "ATAS":
         moving_grad_norm = torch.zeros(num_train_samples, device=device)
         attack_params["moving_grad_norm"] = moving_grad_norm
+    
+    if args.attack == "SIA":
+        attack_params["linearity_coef"] = 0
+        theta = 0.05
+        alignment = None
 
     # Save initial checkpoint
     save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}/model{str(0).zfill(3)}.pt")
@@ -74,6 +80,12 @@ def train(args, device):
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "SIA":
+                    if alignment is not None:
+                        attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
+                        attack_params["prev_batch_alpha"] = alpha
+                        linearity_coef = calc_linearity_coef(grad, backprop_grad, attack_params["method"])
+                        attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
+
                     delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "AAER":
                     delta, grad, clean_logit, loss_before = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
@@ -113,9 +125,8 @@ def train(args, device):
                 scheduler.step()
             
             if args.track_alignment:
-                alignment = calc_alignment(grad, delta)
-                if args.attack == "SIA":
-                    attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
+                backprop_grad = delta.grad.clone().detach()
+                alignment = calc_alignment(grad, backprop_grad)
                 alignment_tracker.update(batch_alignment=alignment)
             #Track Regularizer Value Per Batch
             if use_regularizer:

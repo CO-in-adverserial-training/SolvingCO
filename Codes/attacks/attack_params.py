@@ -2,7 +2,9 @@
 def get_attack_params(epsilon: float):
     return {
         "SIA": {
-            "epsilon": epsilon
+            "epsilon": epsilon,
+            "max_alpha": 2 * epsilon,
+            "method": "Second Order Theory Sign"
         },
         "FGSM": {
             "epsilon": epsilon,
