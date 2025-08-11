@@ -70,10 +70,6 @@ def get_attack_params(epsilon: float):
             "c": 0.01,
             "warm_up_epoch": 5
         },
-        "FGSM-EP": {
-            "epsilon": epsilon,
-            "alpha": 1.0
-        },
     }
 
 def get_regularizer_params(epsilon: float):

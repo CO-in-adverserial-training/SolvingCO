@@ -21,7 +21,7 @@ def train(args, device):
         device (torch.device): Device to use for the training.
     """
     
-    index_dataset = args.attack in ["ATAS", "FGSM-EP"]
+    index_dataset = args.attack in ["ATAS"]
     # Get dataset loaders
     trainloader, _, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
     _, C, H, W = get_input_dimensions(trainloader, index_dataset)
@@ -51,8 +51,8 @@ def train(args, device):
         attack_params["moving_grad_norm"] = moving_grad_norm
     
     if args.attack == "SIA":
-        attack_params["linearity_coef"] = 1
-        theta = 0.005
+        attack_params["linearity_coef"] = 0.99
+        theta = 0.01
         alignment = None
 
     # Save initial checkpoint
@@ -83,7 +83,7 @@ def train(args, device):
                     if alignment is not None:
                         attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
                         attack_params["prev_batch_alpha"] = alpha
-                        linearity_coef = calc_linearity_coef(grad, backprop_grad, attack_params["method"])
+                        linearity_coef = min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"]))
                         attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
 
                     delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
@@ -94,9 +94,6 @@ def train(args, device):
                     delta, grad, moving_grad_norm, alpha = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
                     attack_params["delta"][index] = delta.detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
-                case "FGSM-EP":
-                    delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
-                    attack_params["delta"][index] = delta.detach()
                 case _:
                     raise ValueError("Invalid Attack Method!")
 

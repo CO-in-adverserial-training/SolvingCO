@@ -25,7 +25,7 @@ def evaluate(args, device):
     # Get attack parameters
     attack_params = get_attack_params(args.epsilon).get(args.attack, {}).copy()
 
-    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "FGSM-EP"]
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
 
     # Setup metric trackers
     trackers = {
@@ -58,8 +58,6 @@ def evaluate(args, device):
                     delta, _, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
                     delta, _, _, _ = attack(model, images, labels, None, upper_limit, lower_limit, mu, std, **attack_params)
-                case "FGSM-EP":
-                    delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case _:
                     raise ValueError("Invalid Attack Method!")
             # Add perturbation to original images
