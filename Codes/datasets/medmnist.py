@@ -165,7 +165,6 @@ def get_loaders(args, index_dataset: bool, device):
         split='train', transform=train_transform,
         download=True, size=28
     )
-    trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
 
     testset  = ds_info['class'](
         root=f'{args.root_path}/Datasets/{args.dataset}',
@@ -175,6 +174,8 @@ def get_loaders(args, index_dataset: bool, device):
 
     # Wrap datasets to fix label shape
     trainset = MedMNISTWrapper(trainset)
+    trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
+
     testset = MedMNISTWrapper(testset)
     
     # Create DataLoaders
