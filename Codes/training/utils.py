@@ -54,7 +54,7 @@ def get_scheduler(args, optimizer, len_trainloader):
         case "Cyclic": # Default
             scheduler_up_iters = max((args.epochs * len_trainloader) // 2, 1)
             scheduler_down_iters = max(args.epochs * len_trainloader - (args.epochs * len_trainloader) // 2, 1)
-            return torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=args.initial_lr, max_lr=0.2,
+            return torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=args.initial_lr, max_lr=args.max_lr,
                                                   step_size_up=scheduler_up_iters, step_size_down=scheduler_down_iters)
         case "CosineAnnealing": # For TinyImageNet
             return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len_trainloader, eta_min=0.001) 

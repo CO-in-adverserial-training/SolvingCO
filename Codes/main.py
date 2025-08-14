@@ -43,6 +43,7 @@ def parse_args():
     parser.add_argument("--epsilon", type=float, default=8 / 255)
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--initial_lr", type=float, default=0.01, help="May be overwritten by scheduler")
+    parser.add_argument("--max_lr", type=float, default=0.2, help="Maximum learning rate for Cyclic scheduler")
     parser.add_argument("--optimizer", choices=["SGD"], default="SGD")
     parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--weight_decay", type=float, default=5e-4)
