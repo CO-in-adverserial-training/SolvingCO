@@ -34,6 +34,7 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
     delta = delta.detach() + step_size * torch.sign(grad.detach())
     delta = torch.clamp(delta, min=-eps, max=eps)
     delta = torch.clamp(delta, min=lower_limit - x, max=upper_limit - x)
+    delta = delta.detach()
 
     if model_training:
         model.train()
