@@ -1,6 +1,6 @@
 import torch
 import json
-from matplotlib import pyplot as plt
+from itertools import islice
 from datasets.get_loaders import get_loaders
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
@@ -8,11 +8,15 @@ from utils import load_checkpoint
 from training.utils import MetricTracker
 
 
-def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon, device):
+def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon, index_dataset, device):
+    num_batches_to_evaluate = len(loader) // 10
     model.eval()
     total, correct = 0, 0
-    for img, lbl in loader:
-        img, lbl = img.to(device), lbl.to(device)
+    for data in islice(loader, num_batches_to_evaluate):
+        if index_dataset:
+            img, lbl, _ = data[0].to(device), data[1].to(device), data[2]
+        else:
+            img, lbl = data[0].to(device), data[1].to(device)
         img.requires_grad_(False)
         if attack:
             if attack == "FGSM":
@@ -41,13 +45,13 @@ def test(args, device, max_eps: int = 32):
     
     model.eval()
     
-    clean_acc = test_step(model, None, testloader, upper_limit, lower_limit, mu, std, 0, device)
+    index_dataset = args.attack in ["ATAS"]
+    clean_acc = test_step(model, None, testloader, upper_limit, lower_limit, mu, std, 0, index_dataset, device)
     accs_vs_epps_tracker.update(clean_acc=clean_acc)
-
     for eps in range(1, max_eps + 1):
         # Perform the tests
-        fgsm_acc = test_step(model, "FGSM", testloader, upper_limit, lower_limit, mu, std, eps / 255, device)
-        pgd_acc = test_step(model, "PGD", testloader, upper_limit, lower_limit, mu, std, eps / 255, device)
+        fgsm_acc = test_step(model, "FGSM", testloader, upper_limit, lower_limit, mu, std, eps / 255, index_dataset, device)
+        pgd_acc = test_step(model, "PGD", testloader, upper_limit, lower_limit, mu, std, eps / 255, index_dataset, device)
     
         accs_vs_epps_tracker.update(fgsm_acc=fgsm_acc, pgd_acc=pgd_acc)
         # Progress bar
