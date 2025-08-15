@@ -98,6 +98,8 @@ def train(args, device):
                     print(moving_grad_norm.shape)
                     attack_params["delta"][index] = delta.detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
+                    print(attack_params["delta"].shape)
+                    print(attack_params["moving_grad_norm"].shape)
                     print(attack_params.keys())
                 case _:
                     raise ValueError("Invalid Attack Method!")
