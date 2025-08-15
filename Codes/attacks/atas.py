@@ -28,7 +28,11 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
             grad_norm = torch.norm(grad.view(len(grad), -1), dim=1).detach() ** 2
             moving_grad_norm = beta * moving_grad_norm + (1 - beta) * grad_norm
             step_size = gamma_over_c / (1 + torch.sqrt(moving_grad_norm) / c)
-        step_size = step_size.view(-1, 1, 1, 1).expand_as(grad)
+        # After computing per-sample scalar step_size (shape: [B])
+        step_size = step_size.view(-1, 1, 1, 1)           # B × 1 × 1 × 1 (batch-specific scalar)
+        step_size = step_size / std.view(1, -1, 1, 1)     # scale per channel (B × C × 1 × 1)
+        step_size = step_size.expand_as(grad)             # B × C × H × W for broadcast in update
+
     else:
         step_size = eps
     delta = delta.detach() + step_size * torch.sign(grad.detach())
