@@ -18,7 +18,7 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
         delta = torch.empty_like(x).uniform_(-1, 1) * eps
         moving_grad_norm = torch.zeros(x.size(0), device=x.device)
 
-    delta.requires_grad_()
+    delta.requires_grad_(True)
     preds = model(x + delta)
     loss = F.cross_entropy(preds, y)
     grad = torch.autograd.grad(loss, delta)[0].detach()
