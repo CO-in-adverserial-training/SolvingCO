@@ -47,6 +47,7 @@ def train(args, device):
         attack_params["delta"] = delta
 
     if args.attack == "ATAS":
+        has_reset = True
         moving_grad_norm = torch.zeros(num_train_samples, device=device)
         attack_params["moving_grad_norm"] = moving_grad_norm
     
@@ -90,17 +91,16 @@ def train(args, device):
                 case "AAER":
                     delta, grad, clean_logit, loss_before = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
+                    if epoch % 10 == 0 and has_reset:
+                        delta = torch.empty((num_train_samples, C, H, W), device=device).uniform_(-1, 1) * (args.epsilon / std).view(1, -1, 1, 1)
+                        attack_params["delta"] = delta
+                        has_reset = False
+                    if epoch % 10 == 1:
+                        has_reset = True
                     attack_params["warm_up"] = epoch <= attack_params["warm_up_epoch"]
-                    print(attack_params.keys())
-                    print(index)
                     delta, grad, moving_grad_norm, alpha = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
-                    print(delta.shape)
-                    print(moving_grad_norm.shape)
                     attack_params["delta"][index] = delta.detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
-                    print(attack_params["delta"].shape)
-                    print(attack_params["moving_grad_norm"].shape)
-                    print(attack_params.keys())
                 case _:
                     raise ValueError("Invalid Attack Method!")
 
