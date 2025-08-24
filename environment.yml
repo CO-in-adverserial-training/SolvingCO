@@ -1,0 +1,33 @@
+name: cenv
+channels:
+  - nvidia
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - matplotlib
+  - seaborn
+  - pandas
+  - scikit-learn
+  - pillow
+  - tqdm
+  - ipython
+  - notebook
+  - ipykernel
+  - jupyterlab  # Optional
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  - pip
+  - pip:
+      - torchsummary
+      - torchattacks
+      - medmnist
+      - torchhk
+
+# in bash run these
+# conda env create -f environment.yml
+# conda activate cenv
+
