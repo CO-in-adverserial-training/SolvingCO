@@ -31,6 +31,7 @@ def upload_to_hf():
             api = HfApi(token=hf_token)
             
             # Create repository if it doesn't exist
+            print("Initializing sending files...")
             try:
                 api.create_repo(
                     repo_id=repo_id,
@@ -97,17 +98,19 @@ def upload_to_hf():
                 
             except Exception as e:
                 print(f"Error in upload_with_progress: {e}")
+    
+        upload_folder_to_hf_repo(
+            local_folder_path=LOCAL_FOLDER_PATH,
+            repo_id=REPO_ID,
+            hf_token=HF_TOKEN,
+            private=True  # Set to False if you want a public repository
+        )
+
     except:
         print("Error pushing results to hugging face!")
 
 if __name__ == "__main__":
     # Method 1: Simple upload (recommended) 
-    upload_folder_to_hf_repo(
-        local_folder_path=LOCAL_FOLDER_PATH,
-        repo_id=REPO_ID,
-        hf_token=HF_TOKEN,
-        private=True  # Set to False if you want a public repository
-    )
-    
+    upload_to_hf()
     # Method 2: Alternative with progress tracking (uncomment to use)
     # upload_with_progress(LOCAL_FOLDER_PATH, REPO_ID, HF_TOKEN)
