@@ -2,10 +2,10 @@ import os
 from pathlib import Path
 from huggingface_hub import HfApi, Repository
 
-def upload_to_hf():
+def upload_to_hf(args):
     try:
         # Configuration
-        LOCAL_FOLDER_PATH = "/home/frahmani/Github Code/SolvingCO/Codes/results/Results"  # Update this path 
+        LOCAL_FOLDER_PATH = f'{args.root_path}/Results/'  # Update this path 
         REPO_ID = "SolvingCO/CatastrophicOverfitting"  # Update with your repo ID
         HF_TOKEN = "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"  # Update with your token
 
