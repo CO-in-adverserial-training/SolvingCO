@@ -1,119 +1,99 @@
 import os
+import time
+import hashlib
+import json
 from pathlib import Path
-from huggingface_hub import HfApi, Repository
+from huggingface_hub import HfApi, hf_hub_download, hf_hub_url
+from huggingface_hub.utils import EntryNotFoundError, RepositoryNotFoundError
 
 def upload_to_hf(args):
     try:
         # Configuration
-        LOCAL_FOLDER_PATH = f'{args.root_path}/Results/'  # Update this path 
-        REPO_ID = "SolvingCO/CatastrophicOverfitting"  # Update with your repo ID
-        HF_TOKEN = "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"  # Update with your token
+        LOCAL_FOLDER_PATH = f'{args.root_path}/Results'
+        REPO_ID = "SolvingCO/CatastrophicOverfitting"
+        HF_TOKEN = "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"
+        MANIFEST_FILENAME = ".upload_manifest.json"
+        DELAY_BETWEEN_UPLOADS = 1.5  # seconds
 
         def is_checkpoint_path(path: Path) -> bool:
-            """
-            Returns True if the path is inside or is a folder starting with 'checkpoint'
-            """
-            for part in path.parts:
-                if part.lower().startswith("checkpoint"):
-                    return True
-            return False
+            """True if path is inside/is a folder starting with 'checkpoint'."""
+            return any(part.lower().startswith("checkpoint") for part in path.parts)
 
-        def upload_folder_to_hf_repo(
-            local_folder_path: str,
-            repo_id: str,
-            hf_token: str,
-            repo_type: str = "model",
-            private: bool = True
-        ):
-            """
-            Upload a local folder to a Hugging Face repository, excluding checkpoint folders
-            """
-            api = HfApi(token=hf_token)
-            
-            # Create repository if it doesn't exist
-            print("Initializing sending files...")
+        def file_sha1(path: Path) -> str:
+            """Calculate SHA‑1 hash of a file."""
+            h = hashlib.sha1()
+            with open(path, "rb") as f:
+                for chunk in iter(lambda: f.read(8192), b""):
+                    h.update(chunk)
+            return h.hexdigest()
+
+        api = HfApi(token=HF_TOKEN)
+
+        # Ensure the repository exists
+        api.create_repo(repo_id=REPO_ID, repo_type="model", private=True, exist_ok=True)
+
+        # Try downloading the manifest file from repo (contains {rel_path: sha1})
+        remote_manifest = {}
+        try:
+            manifest_path = hf_hub_download(
+                repo_id=REPO_ID,
+                filename=MANIFEST_FILENAME,
+                repo_type="model",
+                token=HF_TOKEN
+            )
+            with open(manifest_path, "r") as f:
+                remote_manifest = json.load(f)
+            print(f"Loaded manifest from repo with {len(remote_manifest)} entries.")
+        except EntryNotFoundError:
+            print("No existing manifest found in repo — will create one.")
+        except RepositoryNotFoundError:
+            print(f"Repo {REPO_ID} not found; creating new one.")
+        except Exception as e:
+            print(f"Could not load manifest: {e}")
+
+        # Collect local files excluding checkpoint folders
+        updates_needed = {}
+        local_path = Path(LOCAL_FOLDER_PATH)
+
+        for file_path in local_path.rglob("*"):
+            if file_path.is_file() and not is_checkpoint_path(file_path):
+                rel_path = str(file_path.relative_to(local_path))
+                file_hash = file_sha1(file_path)
+                if remote_manifest.get(rel_path) != file_hash:
+                    updates_needed[rel_path] = (file_path, file_hash)
+
+        print(f"{len(updates_needed)} files will be uploaded/updated.")
+
+        # Upload each changed file
+        for idx, (rel_path, (local_file, file_hash)) in enumerate(updates_needed.items(), 1):
             try:
-                api.create_repo(
-                    repo_id=repo_id,
-                    repo_type=repo_type,
-                    private=private,
-                    exist_ok=True
+                api.upload_file(
+                    path_or_fileobj=str(local_file),
+                    path_in_repo=rel_path,
+                    repo_id=REPO_ID,
+                    repo_type="model"
                 )
-                print(f"Repository '{repo_id}' created/verified successfully")
+                remote_manifest[rel_path] = file_hash
+                print(f"[{idx}/{len(updates_needed)}] Uploaded: {rel_path}")
+                time.sleep(DELAY_BETWEEN_UPLOADS)
             except Exception as e:
-                print(f"Error creating repository: {e}")
-                return
-            
-            # Collect files excluding checkpoint folders
-            files_to_upload = []
-            local_path = Path(local_folder_path)
-            for file_path in local_path.rglob("*"):
-                if file_path.is_file() and not is_checkpoint_path(file_path):
-                    files_to_upload.append(str(file_path))
-            
-            # Upload only the filtered files
-            try:
-                for file_path in files_to_upload:
-                    rel_path = str(Path(file_path).relative_to(local_folder_path))
-                    api.upload_file(
-                        path_or_fileobj=file_path,
-                        path_in_repo=rel_path,
-                        repo_id=repo_id,
-                        repo_type=repo_type
-                    )
-                print(f"Uploaded {len(files_to_upload)} files (excluding checkpoints) to '{repo_id}'")
-            except Exception as e:
-                print(f"Error uploading folder: {e}")
+                print(f"Error uploading {rel_path}: {e}")
 
-        def upload_with_progress(local_folder_path: str, repo_id: str, hf_token: str):
-            """
-            Alternative method using Repository class with progress tracking,
-            excluding checkpoint folders
-            """
-            try:
-                # Clone the repository
-                repo = Repository(
-                    local_dir="temp_repo_clone",
-                    clone_from=repo_id,
-                    use_auth_token=hf_token,
-                    git_user="hf",
-                    git_email="hf@huggingface.co"
-                )
+        # Upload the updated manifest file to the repo
+        manifest_tmp = Path("/tmp") / MANIFEST_FILENAME
+        with open(manifest_tmp, "w") as f:
+            json.dump(remote_manifest, f, indent=2)
 
-                # Copy only allowed files
-                local_path = Path(local_folder_path)
-                for item in local_path.rglob('*'):
-                    if item.is_file() and not is_checkpoint_path(item):
-                        relative_path = item.relative_to(local_path)
-                        dest_path = Path("temp_repo_clone") / relative_path
-                        dest_path.parent.mkdir(parents=True, exist_ok=True)
-                        import shutil
-                        shutil.copy2(item, dest_path)
-                        print(f"Copied: {relative_path}")
-                
-                # Commit and push
-                repo.git_add(auto_lfs_track=True)
-                repo.git_commit(f"Upload folder: {local_folder_path}")
-                repo.git_push()
-                print(f"Successfully uploaded folder with commit history")
-
-                # Clean up
-                import shutil
-                shutil.rmtree("temp_repo_clone")
-
-            except Exception as e:
-                print(f"Error in upload_with_progress: {e}")
-
-        # Upload with checkpoint exclusions
-        upload_folder_to_hf_repo(
-            local_folder_path=LOCAL_FOLDER_PATH,
+        api.upload_file(
+            path_or_fileobj=str(manifest_tmp),
+            path_in_repo=MANIFEST_FILENAME,
             repo_id=REPO_ID,
-            hf_token=HF_TOKEN,
-            private=True
+            repo_type="model"
         )
+        print("Updated manifest uploaded.")
 
     except Exception as e:
-        print(f"Error pushing results to hugging face! {e}")
+        print(f"Error pushing results to Hugging Face: {e}")
 
 if __name__ == "__main__":
     upload_to_hf()
