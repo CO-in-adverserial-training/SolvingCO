@@ -21,9 +21,7 @@ def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
     grad2 = torch.autograd.grad(cost2, x, create_graph=True)[0]
     grad2_copy = grad2.clone().detach()
 
-    grad1 = grad1.reshape(grad1.shape[0], -1)
-    grad2_copy = grad2_copy.reshape(grad2.shape[0], -1)   
-    alignment = F.cosine_similarity(grad1, grad2, dim=1)
+    alignment = F.cosine_similarity(grad1.reshape(grad1.shape[0], -1), grad2.reshape(grad2.shape[0], -1), dim=1)
     
     # Generate FGSM-RS Sample
     delta = eta + alpha * grad2.sign()
