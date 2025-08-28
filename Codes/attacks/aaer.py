@@ -31,6 +31,7 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
         delta = torch.clamp(delta, -eps, +eps)
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
     delta = delta.detach()
+    delta.requires_grad = True
     
     return delta, grad, clean_logit, loss_before
 

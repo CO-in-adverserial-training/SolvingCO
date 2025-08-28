@@ -51,6 +51,7 @@ def parse_args():
     parser.add_argument("--scheduler", choices=["Cyclic", "MultiStep", "CosineAnnealing"], default="Cyclic")
     parser.add_argument("--track_alignment", action="store_true")
     parser.add_argument("--evaluate_aa", action="store_true")
+    parser.add_argument("--push_to_hf", action="store_true", help="Pushes results to Hugging Face")
     parser.add_argument("--device", type=str, default="cuda")
     
     return parser.parse_args()
@@ -84,7 +85,7 @@ def main():
     # Visualize results
     visualize(args)
     # Push results to huggingface
-    upload_to_hf(args)
+    upload_to_hf(args.root_path)
 
 if __name__ == "__main__":
     main()
