@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # Implementation of Theoretically Principled Trade-off between Robustness and Accuracy(TRADES)
-def trades(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, perturb_steps: int=10, alpha: float=0.007):
+def trades(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, perturb_steps: int = 10, alpha: float= 2/255):
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
