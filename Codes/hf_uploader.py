@@ -6,10 +6,10 @@ from pathlib import Path
 from huggingface_hub import HfApi, hf_hub_download, hf_hub_url
 from huggingface_hub.utils import EntryNotFoundError, RepositoryNotFoundError
 
-def upload_to_hf(args):
+def upload_to_hf(root_path: str = 'results'):
     try:
         # Configuration
-        LOCAL_FOLDER_PATH = f'{args.root_path}/Results'
+        LOCAL_FOLDER_PATH = f'{root_path}/Results'
         REPO_ID = "SolvingCO/CatastrophicOverfitting"
         HF_TOKEN = "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"
         MANIFEST_FILENAME = ".upload_manifest.json"

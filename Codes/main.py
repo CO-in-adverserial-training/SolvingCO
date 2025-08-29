@@ -85,7 +85,8 @@ def main():
     # Visualize results
     visualize(args)
     # Push results to huggingface
-    upload_to_hf(args.root_path)
+    if args.push_to_hf:
+        upload_to_hf(args.root_path)
 
 if __name__ == "__main__":
     main()
