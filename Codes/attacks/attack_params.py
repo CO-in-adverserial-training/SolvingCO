@@ -68,6 +68,8 @@ def get_attack_params(epsilon: float):
             "beta": 0.5,
             "gamma_over_c": 2 * epsilon,
             "c": 0.01,
+            "min_step_size": 0.5 * epsilon,
+            "max_step_size": 1.75 * epsilon,
             "warm_up_epoch": 5
         },
     }
