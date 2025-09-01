@@ -57,7 +57,7 @@ def evaluate(args, device):
                 case "AAER":
                     delta, _, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "ATAS":
-                    delta, _, _, _ = attack(model, images, labels, None, upper_limit, lower_limit, mu, std, **attack_params)
+                    delta, _, _, _, _ = attack(model, images, labels, None, upper_limit, lower_limit, mu, std, **attack_params)
                 case _:
                     raise ValueError("Invalid Attack Method!")
             # Add perturbation to original images

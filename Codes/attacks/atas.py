@@ -15,10 +15,10 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
         delta_aug, transform_info = aug(delta[index].clone().detach())
         moving_grad_norm = moving_grad_norm[index].clone().detach()
     else:
-        delta_aug, transform_info = aug(torch.empty_like(x).uniform_(-1, 1) * eps)
+        delta_aug, transform_info = torch.empty_like(x).uniform_(-1, 1) * eps
         moving_grad_norm = torch.zeros(x.size(0), device=x.device)
 
-    x = aug_trans(x, transform_info)
+    x = aug_trans(x, transform_info) if index is not None else x
     delta_aug.requires_grad_(True)
     preds = model(x + delta_aug)
     loss = F.cross_entropy(preds, y)
