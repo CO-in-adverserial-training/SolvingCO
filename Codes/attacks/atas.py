@@ -17,6 +17,7 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
     else:
         delta_aug = torch.empty_like(x).uniform_(-1, 1) * eps
         moving_grad_norm = torch.zeros(x.size(0), device=x.device)
+        transform_info = None
 
     x = aug_trans(x, transform_info) if index is not None else x
     delta_aug.requires_grad_(True)
