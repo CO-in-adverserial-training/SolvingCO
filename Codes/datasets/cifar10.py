@@ -29,6 +29,7 @@ def get_loaders(args, index_dataset: bool, device):
     
     if index_dataset:
         train_transform = transforms.Compose([
+                transforms.Pad(padding=4),
                 transforms.ToTensor(),
                 transforms.Normalize(cifar10_mean, cifar10_std),
             ])

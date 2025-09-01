@@ -1,6 +1,5 @@
 import torch
 import torch.nn.functional as F
-import random
 from training.utils import aug, aug_trans
 
 def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,

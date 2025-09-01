@@ -100,7 +100,7 @@ def train(args, device):
                     attack_params["warm_up"] = epoch <= attack_params["warm_up_epoch"]
                     delta, transform_info, grad, moving_grad_norm, alpha = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
                     images = aug_trans(images, transform_info)
-                    attack_params["delta"][index] = inverse_aug(torch.zeros_like(delta), delta, transform_info).detach()
+                    attack_params["delta"][index] = inverse_aug(attack_params["delta"][index], delta, transform_info).detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
                 case _:
                     raise ValueError("Invalid Attack Method!")
