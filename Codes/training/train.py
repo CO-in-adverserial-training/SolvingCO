@@ -10,7 +10,7 @@ from attacks.attack_params import get_attack_params, get_regularizer_params
 from utils import save_checkpoint
 from training.alignment import calc_alignment
 from training.linearity_coef import calc_linearity_coef
-from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, calculate_batch_corrects
+from training.utils import MetricTracker, get_optimizer, get_scheduler, get_input_dimensions, aug_trans, inverse_aug, calculate_batch_corrects
 
 def train(args, device):
     """
@@ -98,8 +98,9 @@ def train(args, device):
                     if epoch % 10 == 1:
                         has_reset = True
                     attack_params["warm_up"] = epoch <= attack_params["warm_up_epoch"]
-                    delta, grad, moving_grad_norm, alpha = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
-                    attack_params["delta"][index] = delta.detach()
+                    delta, transform_info, grad, moving_grad_norm, alpha = attack(model, images, labels, index, upper_limit, lower_limit, mu, std, **attack_params)
+                    images = aug_trans(images, transform_info)
+                    attack_params["delta"][index] = inverse_aug(torch.zeros_like(delta), delta, transform_info).detach()
                     attack_params["moving_grad_norm"][index] = moving_grad_norm.detach()
                 case _:
                     raise ValueError("Invalid Attack Method!")

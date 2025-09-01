@@ -27,13 +27,18 @@ def get_loaders(args, index_dataset: bool, device):
     mu = torch.tensor(cifar10_mean).view(3,1,1).to(device)
     std = torch.tensor(cifar10_std).view(3,1,1).to(device)
     
-        
-    train_transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(cifar10_mean, cifar10_std),
-        ])
+    if index_dataset:
+        train_transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(cifar10_mean, cifar10_std),
+            ])
+    else:
+        train_transform = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(cifar10_mean, cifar10_std),
+            ])
     test_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(cifar10_mean, cifar10_std),
