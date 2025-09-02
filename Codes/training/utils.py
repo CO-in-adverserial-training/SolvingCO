@@ -1,6 +1,8 @@
 import torch
 from collections import defaultdict
 import random
+import torch.nn.functional as F
+from torchvision.transforms import functional as TF
 
 class MetricTracker:
     """
@@ -59,8 +61,8 @@ def get_scheduler(args, optimizer, len_trainloader):
                                                   step_size_up=scheduler_up_iters, step_size_down=scheduler_down_iters)
         case "CosineAnnealing": # For TinyImageNet
             return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len_trainloader, eta_min=0.001) 
-        case "MultiStep": # For Runs With 110 Epochs
-            return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 105], gamma=0.1)
+        case "MultiStep": # For Runs With 110 Epochs (100, 105)
+            return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[24, 28], gamma=0.1)
         case _:
             raise ValueError("Invalid Scheduler!")
 
@@ -81,59 +83,126 @@ def get_input_dimensions(dataloader, index_dataset):
 
     return images.shape
 
-def aug(input_tensor):
-    batch_size = input_tensor.shape[0]
-    x = torch.zeros(batch_size)
-    y = torch.zeros(batch_size)
-    flip = [False] * batch_size
-    rst = torch.zeros((len(input_tensor), 3, 32, 32), dtype=torch.float32, device=input_tensor.device)
-    for i in range(batch_size):
-        flip_t = bool(random.getrandbits(1))
-        x_t = random.randint(0, 8)
-        y_t = random.randint(0, 8)
+def aug(dataset_name: str, input_tensor):
+    match dataset_name:
+        case dataset_name if dataset_name in ['CIFAR10', 'CIFAR100']:
+            batch_size = input_tensor.shape[0]
+            x = torch.zeros(batch_size)
+            y = torch.zeros(batch_size)
+            flip = [False] * batch_size
+            rst = torch.zeros((len(input_tensor), 3, 32, 32), dtype=torch.float32, device=input_tensor.device)
+            for i in range(batch_size):
+                flip_t = bool(random.getrandbits(1))
+                x_t = random.randint(0, 8)
+                y_t = random.randint(0, 8)
 
-        rst[i, :, :, :] = input_tensor[i, :, x_t:x_t + 32, y_t:y_t + 32]
-        if flip_t:
-            rst[i] = torch.flip(rst[i], [2])
-        flip[i] = flip_t
-        x[i] = x_t
-        y[i] = y_t
+                rst[i, :, :, :] = input_tensor[i, :, x_t:x_t + 32, y_t:y_t + 32]
+                if flip_t:
+                    rst[i] = torch.flip(rst[i], [2])
+                flip[i] = flip_t
+                x[i] = x_t
+                y[i] = y_t
 
-    return rst, {"crop": {'x': x, 'y': y}, "flipped": flip}
+            return rst, {"crop": {'x': x, 'y': y}, "flipped": flip}
+        case dataset_name if dataset_name in ['PathMNIST', 'TissueMNIST', 'OrganAMNIST', 'BloodMNIST']:
+            N = input_tensor.size(0)
+            rst = input_tensor.clone()
+            flip_flags = []
+            rotation_angles = []
 
+            for i in range(N):
+                # 1. Flip
+                flip_flag = bool(random.getrandbits(1))
+                if flip_flag:
+                    rst[i] = TF.hflip(rst[i])
 
-def aug_trans(input_tensor, transform_info):
-    batch_size = input_tensor.shape[0]
-    x = transform_info['crop']['x']
-    y = transform_info['crop']['y']
-    flip = transform_info['flipped']
-    rst = torch.zeros((len(input_tensor), 3, 32, 32), dtype=torch.float32, device=input_tensor.device)
+                # 2. Pad
+                # rst[i] = F.pad(rst[i], pad=(2, 2, 2, 2), mode='reflect')
 
-    for i in range(batch_size):
-        flip_t = int(flip[i])
-        x_t = int(x[i])
-        y_t = int(y[i])
-        rst[i, :, :, :] = input_tensor[i, :, x_t:x_t + 32, y_t:y_t + 32]
-        if flip_t:
-            rst[i] = torch.flip(rst[i], [2])
-    return rst
+                # 3. Rotate
+                angle = random.uniform(-10, 10)
+                rst[i] = TF.rotate(rst[i], angle,
+                                   interpolation=TF.InterpolationMode.BILINEAR)
 
+                flip_flags.append(flip_flag)
+                rotation_angles.append(angle)
 
-def inverse_aug(source_tensor, adv_tensor, transform_info):
-    x = transform_info['crop']['x']
-    y = transform_info['crop']['y']
-    flipped = transform_info['flipped']
-    batch_size = source_tensor.shape[0]
+            transform_info = {
+                "flipped": flip_flags,
+                "rotation": torch.tensor(rotation_angles, dtype=torch.float32)
+            }
+            return rst, transform_info
 
-    for i in range(batch_size):
-        flip_t = int(flipped[i])
-        x_t = int(x[i])
-        y_t = int(y[i])
-        if flip_t:
-            adv_tensor[i] = torch.flip(adv_tensor[i], [2])
-        source_tensor[i, :, x_t:x_t + 32, y_t:y_t + 32] = adv_tensor[i]
+def aug_trans(dataset_name: str, input_tensor, transform_info):
+    match dataset_name:
+        case dataset_name if dataset_name in ['CIFAR10', 'CIFAR100']:
+            batch_size = input_tensor.shape[0]
+            x = transform_info['crop']['x']
+            y = transform_info['crop']['y']
+            flip = transform_info['flipped']
+            rst = torch.zeros((len(input_tensor), 3, 32, 32), dtype=torch.float32, device=input_tensor.device)
 
-    return source_tensor
+            for i in range(batch_size):
+                flip_t = int(flip[i])
+                x_t = int(x[i])
+                y_t = int(y[i])
+                rst[i, :, :, :] = input_tensor[i, :, x_t:x_t + 32, y_t:y_t + 32]
+                if flip_t:
+                    rst[i] = torch.flip(rst[i], [2])
+            return rst
+        case dataset_name if dataset_name in ['PathMNIST', 'TissueMNIST', 'OrganAMNIST', 'BloodMNIST']:
+            N = input_tensor.size(0)
+            rst = input_tensor.clone()
+
+            for i in range(N):
+                # 1. Flip
+                if transform_info["flipped"][i]:
+                    rst[i] = TF.hflip(rst[i])
+
+                # 2. Pad
+                # rst[i] = F.pad(rst[i], pad=(2, 2, 2, 2), mode='reflect')
+
+                # 3. Rotate
+                angle = float(transform_info["rotation"][i])
+                rst[i] = TF.rotate(rst[i], angle,
+                                   interpolation=TF.InterpolationMode.BILINEAR)
+            return rst
+
+def inverse_aug(dataset_name: str, source_tensor, adv_tensor, transform_info):
+    match dataset_name:
+        case dataset_name if dataset_name in ['CIFAR10', 'CIFAR100']:
+            x = transform_info['crop']['x']
+            y = transform_info['crop']['y']
+            flipped = transform_info['flipped']
+            batch_size = source_tensor.shape[0]
+
+            for i in range(batch_size):
+                flip_t = int(flipped[i])
+                x_t = int(x[i])
+                y_t = int(y[i])
+                if flip_t:
+                    adv_tensor[i] = torch.flip(adv_tensor[i], [2])
+                source_tensor[i, :, x_t:x_t + 32, y_t:y_t + 32] = adv_tensor[i]
+
+            return source_tensor
+        case dataset_name if dataset_name in ['PathMNIST', 'TissueMNIST', 'OrganAMNIST', 'BloodMNIST']:
+            N = adv_tensor.size(0)
+            for i in range(N):
+                # Inverse rotation
+                angle = -float(transform_info["rotation"][i])
+                img = TF.rotate(adv_tensor[i], angle,
+                                interpolation=TF.InterpolationMode.BILINEAR)
+
+                # Inverse crop of padding
+                # C, H, W = img.shape
+                # img = img[:, 2:H-2, 2:W-2]  # remove pad from step 2
+
+                # Inverse flip
+                if transform_info["flipped"][i]:
+                    img = TF.hflip(img)
+
+                source_tensor[i] = img
+            return source_tensor
 
 def calculate_batch_corrects(logits, labels):
     """

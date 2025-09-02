@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from training.utils import aug, aug_trans
 
-def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
+def atas(dataset_name: str, model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
           beta: float=0.5, gamma_over_c: float=16/255, c: float=0.01, min_step_size: float=4/255,
             max_step_size: float=14/255, warm_up_epoch: int=5, delta = None, moving_grad_norm = None, warm_up: bool=False):     
     model_training = model.training
@@ -12,14 +12,14 @@ def atas(model, x, y, index, upper_limit, lower_limit, mu, std, epsilon: float =
                   
     # Initialize random step
     if index is not None:
-        delta_aug, transform_info = aug(delta[index].clone().detach())
+        delta_aug, transform_info = aug(dataset_name, delta[index].clone().detach())
         moving_grad_norm = moving_grad_norm[index].clone().detach()
     else:
         delta_aug = torch.empty_like(x).uniform_(-1, 1) * eps
         moving_grad_norm = torch.zeros(x.size(0), device=x.device)
         transform_info = None
 
-    x = aug_trans(x, transform_info) if index is not None else x
+    x = aug_trans(dataset_name, x, transform_info) if index is not None else x
     delta_aug.requires_grad_(True)
     preds = model(x + delta_aug)
     loss = F.cross_entropy(preds, y)

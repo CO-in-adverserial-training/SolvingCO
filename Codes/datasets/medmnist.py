@@ -142,22 +142,28 @@ def get_loaders(args, index_dataset: bool, device):
     mu = torch.tensor(medmnist_mean).view(-1,1,1).to(device)
     std = torch.tensor(medmnist_std).view(-1,1,1).to(device)
     
-    train_transform = transforms.Compose([
+    if index_dataset:
+        train_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.RandomHorizontalFlip(p=0.5),  # Flip for chest X-rays
-        transforms.Pad(2),
-        transforms.RandomRotation(degrees=10),   # Small rotations
         transforms.Normalize(medmnist_mean, medmnist_std)
     ])
+    else:
+        train_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.RandomHorizontalFlip(p=0.5),  # Flip for chest X-rays
+            # transforms.Pad(2),
+            transforms.RandomRotation(degrees=10),   # Small rotations
+            transforms.Normalize(medmnist_mean, medmnist_std)
+        ])
 
     test_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Pad(2),
+        # transforms.Pad(2),
         transforms.Normalize(medmnist_mean, medmnist_std)
     ])
 
-    train_transform = build_transform(train=True)
-    test_transform  = build_transform(train=False)
+    # train_transform = build_transform(train=True)
+    # test_transform  = build_transform(train=False)
 
     # Load the actual datasets
     trainset = ds_info['class'](
