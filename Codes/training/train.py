@@ -36,11 +36,11 @@ def train(args, device):
     # Determine attack
     attack = get_attack(args.attack)
     # Get attack parameters
-    attack_params = get_attack_params(args.epsilon).get(args.attack, {}).copy()
+    attack_params = get_attack_params(args).get(args.attack, {}).copy()
     # Get regularization coefficient if needed
     use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
     if use_regularizer:
-        reg_params = get_regularizer_params(args.epsilon).get(args.attack, {}).copy()
+        reg_params = get_regularizer_params(args).get(args.attack, {}).copy()
 
     if index_dataset:
         delta = torch.empty((num_train_samples, C, H, W), device=device).uniform_(-1, 1) * (args.epsilon / std).view(1, -1, 1, 1)
