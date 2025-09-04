@@ -69,6 +69,7 @@ def main():
     checkpoint = torch.load(path, weights_only=True)
     net.load_state_dict(checkpoint['model_state_dict'])
     model = nn.Sequential(Normalize(mean=mean, std=std), net).to(device)
+    model.eval()
     
     # load attack    
     from autoattack import AutoAttack
