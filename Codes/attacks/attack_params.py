@@ -55,7 +55,7 @@ def get_attack_params(epsilon: float):
         "ELLE": {
             "epsilon": epsilon,
             "alpha": epsilon,
-            "k": 1.0
+            "k": 1000
         },
         "AAER": {
             "epsilon": epsilon,
