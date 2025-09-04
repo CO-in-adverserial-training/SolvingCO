@@ -116,6 +116,7 @@ def train(args, device):
             loss = F.cross_entropy(preds, labels)
         
             if args.attack == "AAER":
+                reg_params = get_regularizer_params(args).get(args.attack, {}).copy()
                 loss = aaer(loss_before, clean_logit, preds, labels, **reg_params)
         
             # Add regularization term if needed
