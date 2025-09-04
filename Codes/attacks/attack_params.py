@@ -1,91 +1,113 @@
 # Stores attack specific hyperparameters
-def get_attack_params(epsilon: float):
+def get_attack_params(args):
+    match args.dataset:
+        case "CIFAR10":
+            q_val = 0.35
+        case "CIFAR100":
+            q_val = 0.45
+        case "SVHN":
+            q_val = 0.7
+        case "PathMNIST":
+            q_val = 0.7
+    
     return {
         "SIA": {
-            "epsilon": epsilon,
-            "max_alpha": 2 * epsilon,
+            "epsilon": args.epsilon,
+            "max_alpha": 2 * args.epsilon,
             "method": "Second Order Theory Sign"
         },
         "FGSM": {
-            "epsilon": epsilon,
-            "alpha": 2 * epsilon
+            "epsilon": args.epsilon,
+            "alpha": 2 * args.epsilon
         },
         "FGSM-RS": {
-            "epsilon": epsilon,
-            "alpha": 1.25 * epsilon,
+            "epsilon": args.epsilon,
+            "alpha": 1.25 * args.epsilon,
             "k": 1.0
         },
         "NFGSM": {
-            "epsilon": epsilon,
-            "alpha": epsilon,
+            "epsilon": args.epsilon,
+            "alpha": args.epsilon,
             "k": 2.0
         },
         "ZeroGrad": {
-            "epsilon": epsilon,
-            "alpha": 2 * epsilon,
-            "q_val": 0.35,
+            "epsilon": args.epsilon,
+            "alpha": 2 * args.epsilon,
+            "q_val": q_val,
             "k": 1.0,
             "clip": True
         },
         "MultiGrad": {
-            "epsilon": epsilon,
-            "alpha": 2 * epsilon,
+            "epsilon": args.epsilon,
+            "alpha": 2 * args.epsilon,
             "samples": 3,
             "zeroing_th": -1,
             "k": 1.0,
             "parallel": True
         },
         "PGD": {
-            "epsilon": epsilon,
-            "alpha": epsilon / 4,
+            "epsilon": args.epsilon,
+            "alpha": args.epsilon / 4,
             "attack_iters": 10,
             "k": 1.0,
             "clip": True
         },
         "TRADES": {
-            "epsilon": epsilon,
+            "epsilon": args.epsilon,
             "perturb_steps": 10,
-            "alpha": epsilon / 4
+            "alpha": args.epsilon / 4
         },
         "GradAlign": {
-            "epsilon": epsilon,
-            "alpha": 1.25 * epsilon,
+            "epsilon": args.epsilon,
+            "alpha": 1.25 * args.epsilon,
             "k": 1.0
         },
         "ELLE": {
-            "epsilon": epsilon,
-            "alpha": epsilon,
-            "k": 1000
+            "epsilon": args.epsilon,
+            "alpha": args.epsilon,
+            "k": 1.0
         },
         "AAER": {
-            "epsilon": epsilon,
-            "alpha": epsilon,
+            "epsilon": args.epsilon,
+            "alpha": args.epsilon,
             "k": 2.0,
             "clip": False
         },
         "ATAS": {
-            "epsilon": epsilon,
+            "epsilon": args.epsilon,
             "beta": 0.5,
-            "gamma_over_c": 2 * epsilon,
+            "gamma_over_c": 2 * args.epsilon,
             "c": 0.01,
-            "min_step_size": 0.5 * epsilon,
-            "max_step_size": 1.75 * epsilon,
+            "min_step_size": 0.5 * args.epsilon,
+            "max_step_size": 1.75 * args.epsilon,
             "warm_up_epoch": 5
         },
     }
 
-def get_regularizer_params(epsilon: float):
+def get_regularizer_params(args):
+    match args.dataset:
+        case "CIFAR10":
+            grad_align_reg = 0.2
+        case "CIFAR100":
+            grad_align_reg = 0.2
+        case "SVHN":
+            grad_align_reg = 2.5
+        case "PathMNIST":
+            grad_align_reg = 0.2
+    
     return {
         "TRADES": {
             "reg": 6.0 # Beta
         },
         "GradAlign": {
-            "reg": 0.2 # Lambda Alignment
+            "reg": grad_align_reg # Lambda Alignment
         },
         "ELLE": {
-            "reg": 1.0 # Lambda ELLE
+            "reg": 1000 # Lambda ELLE
         },
         "AAER": {
-            "reg": 1.0 # Lambda AAER
+            "lambda1": 1.0,
+            "lambda2": 1.5,
+            "lambda3": 0.15,
         },
     }
