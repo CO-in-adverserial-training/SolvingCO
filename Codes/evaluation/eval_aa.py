@@ -1,7 +1,6 @@
 import torch
 from torch import nn
 import argparse
-import json
 from datasets.get_loaders import get_loaders
 from architectures.get_model import get_model
 from training.utils import get_input_dimensions
@@ -32,7 +31,7 @@ def parse_args():
     parser.add_argument("--epsilon", type=float, default=8/255)
     parser.add_argument('--norm', type=str, default='Linf', choices=['L2', 'Linf'])
     parser.add_argument('--n_ex', type=int, default=-1)
-    parser.add_argument('--log_path', type=str, default='log.txt')
+    parser.add_argument('--log_path', type=str, default='aa_log.txt')
     parser.add_argument('--individual', default=False, action='store_true')
     parser.add_argument('--version', type=str, default='standard')
     parser.add_argument("--push_to_hf", action="store_true", help="Pushes results to Hugging Face")
@@ -91,5 +90,3 @@ def main():
     # run attack and save images
     if not args.individual:
         adv_complete = adversary.run_standard_evaluation(x_test[:args.n_ex], y_test[:args.n_ex], bs=args.batch_size)
-        with open(f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/aa.json", "w") as f:
-            json.dump(adv_complete, f, indent=4)
