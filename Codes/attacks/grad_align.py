@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 #Implementation of GradAlign Regularizer
-def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
+def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 10/255, k: float = 1.0):
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
@@ -10,7 +10,9 @@ def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
     x.requires_grad = True
     preds1 = model(x)
     cost1 = F.cross_entropy(preds1, y)
-    grad1 = torch.autograd.grad(cost1, x, create_graph=True)[0]
+    # There was a mismatch between the code snippet in README and train.py of the GradAlign repository 
+    # regarding the original GradAlign implementation. We set create_graph=False to improve memory and time efficiency.
+    grad1 = torch.autograd.grad(cost1, x, create_graph=False)[0]
     grad1 = grad1.detach()
     eta = torch.empty_like(x).uniform_(-k, k) * eps
     eta = torch.clamp(eta, lower_limit - x, upper_limit - x)
