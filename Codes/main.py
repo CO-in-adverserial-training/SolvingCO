@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument("--normalize_dataset", action="store_true")
     parser.add_argument("--model", choices=["PreActResNet18", "ResNet18", "WideResNet28", "SENet18", "VitSmall", "VitBase"], default="PreActResNet18")
     parser.add_argument("--attack", choices=["SIA", "FGSM", "FGSM-RS", "GradAlign", "NFGSM", "AAER", "ZeroGrad", "MultiGrad", "ATAS", "ELLE", "TRADES", "PGD"], required=True)
-    parser.add_argument("--epsilon", type=float, default=8 / 255)
+    parser.add_argument("--epsilon", type=float, default=8, help="Epsilon ball * 255")
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--initial_lr", type=float, default=0.01, help="May be overwritten by scheduler")
     parser.add_argument("--max_lr", type=float, default=0.2, help="Maximum learning rate for Cyclic scheduler")
@@ -77,6 +77,7 @@ def main():
     # Get device
     device = get_device(args.device)
     # Train model
+    args.epsilon /= 255
     train(args, device)
     # Evaluate training
     evaluate(args, device)

@@ -7,8 +7,8 @@ def get_attack_params(args):
             q_val = 0.45
         case "SVHN":
             q_val = 0.7
-        case "PathMNIST":
-            q_val = 0.7
+        case _:
+            q_val = 0.45
     
     return {
         "SIA": {
@@ -88,11 +88,9 @@ def get_regularizer_params(args):
     match args.dataset:
         case "CIFAR10":
             grad_align_reg = 0.2
-        case "CIFAR100":
-            grad_align_reg = 0.2
         case "SVHN":
             grad_align_reg = 2.5
-        case "PathMNIST":
+        case _:
             grad_align_reg = 0.2
     
     return {
