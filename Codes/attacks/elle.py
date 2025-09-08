@@ -22,14 +22,10 @@ def elle(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     grad = x_adv.grad.detach()
     
     x_adv = x_adv + alpha * torch.sign(grads_input)
-    x_adv = torch.clamp(x_adv, x - eps, x + eps)
-    x_adv = torch.clamp(x_adv, lower_limit, upper_limit)
+    x_adv = torch.clamp(x_adv, x - eps, x + eps).detach()
     model.zero_grad()
 
     x_adv.detach()
-
-    out2 = model(x_adv)
-    loss = F.cross_entropy(out2,y)
 
     bs = x.shape[0]
     x_ab = x.repeat([2,1,1,1]) 
