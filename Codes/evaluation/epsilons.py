@@ -5,7 +5,7 @@ from datasets.get_loaders import get_loaders
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
 from utils import load_checkpoint
-from training.utils import MetricTracker
+from training.utils import MetricTracker, get_input_dimensions
 
 
 def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon, device):
@@ -35,10 +35,11 @@ def test(args, device, max_eps: int = 32):
     accs_vs_epps_tracker = MetricTracker()
     # Get dataset loaders
     trainloader, testloader, upper_limit, lower_limit, mu, std, _, num_classes, _, _ = get_loaders(args, False, device)
+    _, C, H, W = get_input_dimensions(trainloader, False)
     
     final_checkpoint_path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}/model{str(args.epochs).zfill(3)}.pt"
     
-    model, _, _ = load_checkpoint(args, final_checkpoint_path, num_classes, len(trainloader), device)
+    model, _, _ = load_checkpoint(args, final_checkpoint_path, num_classes, H, C, len(trainloader), device)
     
     model.eval()
     
