@@ -84,7 +84,7 @@ def train(args, device):
                     if alignment is not None:
                         attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
                         attack_params["prev_batch_alpha"] = alpha
-                        linearity_coef = min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"]))
+                        linearity_coef = max(0.4, min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"])))
                         attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
 
                     delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)

@@ -24,7 +24,7 @@ def get_loaders(args, index_dataset: bool, device):
             return svhn_loaders(args, index_dataset, device)
         case "CINIC10":
             return cinic10_loaders(args, index_dataset, device)
-        case "Tiny ImageNet":
+        case "TinyImageNet":
             return tinyimagenet_loaders(args, index_dataset, device)
         case args.dataset if args.dataset in ['PathMNIST', 'TissueMNIST', 'OrganAMNIST', 'BloodMNIST']:
             return medmnist_loaders(args, index_dataset, device)

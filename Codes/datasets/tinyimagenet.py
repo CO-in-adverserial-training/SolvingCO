@@ -63,7 +63,7 @@ def get_loaders(args, index_dataset: bool, device):
                                          shuffle=False, num_workers=args.num_workers)
     
     # Get Class Names (simplified - actual class names would be from the wnids.txt file)
-    classes = [f'class_{i}' for i in range(len(classes))]  # Replace with actual class names if needed
+    classes = [f'class_{i}' for i in range(200)]  # Replace with actual class names if needed
     return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes), len(trainset), len(testset)
 
 

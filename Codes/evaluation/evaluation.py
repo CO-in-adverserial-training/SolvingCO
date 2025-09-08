@@ -8,7 +8,7 @@ from attacks.get_attack import get_attack
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
 from attacks.attack_params import get_attack_params
-from training.utils import MetricTracker, calculate_batch_corrects
+from training.utils import MetricTracker, calculate_batch_corrects, get_input_dimensions
 
 def evaluate(args, device):
     """
@@ -22,6 +22,7 @@ def evaluate(args, device):
     index_dataset = args.attack in ["ATAS", "FGSM-EP"]
     # Get dataset loaders
     trainloader, testloader, upper_limit, lower_limit, mu, std, _, num_classes, num_train_samples, num_test_samples = get_loaders(args, index_dataset, device)
+    _, C, H, W = get_input_dimensions(trainloader, index_dataset)
     # Get attack parameters
     attack_params = get_attack_params(args).get(args.attack, {}).copy()
 
@@ -39,7 +40,7 @@ def evaluate(args, device):
     total_evaluation_time = 0
     for epoch in range(args.epochs + 1):
         start_time = time.time()
-        model, _, _ = load_checkpoint(args, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}/model{str(epoch).zfill(3)}.pt", num_classes, len(trainloader), device)
+        model, _, _ = load_checkpoint(args, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}/model{str(epoch).zfill(3)}.pt", num_classes, H, C, len(trainloader), device)
         model.eval()
 
         # Determine attack

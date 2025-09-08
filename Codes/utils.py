@@ -76,7 +76,7 @@ def save_checkpoint(model, optimizer, scheduler, path:str):
                     "scheduler_state_dict": scheduler.state_dict()
                    }, path)
 
-def load_checkpoint(args, path:str, num_classes:int, len_trainloader, device):
+def load_checkpoint(args, path:str, num_classes:int, image_size:int, num_channels:int, len_trainloader, device):
     """
     Load the model checkpoint.
     
@@ -87,7 +87,7 @@ def load_checkpoint(args, path:str, num_classes:int, len_trainloader, device):
         len_trainloader (int): Length of the training data loader.
         device (torch.device): Device to use for the training.
     """
-    model = get_model(args.model, num_classes)
+    model = get_model(args.model, num_classes, image_size, num_channels)
     model.to(device)
     
     optimizer = get_optimizer(args, model)
