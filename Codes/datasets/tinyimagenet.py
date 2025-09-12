@@ -43,8 +43,8 @@ def get_loaders(args, index_dataset: bool, device):
             transforms.Normalize(tinyimagenet_mean, tinyimagenet_std),
         ])
     test_transform = transforms.Compose([
-        transforms.Resize(64),
-        transforms.CenterCrop(64),
+        # transforms.Resize(64),
+        # transforms.CenterCrop(64),
         transforms.ToTensor(),
         transforms.Normalize(tinyimagenet_mean, tinyimagenet_std),
         ])
