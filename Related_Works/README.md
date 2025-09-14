@@ -27,3 +27,4 @@ What follows is a list of papers on **Catastrophic Overfitting** and their GitHu
 | [Layer-Aware Analysis of Catastrophic Overfitting: Revealing the Pseudo-Robust Shortcut Dependency](https://arxiv.org/abs/2405.16262) | [LAP](https://github.com/tmllab/2024_ICML_LAP) |
 | [Improving Fast Adversarial Training Paradigm: An Example Taxonomy Perspective](https://arxiv.org/abs/2408.03944) | None :( |
 | [Improving Fast Adversarial Training via Self-Knowledge Guidance](https://arxiv.org/abs/2409.17589) | None :( |
+| [Adversarial Initialization with Universal Adversarial Perturbation: A New Approach to Fast Adversarial Training]([https://arxiv.org/abs/2409.17589](https://ojs.aaai.org/index.php/AAAI/article/view/30147)) | [FGSM-UAP](https://github.com/fzjcdt/fgsm_uap) |
