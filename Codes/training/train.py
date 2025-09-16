@@ -52,6 +52,7 @@ def train(args, device):
         attack_params["moving_grad_norm"] = moving_grad_norm
     
     if args.attack == "SIA":
+        args.track_alignment = True
         attack_params["linearity_coef"] = 0.99
         theta = 0.01
         alignment = None

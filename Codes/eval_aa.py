@@ -65,7 +65,8 @@ def main():
     args.n_ex = args.n_ex if args.n_ex > 0 else len(testloader.dataset)
     # Get model
     net = get_model(args.model, num_classes, H, C)
-    path = download_weights(args)
+    path = download_weights(args) 
+    # path = f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/final_checkpoints_{args.seed}/model030.pt"
     checkpoint = torch.load(path, weights_only=True)
     net.load_state_dict(checkpoint['model_state_dict'])
     model = nn.Sequential(Normalize(mean=mean, std=std), net).to(device)
@@ -91,3 +92,6 @@ def main():
     # run attack and save images
     if not args.individual:
         adv_complete = adversary.run_standard_evaluation(x_test[:args.n_ex], y_test[:args.n_ex], bs=args.batch_size)
+
+if __name__ == "__main__":
+    main()

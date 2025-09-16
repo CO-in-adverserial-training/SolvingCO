@@ -41,6 +41,8 @@ def get_optimizer(args, model):
     match args.optimizer:
         case "SGD":
             return torch.optim.SGD(model.parameters(), lr=args.initial_lr, momentum=args.momentum, weight_decay=args.weight_decay)
+        case "Adam":
+            return torch.optim.Adam(model.parameters())
         case _:
             raise ValueError("Invalid Optimizer!")
 
@@ -62,7 +64,7 @@ def get_scheduler(args, optimizer, len_trainloader):
         case "CosineAnnealing": # For TinyImageNet
             return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len_trainloader, eta_min=0.001) 
         case "MultiStep": # For Runs With 110 Epochs (100, 105)
-            return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[24, 28], gamma=0.1)
+            return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15, 18], gamma=0.1)
         case _:
             raise ValueError("Invalid Scheduler!")
 
