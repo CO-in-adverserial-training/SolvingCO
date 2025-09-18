@@ -2,6 +2,14 @@ import torch
 import torch.nn.functional as F
 
 def calc_linearity_coef(input_grad, backprop_grad, method: str):
+    """
+    Calculate the linearity coefficient for SORA
+    
+    Args:
+        input_grad (torch.Tensor): Input gradient.
+        delta (torch.Tensor): Delta gradient.
+        method (String): Varient of SORA to calculate the linearity coefficient
+    """
     match method:
         case "Second Order Theory":
             norm2_input_grad = torch.linalg.norm(input_grad.view(input_grad.shape[0], -1), dim=1, ord=2)

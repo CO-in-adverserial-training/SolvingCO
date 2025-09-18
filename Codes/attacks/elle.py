@@ -4,6 +4,37 @@ import copy
 
 #Implement ELLE Regularizer
 def elle(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, k: float = 1.0):
+    """
+    Implementation of ELLE (Efficient Local Linearity Enforcement) regularizer.
+
+    ELLE improves adversarial robustness by enforcing the *linearity* of the loss
+    across interpolations between adversarial examples in input space. It is applied
+    in conjunction with adversarial training and helps the model maintain consistent
+    gradients for better generalization against perturbations.
+
+    Reference:
+        Elias Abad Rocamora, Fanghui Liu, Grigorios G. Chrysos, Pablo M. Olmos, and Volkan Cevher. (2024).
+        "Efficient Local Linearity Regularization to Overcome Catastrophic Overfitting."
+        arXiv:2401.11618 (https://arxiv.org/abs/2401.11618)
+
+    Args:
+        model (torch.nn.Module): Model to be regularized.
+        x (torch.Tensor): Clean input batch (B, C, H, W).
+        y (torch.Tensor): Ground-truth labels.
+        upper_limit (torch.Tensor): Per-channel normalized maximum.
+        lower_limit (torch.Tensor): Per-channel normalized minimum.
+        mu (torch.Tensor): Per-channel normalization mean.
+        std (torch.Tensor): Per-channel normalization std.
+        epsilon (float): Max perturbation magnitude (default: 8/255).
+        alpha (float): Step size for FGSM update (default: 8/255).
+        k (float): Randomization factor for initial perturbations (default: 1.0).
+
+    Returns:
+        tuple:
+            - torch.Tensor: Adversarial perturbation (`delta`).
+            - torch.Tensor: ELLE linearity regularization term.
+            - torch.Tensor: Gradient of loss wrt adversarial input from first step.
+    """
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (alpha / std).view(1, -1, 1, 1)
