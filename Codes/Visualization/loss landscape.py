@@ -1,3 +1,25 @@
+"""
+Module: loss landscape.py
+
+This module provides routines for visualizing and animating the 3D loss surface and
+decision boundaries of adversarially perturbed images, primarily in the FGSM–PGD
+perturbation space.
+
+Original code adapted and extended from:
+    - GitHub Repository:
+      https://github.com/Harry24k/catastrophic-overfitting
+    - Associated Paper:
+      Hoki Kim, Woojin Lee, and Jaewook Lee.
+      "Understanding Catastrophic Overfitting in Single-step Adversarial Training."
+      Advances in Neural Information Processing Systems (NeurIPS), 2020.
+      arXiv: https://arxiv.org/abs/2010.01799
+
+In this adaptation, docstrings, plotting conventions, and color schemes are refined
+for publication consistency, with added parameter handling for integration into
+adversarial training pipelines.
+
+"""
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import torchhk
@@ -11,6 +33,32 @@ from attacks.pgd import pgd
 #3D Plot Loss Surface
 def loss_plot(images, labels, model, image_index, classes, attack_params, use_directions=False, directions=None,
               return_directions=False, bigger_plot_range=False):
+    """
+    Generate a 3D loss surface for a single datapoint using FGSM and PGD perturbation directions.
+
+    Computes FGSM and PGD adversarial examples from the given image/label, uses them to form
+    the x- and y-axis perturbation directions, and samples the model's cross-entropy loss
+    over a grid in this 2D perturbation space.
+
+    Args:
+        images (torch.Tensor): Batch of input images (B×C×H×W).
+        labels (torch.Tensor): Ground truth labels (B,).
+        model (torch.nn.Module): Model to evaluate.
+        image_index (int): Index of the image within `images` to visualize.
+        classes (list[str]): Class names for interpretation of color regions.
+        attack_params (dict): Parameters for FGSM/PGD attacks (eps, alpha, steps, etc.).
+        use_directions (bool): If True, use provided `directions` instead of computing them.
+        directions (tuple[torch.Tensor, torch.Tensor] or None): Precomputed (fgsm_dir, pgd_dir).
+        return_directions (bool): If True, return computed perturbation directions.
+        bigger_plot_range (bool): If True, set perturbation ranges to (-2,2)² instead of (0,1)².
+
+    Returns:
+        tuple:
+            (fgsm_dir, pgd_dir) (torch.Tensor): Perturbation directions used.
+            zs (np.ndarray): Loss surface values over the 2D grid.
+            fgsm_result: Loss at extreme FGSM perturbation.
+            pgd_result: Loss at extreme PGD perturbation.
+    """
     j = image_index
     fgsm_images = fgsm(model, images, labels, **attack_params)
     pgd_images = pgd(model, images, labels, **attack_params)
@@ -64,6 +112,26 @@ def loss_plot(images, labels, model, image_index, classes, attack_params, use_di
 #Visualize Loss Surface
 def plot_loss_surface(images, labels, model, image_index, high_resolution, index, plot_list,
                       use_directions=False, directions=None, return_directions=False, bigger_plot_range=False):
+    """
+    Wrapper to render and save a 3D loss surface plot for a given training/evaluation step.
+
+    Args:
+        images (torch.Tensor): Batch of input images.
+        labels (torch.Tensor): Ground truth labels.
+        model (torch.nn.Module): Model to visualize.
+        image_index (int): Index within the batch to visualize.
+        classes (list[str]): Class names.
+        attack_params (dict): Parameters for FGSM/PGD attacks.
+        high_resolution (bool): If True, tag the plot as 'Batch', else 'Epoch'.
+        index (int): Step/epoch index for naming.
+        plot_list (list[PIL.Image.Image]): Accumulator for animation frames.
+        use_directions, directions, return_directions, bigger_plot_range: Passed to `loss_plot`.
+        root_path (str): Root directory to save plots.
+
+    Returns:
+        tuple:
+            directions, loss_vals, fgsm_result, pgd_result.
+    """
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
     if high_resolution:
@@ -81,6 +149,15 @@ def plot_loss_surface(images, labels, model, image_index, high_resolution, index
 
 #Visualize Decision Boundry
 def plot_decision_boundry(loss_vals, index, plot_list):
+    """
+    Render and save a decision boundary map from loss values.
+
+    Args:
+        loss_vals (np.ndarray): 2D array of loss values.
+        index (int): Epoch index.
+        plot_list (list): Accumulator for animation frames.
+        root_path (str): Save directory.
+    """
     plt.imshow(loss_vals)
     plt.title(f"Epoch: {index}")
     plt.axis("off")
@@ -91,6 +168,16 @@ def plot_decision_boundry(loss_vals, index, plot_list):
     
 #Animate a Sequence of Plots
 def animate_plots(plot_list, name, size=(5,5)):
+    """
+    Animate a sequence of Matplotlib figure frames into GIF and MP4.
+
+    Args:
+        plot_list (list[PIL.Image.Image]): Sequence of images to animate.
+        name (str): Base filename (without extension).
+        size (tuple[float, float]): Figure size in inches.
+        root_path (str): Output directory.
+        server (bool): If True, skip one of the MP4 saves for server context.
+    """
     frames = []
     fig = plt.figure(figsize=size)
     plt.axis('off')
@@ -113,6 +200,16 @@ def animate_plots(plot_list, name, size=(5,5)):
 
 #Show Animation In Terminal
 def show_animation(path, width=400):
+    """
+    Generate HTML to display an MP4 animation inline (Jupyter/IPython).
+
+    Args:
+        path (str): Path to the MP4 file.
+        width (int): Display width in pixels.
+
+    Returns:
+        IPython.display.HTML: HTML wrapper for the given video.
+    """
     mp4 = open(path, 'rb').read()
     data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
     return HTML(f"""
