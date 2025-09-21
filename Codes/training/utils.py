@@ -86,6 +86,26 @@ def get_input_dimensions(dataloader, index_dataset):
     return images.shape
 
 def aug(dataset_name: str, input_tensor):
+    """
+    Apply dataset-specific stochastic augmentations while recording transformation metadata.
+
+    For CIFAR10/CIFAR100:
+        - Random crop (selects a 32×32 region from up to a 40×40 padded input)
+        - Random horizontal flip (p=0.5)
+
+    For MedMNIST subsets (PathMNIST, TissueMNIST, OrganAMNIST, BloodMNIST):
+        - Random horizontal flip (p=0.5)
+        - Random rotation in [-10°, 10°] using bilinear interpolation
+
+    Args:
+        dataset_name (str): Dataset identifier.
+        input_tensor (torch.Tensor): Input batch of shape (N, C, H, W).
+
+    Returns:
+        Tuple[torch.Tensor, dict]:
+            - Augmented images (torch.Tensor of same batch size)
+            - Transform metadata dict (keys depend on dataset)
+    """
     match dataset_name:
         case dataset_name if dataset_name in ['CIFAR10', 'CIFAR100']:
             batch_size = input_tensor.shape[0]
@@ -136,6 +156,23 @@ def aug(dataset_name: str, input_tensor):
             return rst, transform_info
 
 def aug_trans(dataset_name: str, input_tensor, transform_info):
+    """
+    Apply a *stored* augmentation transformation to a new tensor.
+
+    Uses metadata produced by `aug()` to apply the exact same transforms
+    (crop, flip, rotation) to a fresh batch without randomness.
+
+    This is useful for applying identical spatial transforms to
+    adversarial examples or reconstructed inputs.
+
+    Args:
+        dataset_name (str): Dataset identifier.
+        input_tensor (torch.Tensor): New batch to transform.
+        transform_info (dict): Metadata from `aug()`.
+
+    Returns:
+        torch.Tensor: Transformed batch.
+    """
     match dataset_name:
         case dataset_name if dataset_name in ['CIFAR10', 'CIFAR100']:
             batch_size = input_tensor.shape[0]
@@ -171,6 +208,22 @@ def aug_trans(dataset_name: str, input_tensor, transform_info):
             return rst
 
 def inverse_aug(dataset_name: str, source_tensor, adv_tensor, transform_info):
+    """
+    Invert dataset-specific augmentation to map adversarial examples back
+    to the source tensor's coordinate frame.
+
+    This is the reverse of `aug_trans()` and is crucial for reconstructing
+    perturbed images to the format expected by the model.
+
+    Args:
+        dataset_name (str): Dataset identifier.
+        source_tensor (torch.Tensor): Base tensor to receive inverse-transformed content.
+        adv_tensor (torch.Tensor): Tensor with augmentations applied.
+        transform_info (dict): Metadata from `aug()` describing the applied transformation.
+
+    Returns:
+        torch.Tensor: Source tensor with inverse transformation applied.
+    """
     match dataset_name:
         case dataset_name if dataset_name in ['CIFAR10', 'CIFAR100']:
             x = transform_info['crop']['x']

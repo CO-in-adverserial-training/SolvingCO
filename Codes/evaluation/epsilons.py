@@ -31,6 +31,25 @@ def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon,
     return 100 * correct / total
 
 def test(args, device, max_eps: int = 32):
+    """
+    Evaluation script for robustness curves using Clean, FGSM, and PGD.
+
+    This module loads a trained model checkpoint, computes baseline clean accuracy,
+    and measures adversarial accuracy for a sweep of ε values using:
+        - Fast Gradient Sign Method (FGSM)
+        - Projected Gradient Descent (PGD)
+
+    Results are logged and saved as JSON for plotting robustness curves in research
+    analysis.
+
+    References:
+        - Goodfellow, I. J., Shlens, J., & Szegedy, C. (2015).
+        "Explaining and Harnessing Adversarial Examples."
+        arXiv:1412.6572 (https://arxiv.org/abs/1412.6572)
+        - Madry, A., Makelov, A., Schmidt, L., Tsipras, D., & Vladu, A. (2019).
+        "Towards Deep Learning Models Resistant to Adversarial Attacks."
+        arXiv:1706.06083 (https://arxiv.org/abs/1706.06083)
+    """
     # Initialize tracker
     accs_vs_epps_tracker = MetricTracker()
     # Get dataset loaders

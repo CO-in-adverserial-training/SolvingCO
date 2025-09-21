@@ -6,17 +6,41 @@ from datasets.index_dataset import IndexDataset
 
 def get_loaders(args, index_dataset: bool, device):
     """
-    Get the loaders for the CIFAR-100 dataset.
-    
+    Prepare CIFAR-100 dataset loaders with optional index annotation and normalization.
+
+    This function handles:
+        - Dataset mean/std normalization (optional).
+        - Choice between standard augmentation (random crop + horizontal flip)
+          or deterministic padding for index-aware datasets.
+        - Creation of train/test DataLoaders with specified batch size and workers.
+        - Computation of normalized upper/lower pixel bounds for adversarial clamping.
+
     Args:
-        batch_size (int): Batch size for the data loader.
-        num_workers (int): Number of workers for the data loader.
-        normalize_dataset (bool): Whether to normalize the dataset.
-        index_dataset (bool): Whether to index the dataset.
-        root_path (str): Path to the root directory of the project.
-        device (torch.device): Device to use for the training.
+        args (argparse.Namespace): Contains dataset, root_path, batch_size, num_workers,
+            normalize_dataset, and other configuration options.
+        index_dataset (bool): If True, wraps the training set with IndexDataset to return
+            (sample, label, index) tuples for dataset index tracking.
+        device (str): Device on which normalization tensors and pixel bounds will be stored 
+            (e.g., "cuda").
+
+    Returns:
+        tuple:
+            trainloader (DataLoader): Augmented CIFAR-100 training loader.
+            testloader (DataLoader): Normalized CIFAR-100 test loader.
+            upper_limit (torch.Tensor): Per-channel perturbed pixel max bound (normalized).
+            lower_limit (torch.Tensor): Per-channel perturbed pixel min bound (normalized).
+            mu (torch.Tensor): Dataset channel means (C×1×1).
+            std (torch.Tensor): Dataset channel standard deviations (C×1×1).
+            classes (tuple[str]): Ordered tuple of CIFAR-100 class names.
+            num_classes (int): Number of classes (100 for CIFAR-100).
+            len_trainset (int): Number of training samples (50,000 for CIFAR-100).
+            len_testset (int): Number of test samples (10,000 for CIFAR-100).
+
+    References:
+        Krizhevsky, A. (2009). *Learning Multiple Layers of Features from Tiny Images*.
+        Technical Report, University of Toronto.
+        URL: https://www.cs.toronto.edu/~kriz/cifar.html
     """
-    
     if args.normalize_dataset:
         cifar100_mean = [0.5071, 0.4865, 0.4409] # equals np.mean(train_set.train_data, axis=(0,1,2))/255
         cifar100_std =  [0.2673, 0.2564, 0.2762] # equals np.std(train_set.train_data, axis=(0,1,2))/255

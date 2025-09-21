@@ -7,8 +7,11 @@ from datasets.index_dataset import IndexDataset
 # Custom Dataset Wrapper to Squeeze Labels
 class MedMNISTWrapper(torch.utils.data.Dataset):
     """
-    A class to wrap the MedMNIST dataset.
-    
+    Dataset wrapper to squeeze MedMNIST labels from shape [1] → scalar.
+
+    This is used because MedMNIST labels are provided as shape (1,)
+    tensors, which can cause downstream compatibility issues.
+
     Args:
         dataset (torch.utils.data.Dataset): The base dataset to wrap.
     """
@@ -27,15 +30,46 @@ class MedMNISTWrapper(torch.utils.data.Dataset):
 # MedMNIST Dataset
 def get_loaders(args, index_dataset: bool, device):
     """
-    Get the loaders for the MedMNIST dataset.
-    
+    Prepare MedMNIST dataset loaders with optional normalization and index annotation.
+
+    Supports the following subsets:
+        - PathMNIST      (3-channel histopathology patches)
+        - TissueMNIST    (1-channel kidney tissue microscopy)
+        - OrganAMNIST    (1-channel CT slices of abdominal organs)
+        - BloodMNIST     (3-channel blood-cell microscopy)
+
+    Features:
+        - Dataset-specific mean/std normalization (optional).
+        - Auto-channel replication to RGB if dataset is grayscale.
+        - Augmentation: horizontal flip + small rotations for non-index datasets.
+        - Wrapping for label squeezing and optional index annotation.
+        - Computation of per-channel pixel bounds for adversarial clamping.
+
     Args:
-        batch_size (int): Batch size for the data loader.
-        num_workers (int): Number of workers for the data loader.
-        normalize_dataset (bool): Whether to normalize the dataset.
-        index_dataset (bool): Whether to index the dataset.
-        root_path (str): Path to the root directory of the project.
-        device (torch.device): Device to use for the training.
+        args (argparse.Namespace): Contains dataset, root_path, batch_size, num_workers,
+            normalize_dataset, and other configuration options.
+        index_dataset (bool): If True, wraps dataset with IndexDataset to return
+            (sample, label, index) tuples for tracking.
+        device (str): Target device for bound/mu/std tensors (e.g., "cuda").
+
+    Returns:
+        tuple:
+            trainloader (DataLoader): Augmented MedMNIST training loader.
+            testloader (DataLoader): Normalized MedMNIST test loader.
+            upper_limit (torch.Tensor): Per-channel max bound after normalization.
+            lower_limit (torch.Tensor): Per-channel min bound after normalization.
+            mu (torch.Tensor): Per-channel dataset mean (C×1×1).
+            std (torch.Tensor): Per-channel dataset std (C×1×1).
+            classes (list[str]): Class names for the dataset.
+            num_classes (int): Number of classes in dataset.
+            len_trainset (int): Number of training samples.
+            len_testset (int): Number of test samples.
+
+    References:
+        Yang, J., Shi, R., Wei, D., Liu, Z., Zhao, L., Ke, B., Pfister, H., & Ni, B. (2023).
+        MedMNIST v2: A large-scale lightweight benchmark for 2D and 3D biomedical image classification.
+        *Scientific Data, 10*(1), 41.
+        URL: https://medmnist.com/
     """
     # Map dataset name to class and metadata
     dataset_map = {

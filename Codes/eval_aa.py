@@ -76,6 +76,9 @@ def main():
     from autoattack import AutoAttack
     log_path = f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/{args.log_path}'
     adversary = AutoAttack(model, norm=args.norm, eps=args.epsilon , log_path=log_path)
+    # set the number of classes
+    adversary.fab.n_target_classes = min(num_classes - 1, adversary.fab.n_target_classes)
+    adversary.apgd_targeted.n_target_classes = min(num_classes - 1, adversary.apgd_targeted.n_target_classes)
     
     l = [x for (x, y) in testloader]
     x_test = torch.cat(l, 0)

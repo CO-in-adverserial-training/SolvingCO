@@ -2,7 +2,7 @@ import torch.nn.functional as F
 
 def calc_alignment(input_grad, backprop_grad):
     """
-    Calculate the alignment between the input gradient and the delta gradient.
+    Calculate PertAlign between the input gradient and the delta gradient.
     
     Args:
         input_grad (torch.Tensor): Input gradient.
