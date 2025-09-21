@@ -97,4 +97,4 @@ def get_loaders(args, index_dataset: bool, device):
 
     classes = ('airplane', 'automobile', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-    return trainloader, testloader, mu, std, upper_limit, lower_limit, classes, len(classes), len(trainset), len(testset)
+    return trainloader, testloader, upper_limit, lower_limit, mu, std, classes, len(classes), len(trainset), len(testset)
