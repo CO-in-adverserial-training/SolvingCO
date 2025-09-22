@@ -37,7 +37,7 @@ def get_loaders(args, index_dataset: bool, device):
     lower_limit = (0 - mu) / std
     
     train_transform = transforms.Compose([
-            transforms.RandomResizedCrop(64),
+            transforms.RandomCrop(64, padding=8),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(tinyimagenet_mean, tinyimagenet_std),
