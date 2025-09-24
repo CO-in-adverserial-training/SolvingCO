@@ -154,6 +154,35 @@ def aug(dataset_name: str, input_tensor):
                 "rotation": torch.tensor(rotation_angles, dtype=torch.float32)
             }
             return rst, transform_info
+        case "TinyImageNet":
+            batch_size = input_tensor.shape[0]
+            x = torch.zeros(batch_size)
+            y = torch.zeros(batch_size)
+            flip_flags = [False] * batch_size
+            
+            rst = torch.zeros((batch_size, 3, 64, 64),
+                              dtype=torch.float32,
+                              device=input_tensor.device)
+
+            # Note: padded size would be 80×80 if you pre-pad, but here 
+            # we assume input_tensor is already padded (like CIFAR aug does)
+            for i in range(batch_size):
+                flip_flag = bool(random.getrandbits(1))
+                x_t = random.randint(0, 16)  # max shift due to padding=8
+                y_t = random.randint(0, 16)
+
+                rst[i] = input_tensor[i, :, x_t:x_t + 64, y_t:y_t + 64]
+                if flip_flag:
+                    rst[i] = torch.flip(rst[i], [2])
+                flip_flags[i] = flip_flag
+                x[i] = x_t
+                y[i] = y_t
+
+            transform_info = {
+                "crop": {"x": x, "y": y},
+                "flipped": flip_flags
+            }
+            return rst, transform_info
 
 def aug_trans(dataset_name: str, input_tensor, transform_info):
     """
@@ -206,6 +235,24 @@ def aug_trans(dataset_name: str, input_tensor, transform_info):
                 rst[i] = TF.rotate(rst[i], angle,
                                    interpolation=TF.InterpolationMode.BILINEAR)
             return rst
+        case "TinyImageNet":
+            batch_size = input_tensor.shape[0]
+            x = transform_info["crop"]["x"]
+            y = transform_info["crop"]["y"]
+            flip_flags = transform_info["flipped"]
+
+            rst = torch.zeros((batch_size, 3, 64, 64),
+                              dtype=torch.float32,
+                              device=input_tensor.device)
+
+            for i in range(batch_size):
+                x_t = int(x[i])
+                y_t = int(y[i])
+                rst[i] = input_tensor[i, :, x_t:x_t + 64, y_t:y_t + 64]
+                if flip_flags[i]:
+                    rst[i] = torch.flip(rst[i], [2])
+
+            return rst
 
 def inverse_aug(dataset_name: str, source_tensor, adv_tensor, transform_info):
     """
@@ -257,6 +304,20 @@ def inverse_aug(dataset_name: str, source_tensor, adv_tensor, transform_info):
                     img = TF.hflip(img)
 
                 source_tensor[i] = img
+            return source_tensor
+        case "TinyImageNet":
+            x = transform_info["crop"]["x"]
+            y = transform_info["crop"]["y"]
+            flipped = transform_info["flipped"]
+            batch_size = source_tensor.shape[0]
+
+            for i in range(batch_size):
+                if flipped[i]:
+                    adv_tensor[i] = torch.flip(adv_tensor[i], [2])
+                x_t = int(x[i])
+                y_t = int(y[i])
+                # Place back into original padded coordinate space
+                source_tensor[i, :, x_t:x_t + 64, y_t:y_t + 64] = adv_tensor[i]
             return source_tensor
 
 def calculate_batch_corrects(logits, labels):
