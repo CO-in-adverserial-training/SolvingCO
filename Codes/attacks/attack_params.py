@@ -52,6 +52,13 @@ def get_attack_params(args):
             "k": 1.0,
             "clip": True
         },
+        "PGD2": {
+            "epsilon": args.epsilon,
+            "alpha": args.epsilon / 2,
+            "attack_iters": 2,
+            "k": 1.0,
+            "clip": True
+        },
         "TRADES": {
             "epsilon": args.epsilon,
             "perturb_steps": 10,
