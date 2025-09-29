@@ -26,6 +26,13 @@ attack_params_dict = {
         "k": 1.0,
         "clip": True
     },
+    "PGD2": {
+        "epsilon": 8 / 255,
+        "alpha": 4 / 255,
+        "attack_iters": 2,
+        "k": 1.0,
+        "clip": True
+    },
     "TRADES": {
         "epsilon": 8 / 255,
         "perturb_steps": 10,
