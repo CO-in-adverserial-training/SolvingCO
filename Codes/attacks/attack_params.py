@@ -16,6 +16,10 @@ def get_attack_params(args):
             "max_alpha": 2 * args.epsilon,
             "method": "Second Order Theory Sign"
         },
+        "Benign": {
+            "epsilon": 0,
+            "alpha": 0
+        },
         "FGSM": {
             "epsilon": args.epsilon,
             "alpha": 2 * args.epsilon
