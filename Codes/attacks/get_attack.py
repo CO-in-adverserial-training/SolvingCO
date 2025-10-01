@@ -21,6 +21,8 @@ def get_attack(attack_name: str):
     """
     
     match attack_name:
+        case "Benign":
+            return None
         case "FGSM":
             return fgsm
         case "TRADES":
