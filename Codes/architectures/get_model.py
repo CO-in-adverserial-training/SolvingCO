@@ -4,7 +4,7 @@ from .wide_resnet import WideResNet28, WideResNet34
 from .senet import SENet18
 from .vit_small import VitSmallPatch16_224
 from .vit_base import VitBasePatch16_224
-from .vit import vit_base_patch16_224_in21k
+from .vit import create_vit_base_patch16
 
 def get_model(model_name: str, num_classes: int = 10, img_size: int = 32, in_channels: int = 3):
     """
@@ -48,6 +48,7 @@ def get_model(model_name: str, num_classes: int = 10, img_size: int = 32, in_cha
         case "VitBase":
             return VitBasePatch16_224(num_classes=num_classes, img_size=img_size)
         case 'ViT':
-            return vit_base_patch16_224_in21k(pretrained=True, num_classes=num_classes, img_size=224)
+            # return vit_base_patch16_224_in21k(pretrained=True, num_classes=num_classes, img_size=224)
+            return create_vit_base_patch16(pretrained=True, target_num_classes=num_classes)
         case _:
             raise ValueError("Invalid Model!")

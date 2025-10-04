@@ -70,20 +70,23 @@ def get_loaders(args, index_dataset: bool, device):
     # ])
 
     if args.model == "ViT":
-        # Upscaling for ViT (pretrained patch_size=16, img_size=224)
-        train_transform = transforms.Compose([
-            transforms.Resize(224),                    # upscale 32x32 to 224x224
-            transforms.RandomCrop(224, padding=4),     # slight augmentation
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(cifar10_mean, cifar10_std),
-        ])
+        if args.model == "ViT":
+            imagenet_mean = (0.485, 0.456, 0.406)
+            imagenet_std = (0.229, 0.224, 0.225)
 
-        test_transform = transforms.Compose([
-            transforms.Resize(224),
-            transforms.ToTensor(),
-            transforms.Normalize(cifar10_mean, cifar10_std),
-        ])
+            train_transform = transforms.Compose([
+                transforms.Resize(224),                    # upscale 32x32 to 224x224
+                transforms.RandomCrop(224, padding=4),     # slight augmentation
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(imagenet_mean, imagenet_std),
+            ])
+
+            test_transform = transforms.Compose([
+                transforms.Resize(224),
+                transforms.ToTensor(),
+                transforms.Normalize(imagenet_mean, imagenet_std),
+            ])
 
     else:
         # Original behavior for CNN-based models

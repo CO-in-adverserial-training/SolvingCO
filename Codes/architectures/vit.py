@@ -582,3 +582,27 @@ def vit_small_patch16_224(pretrained=False, patch_size=16, args=None, **kwargs):
         model_kwargs.setdefault('qk_scale', 768 ** -0.5)
     model = _create_vision_transformer('vit_small_patch16_224', pretrained=pretrained, args=args, **model_kwargs)
     return model
+
+import timm
+def create_vit_base_patch16(pretrained=True, target_num_classes=10, drop_path_rate=0.1):
+    """
+    Returns a timm Vision Transformer (ViT-B/16) pretrained on ImageNet-21k
+    with classifier head reset to target_num_classes.
+    
+    Parameters:
+        pretrained (bool): Load pretrained weights from ImageNet-21k
+        target_num_classes (int): Number of output classes (e.g. 10 for CIFAR-10)
+        drop_path_rate (float): Stochastic depth rate for regularization
+    
+    Returns:
+        model (torch.nn.Module): Configured ViT model
+    """
+    model = timm.create_model(
+        'vit_base_patch16_224_in21k',
+        pretrained=pretrained,
+        img_size=224,            # match pretrained resolution
+        patch_size=16,           # match pretrained patch size
+        num_classes=target_num_classes,  # override classifier head
+        drop_path_rate=drop_path_rate
+    )
+    return model
