@@ -51,23 +51,60 @@ def get_loaders(args, index_dataset: bool, device):
     mu = torch.tensor(cifar10_mean).view(3,1,1).to(device)
     std = torch.tensor(cifar10_std).view(3,1,1).to(device)
     
-    if index_dataset:
+    # if index_dataset:
+    #     train_transform = transforms.Compose([
+    #             transforms.Pad(padding=4),
+    #             transforms.ToTensor(),
+    #             transforms.Normalize(cifar10_mean, cifar10_std),
+    #         ])
+    # else:
+    #     train_transform = transforms.Compose([
+    #             transforms.RandomCrop(32, padding=4),
+    #             transforms.RandomHorizontalFlip(),
+    #             transforms.ToTensor(),
+    #             transforms.Normalize(cifar10_mean, cifar10_std),
+    #         ])
+    # test_transform = transforms.Compose([
+    #     transforms.ToTensor(),
+    #     transforms.Normalize(cifar10_mean, cifar10_std),
+    # ])
+
+    if args.model == "ViT":
+        # Upscaling for ViT (pretrained patch_size=16, img_size=224)
         train_transform = transforms.Compose([
+            transforms.Resize(224),                    # upscale 32x32 to 224x224
+            transforms.RandomCrop(224, padding=4),     # slight augmentation
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(cifar10_mean, cifar10_std),
+        ])
+
+        test_transform = transforms.Compose([
+            transforms.Resize(224),
+            transforms.ToTensor(),
+            transforms.Normalize(cifar10_mean, cifar10_std),
+        ])
+
+    else:
+        # Original behavior for CNN-based models
+        if index_dataset:
+            train_transform = transforms.Compose([
                 transforms.Pad(padding=4),
                 transforms.ToTensor(),
                 transforms.Normalize(cifar10_mean, cifar10_std),
             ])
-    else:
-        train_transform = transforms.Compose([
+        else:
+            train_transform = transforms.Compose([
                 transforms.RandomCrop(32, padding=4),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize(cifar10_mean, cifar10_std),
             ])
-    test_transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(cifar10_mean, cifar10_std),
-    ])
+
+        test_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(cifar10_mean, cifar10_std),
+        ])
     
 
     # Download the dataset

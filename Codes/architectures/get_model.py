@@ -48,6 +48,6 @@ def get_model(model_name: str, num_classes: int = 10, img_size: int = 32, in_cha
         case "VitBase":
             return VitBasePatch16_224(num_classes=num_classes, img_size=img_size)
         case 'ViT':
-            return vit_base_patch16_224_in21k(pretrained=True, patch_size=4, num_classes=num_classes, img_size=img_size)
+            return vit_base_patch16_224_in21k(pretrained=True, patch_size=16, num_classes=num_classes, img_size=224)
         case _:
             raise ValueError("Invalid Model!")
