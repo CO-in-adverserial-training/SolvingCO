@@ -43,6 +43,8 @@ def get_optimizer(args, model):
             return torch.optim.SGD(model.parameters(), lr=args.initial_lr, momentum=args.momentum, weight_decay=args.weight_decay)
         case "Adam":
             return torch.optim.Adam(model.parameters())
+        case "AdamW":
+            return torch.optim.Adam(model.parameters(), lr=1e-3)
         case _:
             raise ValueError("Invalid Optimizer!")
 
