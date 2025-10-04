@@ -73,7 +73,7 @@ def save_checkpoint(model, optimizer, scheduler, path:str):
     """
     torch.save({"model_state_dict": model.state_dict(),
                     "optimizer_state_dict": optimizer.state_dict(),
-                    "scheduler_state_dict": scheduler.state_dict()
+                    "scheduler_state_dict": scheduler.state_dict() if scheduler is not None else None
                    }, path)
 
 def load_checkpoint(args, path:str, num_classes:int, image_size:int, num_channels:int, len_trainloader, device):
