@@ -3,6 +3,7 @@ from collections import defaultdict
 import random
 import torch.nn.functional as F
 from torchvision.transforms import functional as TF
+import math
 
 class MetricTracker:
     """
@@ -44,7 +45,7 @@ def get_optimizer(args, model):
         case "Adam":
             return torch.optim.Adam(model.parameters(), lr=args.initial_lr)
         case "AdamW":
-            return torch.optim.Adam(model.parameters(), lr=args.initial_lr)
+            return torch.optim.AdamW(model.parameters(), lr=args.initial_lr)
         case _:
             raise ValueError("Invalid Optimizer!")
 
@@ -64,9 +65,19 @@ def get_scheduler(args, optimizer, len_trainloader):
             return torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=args.initial_lr, max_lr=args.max_lr,
                                                   step_size_up=scheduler_up_iters, step_size_down=scheduler_down_iters)
         case "CosineAnnealing": # For TinyImageNet
-            return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len_trainloader, eta_min=0.001) 
+            eta_min = 1e-6 if args.model == "ViT" else 0.001
+            return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs * len_trainloader, eta_min=eta_min) 
         case "MultiStep": # For Runs With 110 Epochs (100, 105)
             return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15, 18], gamma=0.1)
+        case "WarmupLambda":
+            total_steps = args.epochs * len_trainloader
+            warmup_steps = int(0.1 * total_steps)  # 10% warmup
+            def lr_lambda(step):
+                if step < warmup_steps:
+                    return step / warmup_steps
+                progress = (step - warmup_steps) / float(total_steps - warmup_steps)
+                return 0.5 * (1.0 + math.cos(math.pi * progress))
+            return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
         case "None":
             return None
         case _:

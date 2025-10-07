@@ -47,46 +47,26 @@ def get_loaders(args, index_dataset: bool, device):
     else:
         cifar10_mean = [0., 0., 0.]
         cifar10_std = [1., 1., 1.]
-    
-    mu = torch.tensor(cifar10_mean).view(3,1,1).to(device)
-    std = torch.tensor(cifar10_std).view(3,1,1).to(device)
-    
-    # if index_dataset:
-    #     train_transform = transforms.Compose([
-    #             transforms.Pad(padding=4),
-    #             transforms.ToTensor(),
-    #             transforms.Normalize(cifar10_mean, cifar10_std),
-    #         ])
-    # else:
-    #     train_transform = transforms.Compose([
-    #             transforms.RandomCrop(32, padding=4),
-    #             transforms.RandomHorizontalFlip(),
-    #             transforms.ToTensor(),
-    #             transforms.Normalize(cifar10_mean, cifar10_std),
-    #         ])
-    # test_transform = transforms.Compose([
-    #     transforms.ToTensor(),
-    #     transforms.Normalize(cifar10_mean, cifar10_std),
-    # ])
 
+    
     if args.model == "ViT":
-        if args.model == "ViT":
-            imagenet_mean = (0.485, 0.456, 0.406)
-            imagenet_std = (0.229, 0.224, 0.225)
-
-            train_transform = transforms.Compose([
-                transforms.Resize(224),                    # upscale 32x32 to 224x224
-                transforms.RandomCrop(224, padding=4),     # slight augmentation
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                transforms.Normalize(imagenet_mean, imagenet_std),
-            ])
-
-            test_transform = transforms.Compose([
-                transforms.Resize(224),
-                transforms.ToTensor(),
-                transforms.Normalize(imagenet_mean, imagenet_std),
-            ])
+        imagenet_mean = [0.485, 0.456, 0.406]
+        imagenet_std  = [0.229, 0.224, 0.225]
+        train_transform = transforms.Compose([
+            transforms.Resize(256),                # upscale 32->256 first
+            transforms.RandomResizedCrop(224),     # better augmentation for ViT
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(imagenet_mean, imagenet_std),
+        ])
+        test_transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(imagenet_mean, imagenet_std),
+        ])
+        mu = torch.tensor(imagenet_mean).view(3,1,1).to(device)
+        std = torch.tensor(imagenet_std).view(3,1,1).to(device)
 
     else:
         # Original behavior for CNN-based models
@@ -108,6 +88,8 @@ def get_loaders(args, index_dataset: bool, device):
             transforms.ToTensor(),
             transforms.Normalize(cifar10_mean, cifar10_std),
         ])
+        mu = torch.tensor(cifar10_mean).view(3,1,1).to(device)
+        std = torch.tensor(cifar10_std).view(3,1,1).to(device)
     
 
     # Download the dataset

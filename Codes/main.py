@@ -48,7 +48,7 @@ def parse_args():
     parser.add_argument("--optimizer", choices=["SGD", "Adam", "AdamW"], default="SGD")
     parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--weight_decay", type=float, default=5e-4)
-    parser.add_argument("--scheduler", choices=["Cyclic", "MultiStep", "CosineAnnealing", "None"], default="Cyclic")
+    parser.add_argument("--scheduler", choices=["Cyclic", "MultiStep", "CosineAnnealing", "WarmupLambda", "None"], default="Cyclic")
     parser.add_argument("--track_alignment", action="store_true")
     parser.add_argument("--evaluate_aa", action="store_true")
     parser.add_argument("--push_to_hf", action="store_true", help="Pushes results to Hugging Face")
