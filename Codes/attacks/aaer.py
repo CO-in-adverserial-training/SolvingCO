@@ -106,7 +106,7 @@ def aaer(loss_before, clean_logit, adv_logit, labels, lambda1: float = 1.0, lamb
     Returns:
         torch.Tensor: The AAER-augmented loss value.
     """
-    loss = F.cross_entropy(adv_logit, labels, reduction=None)
+    loss = F.cross_entropy(adv_logit, labels, reduction='none')
     loss_after = loss.detach()
     loss = loss.mean()
     abnormal_example = loss_before > loss_after
