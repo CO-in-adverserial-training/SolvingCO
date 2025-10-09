@@ -65,7 +65,7 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     
     output = model(x + eta)
     clean_logit = output.detach()
-    loss = F.cross_entropy(output, y, reduce=None)
+    loss = F.cross_entropy(output, y, reduction='none')
     loss_before = loss.detach()
     loss = loss.mean()
     loss.backward()
