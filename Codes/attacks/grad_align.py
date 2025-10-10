@@ -66,6 +66,7 @@ def grad_align(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 
     # Generate FGSM-RS Sample
     delta = eta + alpha * grad2.sign()
     delta = torch.clamp(delta, min=-eps, max=eps)
+    delta = torch.clamp(delta, min=lower_limit - x, max=upper_limit - x)
     delta = delta.detach()
     
     return delta, 1 - alignment.mean(), grad2_copy
