@@ -5,6 +5,7 @@ from .senet import SENet18
 from .vit_small import VitSmallPatch16_224
 from .vit_base import VitBasePatch16_224
 from .vit import create_vit_base_patch16
+from .vit_cifar10 import pretrained_vit_cifar10
 
 def get_model(model_name: str, num_classes: int = 10, img_size: int = 32, in_channels: int = 3):
     """
@@ -47,8 +48,10 @@ def get_model(model_name: str, num_classes: int = 10, img_size: int = 32, in_cha
             return VitSmallPatch16_224(num_classes=num_classes, img_size=img_size)
         case "VitBase":
             return VitBasePatch16_224(num_classes=num_classes, img_size=img_size)
-        case 'ViT':
+        case "ViT":
             # return vit_base_patch16_224_in21k(pretrained=True, num_classes=num_classes, img_size=224)
             return create_vit_base_patch16(pretrained=True, target_num_classes=num_classes)
+        case "ViTCIFAR10":
+            return pretrained_vit_cifar10(num_classes=num_classes)
         case _:
             raise ValueError("Invalid Model!")

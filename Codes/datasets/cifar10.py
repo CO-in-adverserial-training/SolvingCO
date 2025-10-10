@@ -67,7 +67,22 @@ def get_loaders(args, index_dataset: bool, device):
         ])
         mu = torch.tensor(imagenet_mean).view(3,1,1).to(device)
         std = torch.tensor(imagenet_std).view(3,1,1).to(device)
-
+    elif args.model == "ViTCIFAR10":
+        vitcifar10_mean = [0.485, 0.456, 0.406]
+        vitcifar10_std  = [0.229, 0.224, 0.225]
+        train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandAugment(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
+        test_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
+        mu = torch.tensor(vitcifar10_mean).view(3,1,1).to(device)
+        std = torch.tensor(vitcifar10_std).view(3,1,1).to(device)
     else:
         # Original behavior for CNN-based models
         if index_dataset:
