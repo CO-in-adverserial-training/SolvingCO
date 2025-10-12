@@ -1,7 +1,7 @@
 # Stores attack specific hyperparameters
 
 attack_params_dict = {
-    "SIA": {
+    "SORA": {
         "epsilon": 8 / 255,
         "alpha": 16/ 255
     },

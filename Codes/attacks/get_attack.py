@@ -8,7 +8,7 @@ from .multigrad import multi_grad
 from .nfgsm import nfgsm
 from .aaer import fgsm as fgsm_aae
 from .elle import elle
-from .sia import sia
+from .sora import sora
 from .pgd import pgd
 
 def get_attack(attack_name: str):
@@ -42,8 +42,8 @@ def get_attack(attack_name: str):
             return fgsm_aae
         case "ELLE":
             return elle
-        case "SIA":
-            return sia
+        case "SORA":
+            return sora
         case "PGD":
             return pgd
         case "PGD2":

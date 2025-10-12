@@ -2,14 +2,14 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, max_alpha: float=16 / 255, method: str="Second Order Theory Sign", alignment: float=1, prev_batch_alpha: float=None, linearity_coef: float=None):
+def sora(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, max_alpha: float=16 / 255, method: str="Second Order Theory Sign", alignment: float=1, prev_batch_alpha: float=None, linearity_coef: float=None):
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha_scalar = sia_max_alpha_function(method, alignment, max_alpha, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha, linearity_coef=linearity_coef)
+    alpha_scalar = sora_max_alpha_function(method, alignment, max_alpha, a=0.1, b=5, prev_batch_alpha=prev_batch_alpha, linearity_coef=linearity_coef)
     alpha = (alpha_scalar / std).view(1, -1, 1, 1)
     
     # Initialize random step
-    k = sia_max_range_noise_function("Fix", alignment, a=2, b=1.5)
+    k = sora_max_range_noise_function("Fix", alignment, a=2, b=1.5)
     eta = torch.empty_like(x).uniform_(-k, k)
     eta *= eps
     eta = torch.clamp(eta, lower_limit - x, upper_limit - x)
@@ -28,8 +28,8 @@ def sia(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, m
     
     return delta, grad, alpha_scalar
 
-# Function For Mapping Alignment To Max Noise For SIA Method 
-def sia_max_range_noise_function(func, alignment, a=2, b=1.5):
+# Function For Mapping Alignment To Max Noise For SORA Method 
+def sora_max_range_noise_function(func, alignment, a=2, b=1.5):
     match func:
         case "Fix":
             k = 1
@@ -37,8 +37,8 @@ def sia_max_range_noise_function(func, alignment, a=2, b=1.5):
             k = min(2, 1 / (1.5 * abs(alignment)))
     return k
 
-# Function For Mapping Alignment To Max Alpha For SIA Method 
-def sia_max_alpha_function(func, alignment, max_alpha, a=0.1, b=5, moving_avg_alignment=1, prev_batch_alpha=None, linearity_coef=None):
+# Function For Mapping Alignment To Max Alpha For SORA Method 
+def sora_max_alpha_function(func, alignment, max_alpha, a=0.1, b=5, moving_avg_alignment=1, prev_batch_alpha=None, linearity_coef=None):
     alignment = 1 if alignment is None else alignment
     prev_batch_alpha = max_alpha if prev_batch_alpha is None else prev_batch_alpha
     linearity_coef = 0 if linearity_coef is None else linearity_coef

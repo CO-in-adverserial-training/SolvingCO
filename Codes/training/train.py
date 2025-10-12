@@ -51,7 +51,7 @@ def train(args, device):
         moving_grad_norm = torch.zeros(num_train_samples, device=device)
         attack_params["moving_grad_norm"] = moving_grad_norm
     
-    if args.attack == "SIA":
+    if args.attack == "SORA":
         args.track_alignment = True
         attack_params["linearity_coef"] = 0.99
         theta = 0.01
@@ -83,9 +83,9 @@ def train(args, device):
                     delta, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
-                case "SIA":
+                case "SORA":
                     if alignment is not None:
-                        attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SIA
+                        attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SORA
                         attack_params["prev_batch_alpha"] = alpha
                         linearity_coef = max(-1, min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"])))
                         attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
@@ -144,7 +144,7 @@ def train(args, device):
 
             batch_corrects = calculate_batch_corrects(preds, labels)
             batch_tracker.update(loss=loss.item(), accuracy=batch_corrects.item())
-            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SIA"] else alpha)
+            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SORA"] else alpha)
 
         if args.scheduler in ["MultiStep"]:
             scheduler.step()

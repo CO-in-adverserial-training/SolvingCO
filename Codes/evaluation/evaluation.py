@@ -55,7 +55,7 @@ def evaluate(args, device):
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
-                case "SIA":
+                case "SORA":
                     delta, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "AAER":
                     delta, _, _, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)

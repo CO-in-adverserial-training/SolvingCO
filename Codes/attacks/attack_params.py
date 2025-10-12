@@ -11,7 +11,7 @@ def get_attack_params(args):
             q_val = 0.45
     
     return {
-        "SIA": {
+        "SORA": {
             "epsilon": args.epsilon,
             "max_alpha": 2 * args.epsilon,
             "method": "Second Order Theory Sign"

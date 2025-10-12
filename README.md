@@ -46,7 +46,7 @@ In this directory there are our accepted paper, our sildes for conference presen
 ```
 **Run Experiments**:
 ```bash
-   pyhton main.py --root_path absolute/result/root/path --attack SIA --seed 42
+   pyhton main.py --root_path absolute/result/root/path --attack SORA --seed 42
 ```
 Explore experiments or results and run the notebooks.
 

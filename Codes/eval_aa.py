@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument("--num_workers", type=int, default=2)
     parser.add_argument("--normalize_dataset", action="store_true")
     parser.add_argument("--model", choices=["PreActResNet18", "ResNet18", "WideResNet28", "SENet18", "VitSmall", "VitBase"], default="PreActResNet18")
-    parser.add_argument("--attack", choices=["SIA", "FGSM", "FGSM-RS", "GradAlign", "NFGSM", "AAER", "ZeroGrad", "MultiGrad", "ATAS", "ELLE", "TRADES", "PGD"], required=True)
+    parser.add_argument("--attack", choices=["SORA", "FGSM", "FGSM-RS", "GradAlign", "NFGSM", "AAER", "ZeroGrad", "MultiGrad", "ATAS", "ELLE", "TRADES", "PGD"], required=True)
     parser.add_argument("--epsilon", type=float, default=8/255)
     parser.add_argument('--norm', type=str, default='Linf', choices=['L2', 'Linf'])
     parser.add_argument('--n_ex', type=int, default=-1)
