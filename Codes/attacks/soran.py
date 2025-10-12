@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from training.linearity_coef import calc_linearity_coef
 
-def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, max_alpha: float=16 / 255, method: str="Second Order Theory Sign", attack_iters: int=10, linearity_coef: float=None):
+def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, max_alpha: float=4 / 255, max_perturb: float=16 / 255, method: str="Second Order Theory Sign", attack_iters: int=10, linearity_coef: float=None):
     model_training = model.training
     # Normalize perturbations
     eps = (epsilon / std).view(1, -1, 1, 1)
@@ -28,7 +28,6 @@ def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255,
             delta = eta + alpha * interpolation_coeff * grad.sign()
             delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
             # delta = delta.detach()
-            # eta.grad.zero_()
             prev_grad = grad.clone()
         else:
             output = model(x + delta)
@@ -44,8 +43,8 @@ def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255,
             delta = delta + alpha * interpolation_coeff * grad.sign()
             delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
             # delta = delta.detach()
-            # delta.grad.zero_()
             prev_grad = grad.clone()
+        delta = torch.clamp(delta, -max_perturb, max_perturb)
     
     delta = delta.detach()
     if model_training:
