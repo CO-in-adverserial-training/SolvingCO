@@ -47,6 +47,7 @@ def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255,
             # delta.grad.zero_()
             prev_grad = grad.clone()
     
+    delta = delta.detach()
     if model_training:
         model.train()
     return delta, grad, alpha_scalar
