@@ -156,7 +156,7 @@ def train(args, device):
 
             batch_corrects = calculate_batch_corrects(preds, labels)
             batch_tracker.update(loss=loss.item(), accuracy=batch_corrects.item())
-            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SORA"] else alpha)
+            alpha_tracker.update(batch_alpha=attack_params["alpha"] if args.attack not in ["ATAS", "SORA", "SORAN"] else alpha)
 
         if args.scheduler in ["MultiStep"]:
             scheduler.step()
