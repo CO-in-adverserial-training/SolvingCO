@@ -57,6 +57,12 @@ def train(args, device):
         theta = 0.01
         alignment = None
 
+    if args.attack == "SORAN":
+        args.track_alignment = True
+        attack_params["linearity_coef"] = 0.99
+        theta = 0.01
+        alignment = None
+
     # Save initial checkpoint
     save_checkpoint(model, optimizer, scheduler, f"{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/checkpoints_{args.seed}/model{str(0).zfill(3)}.pt")
     # Setup metric trackers
@@ -88,6 +94,12 @@ def train(args, device):
                         attack_params["alignment"] = alignment # Save as attack param to use in the next batch for SORA
                         attack_params["prev_batch_alpha"] = alpha
                         linearity_coef = max(-1, min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"])))
+                        attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
+
+                    delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
+                case "SORAN":
+                    if alignment is not None:
+                        linearity_coef = min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"]))
                         attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
 
                     delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)

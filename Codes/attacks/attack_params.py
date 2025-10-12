@@ -16,6 +16,12 @@ def get_attack_params(args):
             "max_alpha": 2 * args.epsilon,
             "method": "Second Order Theory Sign"
         },
+        "SORAN": {
+            "epsilon": args.epsilon,
+            "max_alpha": args.epsilon / 2,
+            "method": "Second Order Theory Sign",
+            "attack_iters": 10
+        },
         "Benign": {
             "epsilon": 0,
             "alpha": 0

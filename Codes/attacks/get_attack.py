@@ -9,6 +9,7 @@ from .nfgsm import nfgsm
 from .aaer import fgsm as fgsm_aae
 from .elle import elle
 from .sora import sora
+from .soran import soran
 from .pgd import pgd
 
 def get_attack(attack_name: str):
@@ -44,6 +45,8 @@ def get_attack(attack_name: str):
             return elle
         case "SORA":
             return sora
+        case "SORAN":
+            return soran
         case "PGD":
             return pgd
         case "PGD2":
