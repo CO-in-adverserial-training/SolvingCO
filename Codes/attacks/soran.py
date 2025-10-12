@@ -28,7 +28,7 @@ def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255,
             delta = eta + alpha * interpolation_coeff * grad.sign()
             delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
             # delta = delta.detach()
-            eta.grad.zero_()
+            # eta.grad.zero_()
             prev_grad = grad.clone()
         else:
             output = model(x + delta)
@@ -44,7 +44,7 @@ def soran(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255,
             delta = delta + alpha * interpolation_coeff * grad.sign()
             delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
             # delta = delta.detach()
-            delta.grad.zero_()
+            # delta.grad.zero_()
             prev_grad = grad.clone()
     
     if model_training:
