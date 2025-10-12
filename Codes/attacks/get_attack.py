@@ -10,7 +10,6 @@ from .aaer import fgsm as fgsm_aae
 from .elle import elle
 from .sia import sia
 from .pgd import pgd
-from .pgd2 import pgd2
 
 def get_attack(attack_name: str):
     """
@@ -48,7 +47,7 @@ def get_attack(attack_name: str):
         case "PGD":
             return pgd
         case "PGD2":
-            return pgd2
+            return pgd
         case _:
             raise ValueError('Invalid Attack!')
         
