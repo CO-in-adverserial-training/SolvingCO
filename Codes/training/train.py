@@ -54,13 +54,7 @@ def train(args, device):
     if args.attack == "SORA":
         args.track_alignment = True
         attack_params["linearity_coef"] = 0.99
-        theta = 0.01
-        alignment = None
-
-    if args.attack == "SORAN":
-        args.track_alignment = True
-        attack_params["linearity_coef"] = 0.99
-        theta = 0.01
+        theta = 0.05
         alignment = None
 
     # Save initial checkpoint
@@ -98,10 +92,6 @@ def train(args, device):
 
                     delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "SORAN":
-                    if alignment is not None:
-                        linearity_coef = min(1, calc_linearity_coef(grad, backprop_grad, attack_params["method"]))
-                        attack_params["linearity_coef"] = (1 - theta) * attack_params["linearity_coef"] + theta * linearity_coef
-
                     delta, grad, alpha = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "AAER":
                     delta, grad, clean_logit, loss_before = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)

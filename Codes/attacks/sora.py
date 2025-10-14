@@ -63,6 +63,6 @@ def sora_max_alpha_function(func, alignment, max_alpha, a=0.1, b=5, moving_avg_a
             if linearity_coef == 1:
                 coef = 1
             else:
-                coef = min(1, 0.1 / (1 - linearity_coef))
+                coef = min(1, 0.02 / (1 - linearity_coef))
     alpha = coef * max_alpha
     return alpha
