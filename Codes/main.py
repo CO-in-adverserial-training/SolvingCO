@@ -35,7 +35,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root_path", required=True)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--dataset", choices=["CIFAR10", "CIFAR100", "CINIC10", "SVHN", "TinyImageNet", "PathMNIST", "TissueMNIST", "OrganAMNIST", "BloodMNIST"], default="CIFAR10")
+    parser.add_argument("--dataset", choices=["CIFAR10", "CIFAR100", "CINIC10", "SVHN", "TinyImageNet", "ImageNet100", "PathMNIST", "TissueMNIST", "OrganAMNIST", "BloodMNIST"], default="CIFAR10")
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_workers", type=int, default=2)
     parser.add_argument("--normalize_dataset", action="store_true")
