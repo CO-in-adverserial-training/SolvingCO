@@ -1,7 +1,7 @@
 import torch
 import json
 from itertools import islice
-from datasets.get_loaders import get_loaders
+from dataloaders.get_loaders import get_loaders
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
 from utils import load_checkpoint

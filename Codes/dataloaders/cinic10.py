@@ -6,7 +6,7 @@ import tarfile
 import requests
 import os
 from pathlib import Path
-from datasets.index_dataset import IndexDataset
+from dataloaders.index_dataset import IndexDataset
 
 def download_and_extract_cinic10(dest_path):
     """

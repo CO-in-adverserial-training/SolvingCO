@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import CIFAR100
 import torchvision.transforms as transforms
-from datasets.index_dataset import IndexDataset
+from dataloaders.index_dataset import IndexDataset
 
 def get_loaders(args, index_dataset: bool, device):
     """

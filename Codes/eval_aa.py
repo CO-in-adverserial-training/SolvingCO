@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import argparse
-from datasets.get_loaders import get_loaders
+from dataloaders.get_loaders import get_loaders
 from architectures.get_model import get_model
 from training.utils import get_input_dimensions
 from utils import create_directories, get_device, set_seed, load_checkpoint

@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 import time
 import json
-from datasets.get_loaders import get_loaders
+from dataloaders.get_loaders import get_loaders
 from utils import load_checkpoint
 from attacks.get_attack import get_attack
 from attacks.fgsm import fgsm

@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from medmnist import PathMNIST, TissueMNIST, OrganAMNIST, BloodMNIST
 import torchvision.transforms as transforms
-from datasets.index_dataset import IndexDataset
+from dataloaders.index_dataset import IndexDataset
 
 # Custom Dataset Wrapper to Squeeze Labels
 class MedMNISTWrapper(torch.utils.data.Dataset):

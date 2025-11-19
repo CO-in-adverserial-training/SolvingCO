@@ -5,7 +5,7 @@ import os
 from PIL import Image
 import urllib.request
 import zipfile
-from datasets.index_dataset import IndexDataset
+from dataloaders.index_dataset import IndexDataset
 
 # TinyImageNet Dataset
 def get_loaders(args, index_dataset: bool, device):
