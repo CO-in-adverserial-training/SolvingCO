@@ -13,7 +13,7 @@ def sora(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float= 8/255, 
         alpha = torch.sqrt(torch.sum((alpha_scalar / std) ** 2)).item()
     
     # Initialize random step
-    k = sora_max_range_noise_function("Fix", alignment, linearity_coef, alpha_scalar / epsilon, a=2, b=1.5)
+    k = sora_max_range_noise_function("Fix", alignment, a=2, b=1.5)
     if method == "Second Order Theory Sign":
         eta = torch.empty_like(x).uniform_(-k, k)
         eta *= eps
