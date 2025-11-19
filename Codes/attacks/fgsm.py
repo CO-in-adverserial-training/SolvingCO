@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 16/255):
+def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 16/255, norm: str = "Linf"):
     """
     Fast Gradient Sign Method (FGSM).
 
@@ -33,8 +33,12 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
             - torch.Tensor: Gradient tensor from backward pass.
     """
     # Normalize perturbations
-    eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha = (alpha / std).view(1, -1, 1, 1)
+    if norm == "Linf":
+        eps = (epsilon / std).view(1, -1, 1, 1)
+        alpha = (alpha / std).view(1, -1, 1, 1)
+    elif norm == "L2":
+        eps = torch.sqrt(torch.sum((epsilon / std) ** 2)).item()
+        alpha = torch.sqrt(torch.sum((alpha / std) ** 2)).item()
 
     x = x.clone().detach()
     x.requires_grad = True
@@ -44,9 +48,13 @@ def fgsm(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255,
     grad = torch.autograd.grad(loss, x)[0].detach()
     
 
-    # Compute perturbation based on sign of gradient
-    delta = alpha * torch.sign(grad)
-    delta = torch.clamp(delta, -eps, +eps)
+    # Compute perturbation based on gradient
+    if norm == "Linf":
+        delta = alpha * torch.sign(grad)
+        delta = torch.clamp(delta, -eps, +eps)
+    elif norm == "L2":
+        grad_normalized = grad / (grad.view(grad.size(0), -1).norm(p=2, dim=1).view(-1, 1, 1, 1) + 1e-10)
+        delta = alpha * grad_normalized
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x)
     delta = delta.detach()
     

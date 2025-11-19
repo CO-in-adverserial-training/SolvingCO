@@ -29,7 +29,8 @@ def get_attack_params(args):
         },
         "FGSM": {
             "epsilon": args.epsilon,
-            "alpha": 2 * args.epsilon
+            "alpha": args.epsilon,
+            "norm": "Linf"
         },
         "FGSM-RS": {
             "epsilon": args.epsilon,
