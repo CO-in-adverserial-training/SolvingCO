@@ -82,11 +82,11 @@ def evaluate(args, device):
             # Calculate Benign accuracy
             eval_and_track(model, images, labels, torch.zeros_like(images), trackers["benign"]["batch"])
             # Calculate FGSM accuracy
-            delta_fgsm, _ = fgsm(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, 2 * args.epsilon)
+            delta_fgsm, _ = fgsm(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, 2 * args.epsilon, args.attack_norm)
             eval_and_track(model, images, labels, delta_fgsm, trackers["fgsm"]["batch"])
             
             # Calculate PGD accuracy # TODO adapt for dataset normalization
-            delta_pgd, _ = pgd(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, args.epsilon / 4, 10, 1)
+            delta_pgd, _ = pgd(model, images, labels, upper_limit, lower_limit, mu, std, args.epsilon, args.epsilon / 4, args.attack_norm, 10, 1)
             eval_and_track(model, images, labels, delta_pgd, trackers["pgd"]["batch"])
 
         

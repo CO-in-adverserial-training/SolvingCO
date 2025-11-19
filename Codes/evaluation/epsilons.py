@@ -8,7 +8,7 @@ from utils import load_checkpoint
 from training.utils import MetricTracker, get_input_dimensions
 
 
-def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon, device):
+def test_step(model, attack, loader, upper_limit, lower_limit, mu, std, epsilon, attack_norm, device):
     num_batches_to_evaluate = len(loader) // 10
     model.eval()
     total, correct = 0, 0
@@ -62,12 +62,12 @@ def test(args, device, max_eps: int = 32):
     
     model.eval()
     
-    clean_acc = test_step(model, None, testloader, upper_limit, lower_limit, mu, std, 0, device)
+    clean_acc = test_step(model, None, testloader, upper_limit, lower_limit, mu, std, 0, args.attack_norm, device)
     accs_vs_epps_tracker.update(clean_acc=clean_acc)
     for eps in range(1, max_eps + 1):
         # Perform the tests
-        fgsm_acc = test_step(model, "FGSM", testloader, upper_limit, lower_limit, mu, std, eps / 255, device)
-        pgd_acc = test_step(model, "PGD", testloader, upper_limit, lower_limit, mu, std, eps / 255, device)
+        fgsm_acc = test_step(model, "FGSM", testloader, upper_limit, lower_limit, mu, std, eps / 255, args.attack_norm, device)
+        pgd_acc = test_step(model, "PGD", testloader, upper_limit, lower_limit, mu, std, eps / 255, args.attack_norm, device)
     
         accs_vs_epps_tracker.update(fgsm_acc=fgsm_acc, pgd_acc=pgd_acc)
         # Progress bar
