@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, Dataset
 import torchvision.transforms as transforms
-from dataloaders import load_dataset
+from datasets import load_dataset
 from dataloaders.index_dataset import IndexDataset
 from PIL import Image
 
