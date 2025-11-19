@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 
-def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 2/255, attack_iters: int = 10, k: float = 1.0, clip: bool = True):
+def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 2/255, norm: str = "Linf", attack_iters: int = 10, k: float = 1.0, clip: bool = True):
     """
     Projected Gradient Descent (PGD) Adversarial Attack.
 
@@ -40,11 +40,22 @@ def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, 
             - torch.Tensor: Gradient tensor from the last backward pass.
     """
     # Normalize perturbations
-    eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha = (alpha / std).view(1, -1, 1, 1)
+    if norm == "Linf":
+        eps = (epsilon / std).view(1, -1, 1, 1)
+        alpha = (alpha / std).view(1, -1, 1, 1)
+    elif norm == "L2":
+        eps = torch.sqrt(torch.sum((epsilon / std) ** 2)).item()
+        alpha = torch.sqrt(torch.sum((alpha / std) ** 2)).item()
     
     # Initialize random step
-    delta = torch.empty_like(x).uniform_(-k, k) * eps
+    if norm == "Linf":
+        delta = torch.empty_like(x).uniform_(-k, k) * eps
+    elif norm == "L2":
+        delta = torch.empty_like(x).normal_()
+        delta_norm = delta.view(x.size(0), -1).norm(p=2, dim=1).view(-1, 1, 1, 1)
+        r = torch.zeros_like(delta_norm).uniform(0, 1)
+        delta *= r / delta_norm * eps
+    
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x).detach()
     delta.requires_grad = True
 
@@ -54,9 +65,18 @@ def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, 
         loss.backward()
         grad = delta.grad.detach()
         with torch.no_grad():
-            delta.data += alpha * torch.sign(grad)
-            if clip:
-                delta.data.clamp_(-eps, eps)
+            if norm == "Linf":
+                delta.data += alpha * torch.sign(grad)
+                if clip:
+                    delta.data.clamp_(-eps, eps)
+            elif norm == "L2":
+                grad_normalized = grad / (grad.view(grad.size(0), -1).norm(p=2, dim=1).view(-1, 1, 1, 1) + 1e-10)
+                delta.data += alpha * grad_normalized
+                # L2 projection to epsilon ball
+                delta_norm = delta.data.view(delta.size(0), -1).norm(p=2, dim=1).view(-1,1,1,1)
+                factor = torch.clamp(eps / (delta_norm + 1e-10), max=1.0)
+                delta.data = delta.data * factor
+                
             delta.data.clamp_(lower_limit - x, upper_limit - x)
         delta.grad.zero_()
     delta = delta.detach()

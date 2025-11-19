@@ -30,7 +30,7 @@ def get_attack_params(args):
         "FGSM": {
             "epsilon": args.epsilon,
             "alpha": args.epsilon,
-            "norm": "Linf"
+            "norm": "Linf" # Linf or L2
         },
         "FGSM-RS": {
             "epsilon": args.epsilon,
@@ -59,7 +59,8 @@ def get_attack_params(args):
         },
         "PGD": {
             "epsilon": args.epsilon,
-            "alpha": args.epsilon / 4,
+            "alpha": args.epsilon / 4, # Linf or L2
+            "norm": "Linf", # Linf or L2
             "attack_iters": 10,
             "k": 1.0,
             "clip": True
