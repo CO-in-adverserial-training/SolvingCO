@@ -59,7 +59,7 @@ def get_attack_params(args):
         },
         "PGD": {
             "epsilon": args.epsilon,
-            "alpha": args.epsilon / 4, # Linf or L2
+            "alpha": args.epsilon / 4,
             "norm": "Linf", # Linf or L2
             "attack_iters": 10,
             "k": 1.0,
@@ -68,6 +68,7 @@ def get_attack_params(args):
         "PGD2": {
             "epsilon": args.epsilon,
             "alpha": args.epsilon / 2,
+            "norm": "Linf", # Linf or L2
             "attack_iters": 2,
             "k": 1.0,
             "clip": True
