@@ -53,7 +53,7 @@ def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, 
     elif norm == "L2":
         delta = torch.empty_like(x).normal_()
         delta_norm = delta.view(x.size(0), -1).norm(p=2, dim=1).view(-1, 1, 1, 1)
-        r = torch.zeros_like(delta_norm).uniform(0, 1)
+        r = torch.zeros_like(delta_norm).uniform_(0, 1)
         delta *= r / delta_norm * eps
     
     delta = torch.clamp(delta, lower_limit - x, upper_limit - x).detach()
@@ -76,7 +76,7 @@ def pgd(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, 
                 delta_norm = delta.data.view(delta.size(0), -1).norm(p=2, dim=1).view(-1,1,1,1)
                 factor = torch.clamp(eps / (delta_norm + 1e-10), max=1.0)
                 delta.data = delta.data * factor
-                
+
             delta.data.clamp_(lower_limit - x, upper_limit - x)
         delta.grad.zero_()
     delta = delta.detach()
