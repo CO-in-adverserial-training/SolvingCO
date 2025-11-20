@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, steps: int = 1, nuc_reg: float = 4, k: float = 4/255):
+def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, steps: int = 1, nuc_reg: float = 4, k: float = 4/255):
     """
     Nuclear-Norm Adversarial Training (NuAT).
 
