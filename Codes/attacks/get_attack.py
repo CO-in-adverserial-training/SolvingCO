@@ -3,6 +3,7 @@ from .trades import trades
 from .fgsm_rs import fgsm_rs
 from .grad_align import grad_align
 from .atas import atas
+from .nuclear import nuclear
 from .zerograd import zero_grad
 from .multigrad import multi_grad
 from .nfgsm import nfgsm
@@ -33,6 +34,8 @@ def get_attack(attack_name: str):
             return grad_align
         case "ATAS":
             return atas
+        case "NuAT":
+            return nuclear
         case "ZeroGrad":
             return zero_grad
         case "MultiGrad":
