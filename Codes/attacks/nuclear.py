@@ -28,12 +28,14 @@ def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/2
 
     Returns:
         tuple:
-            - torch.Tensor: Final NuAT perturbation (`delta`).
-            - torch.Tensor: Gradient tensor from backward pass.
+            - torch.Tensor: Zero tensor (placeholder for compatibility with other training steps).
+            - torch.Tensor: Regularization loss computed from adversarial examples.
+            - torch.Tensor: Gradient tensor from the final backward pass.
     """
 
     out = model(x)
-  
+    model_training = model.training
+    
     eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (epsilon / std).view(1, -1, 1, 1) / steps
 
@@ -52,5 +54,11 @@ def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/2
     delta = torch.clamp(delta, -eps, +eps)
     delta = torch.clamp(x_adv - x, lower_limit - x, upper_limit - x)
     delta = delta.detach()
+
+    model.train()
     
-    return delta, grad
+    out = model(x)
+    adv_out = model(x + delta)
+    reg_loss =  torch.norm(out - adv_out, 'nuc') / y.shape[0] # Batch size
+    
+    return torch.zeros_like(x), reg_loss, grad
