@@ -46,7 +46,7 @@ def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/2
         x_adv.requires_grad = True
         output = model(x_adv)
         loss = F.cross_entropy(output, y) + nuc_reg * torch.norm(out - output, 'nuc') / y.shape[0] # Batch size
-        grad = torch.autograd.grad(loss, x)[0].detach()
+        grad = torch.autograd.grad(loss, x_adv)[0].detach()
       
         delta = alpha * torch.sign(grad)
         x_adv = torch.clamp(x_adv + delta, lower_limit, upper_limit)
