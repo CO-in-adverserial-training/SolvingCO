@@ -39,7 +39,7 @@ def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/2
     eps = (epsilon / std).view(1, -1, 1, 1)
     alpha = (epsilon / std).view(1, -1, 1, 1) / steps
 
-    x_adv = x.clone().detach() + k * torch.sign(torch.tensor([0.5]) - torch.rand_like(x))
+    x_adv = x.clone().detach() + k * torch.sign(torch.tensor([0.5]).to(x.device) - torch.rand_like(x))
     x_adv = torch.clamp(x_adv, lower_limit, upper_limit)
 
     for step in range(steps):
