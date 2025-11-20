@@ -94,6 +94,12 @@ def get_attack_params(args):
             "k": 2.0,
             "clip": False
         },
+        "NuAT": {
+            "epsilon": args.epsilon,
+            "k": args.epsilon / 2,
+            "steps": 1,
+            "nuc_reg": 4
+        },
         "ATAS": {
             "epsilon": args.epsilon,
             "beta": 0.5,
