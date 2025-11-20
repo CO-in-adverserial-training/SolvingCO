@@ -38,7 +38,7 @@ def train(args, device):
     # Get attack parameters
     attack_params = get_attack_params(args).get(args.attack, {}).copy()
     # Get regularization coefficient if needed
-    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "NuAT"]
     if use_regularizer:
         reg_params = get_regularizer_params(args).get(args.attack, {}).copy()
 
@@ -81,7 +81,7 @@ def train(args, device):
                     delta = torch.zeros_like(images)
                 case args.attack if args.attack in ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "MultiGrad", "PGD", "PGD2"]:
                     delta, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
-                case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE"]:
+                case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE", "NuAT"]:
                     delta, reg, grad = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case "SORA":
                     if alignment is not None:
