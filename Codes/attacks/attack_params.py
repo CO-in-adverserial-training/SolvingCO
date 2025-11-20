@@ -135,4 +135,7 @@ def get_regularizer_params(args):
             "lambda2": 1.5,
             "lambda3": 0.15,
         },
+        "NuAT": {
+            "reg": 4.0 # Lambda NuAT
+        },
     }
