@@ -97,7 +97,7 @@ def get_attack_params(args):
         "NuAT": {
             "epsilon": args.epsilon,
             "alpha": args.epsilon,
-            "k": args.epsilon / 2,
+            "k": 0.5,
             "steps": 1,
             "nuc_reg": 4
         },
