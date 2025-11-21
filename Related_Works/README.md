@@ -1,13 +1,14 @@
 # Papers on Catastrophic Overfitting
 
 What follows is a list of papers on **Catastrophic Overfitting** and their GitHub respositories.
-
+https://github.com/val-iisc/GAMA-GAT
 | Title | Method |
 | :---: | :----: |
 | [Theoretically Principled Trade-off between Robustness and Accuracy](https://arxiv.org/abs/1901.08573) | [TRADES](https://github.com/yaodongyu/TRADES) |
 | [Fast is Better than Free: Revisiting Adversarial Training](https://arxiv.org/abs/2001.03994) | [FGSM-RS](https://github.com/locuslab/fast_adversarial) |
 | [Understanding and Improving Fast Adversarial Training](https://arxiv.org/abs/2007.02617) | [GradAlign](https://github.com/tml-epfl/understanding-fast-adv-training) |
 | [Understanding Catastrophic Overfitting in Single-step Adversarial Training](https://arxiv.org/abs/2010.01799) | [Stable Single-Step Adversarial Training](https://github.com/Harry24k/catastrophic-overfitting) |
+| [Guided Adversarial Attack for Evaluating and Enhancing Adversarial Defenses](https://arxiv.org/abs/2011.14969) | [GAT](https://github.com/val-iisc/GAMA-GAT) |
 | [ZeroGrad: Mitigating and Explaining Catastrophic Overfitting in FGSM Adversarial Training](https://arxiv.org/abs/2103.15476) | [ZeroGrad & MultiGrad](https://github.com/rohban-lab/catastrophic_overfitting) |
 | [Boosting Fast Adversarial Training with Learnable Adversarial Initialization](https://arxiv.org/abs/2110.05007) | [FGSM-SDI](https://github.com//jiaxiaojunQAQ//FGSM-SDI) |
 | [Subspace Adversarial Training](https://arxiv.org/abs/2111.12229) | [Subspace Adversarial Training](https://github.com/nblt/Sub-AT) | 
