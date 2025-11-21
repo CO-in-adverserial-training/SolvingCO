@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, steps: int = 1, nuc_reg: float = 4, k: float = 4/255):
+def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/255, alpha: float = 8/255, steps: int = 1, nuc_reg: float = 4, k: float = 0.5):
     """
     Nuclear-Norm Adversarial Training (NuAT).
 
@@ -37,9 +37,9 @@ def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/2
     model_training = model.training
     
     eps = (epsilon / std).view(1, -1, 1, 1)
-    alpha = (epsilon / std).view(1, -1, 1, 1) / steps
+    alpha = (alpha / std).view(1, -1, 1, 1) / steps
 
-    x_adv = x.clone().detach() + k * torch.sign(torch.tensor([0.5]).to(x.device) - torch.rand_like(x))
+    x_adv = x.clone().detach() + k * eps * torch.sign(torch.tensor([0.5]).to(x.device) - torch.rand_like(x))
     x_adv = torch.clamp(x_adv, lower_limit, upper_limit)
 
     for step in range(steps):
