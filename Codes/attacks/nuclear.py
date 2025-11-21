@@ -55,7 +55,8 @@ def nuclear(model, x, y, upper_limit, lower_limit, mu, std, epsilon: float = 8/2
     delta = torch.clamp(x_adv - x, lower_limit - x, upper_limit - x)
     delta = delta.detach()
 
-    model.train()
+    if model_training:
+        model.train()
     
     out = model(x)
     adv_out = model(x + delta)
