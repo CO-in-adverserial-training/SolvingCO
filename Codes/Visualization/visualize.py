@@ -30,7 +30,7 @@ def visualize(args):
                             evaluation_metrics["pgd_epoch_metrics"]["loss"], evaluation_metrics["pgd_epoch_metrics"]["accuracy"])
 
     
-    if args.attack in ["TRADES", "GradAlign", "ELLE"]:
+    if args.attack in ["TRADES", "GradAlign", "ELLE", "NuAT"]:
         plot_regularizer_values(args, training_metrics["regularizer_values"]["batch_train_reg"], evaluation_metrics["regularizer_values"]["batch_test_reg"])
     
     plot_alpha_per_batch(args, training_metrics["alpha_values"]["batch_alpha"])
