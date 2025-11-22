@@ -98,7 +98,7 @@ def get_loaders(args, index_dataset: bool, device):
 
     # Download the dataset
     trainset = HFDatasetWrapper(train_ds, transform=train_transform)
-    testset = HFDatasetWrapper(test_ds, transform=val_transform)
+    testset = HFDatasetWrapper(test_ds, transform=test_transform)
     # valset = HFDatasetWrapper(val_ds, transform=val_transform)
 
     trainset = IndexDataset(trainset) if index_dataset else trainset # Index Dataset
