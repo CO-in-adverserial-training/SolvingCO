@@ -26,7 +26,7 @@ def evaluate(args, device):
     # Get attack parameters
     attack_params = get_attack_params(args).get(args.attack, {}).copy()
 
-    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE"]
+    use_regularizer = args.attack in ["TRADES", "GradAlign", "ELLE", "NuAT"]
 
     # Setup metric trackers
     trackers = {
