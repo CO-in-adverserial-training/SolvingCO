@@ -101,6 +101,9 @@ def get_attack_params(args):
             "steps": 1,
             "nuc_reg": 4
         },
+        "FastBat": {
+            "epsilon": args.epsilon
+        },
         "ATAS": {
             "epsilon": args.epsilon,
             "beta": 0.5,

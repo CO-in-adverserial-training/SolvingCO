@@ -1,0 +1,2 @@
+def fastbat():
+    pass
