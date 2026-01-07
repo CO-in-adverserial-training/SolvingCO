@@ -51,7 +51,7 @@ def evaluate(args, device):
             match args.attack:
                 case "Benign":
                     delta = torch.zeros_like(images)
-                case args.attack if args.attack in ["FGSM", "FGSM-RS", "NFGSM", "ZeroGrad", "MultiGrad", "PGD", "PGD2"]:
+                case args.attack if args.attack in ["FGSM", "FGM", "FGSM-RS", "NFGSM", "ZeroGrad", "MultiGrad", "PGD", "PGD2"]:
                     delta, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
                 case args.attack if args.attack in ["TRADES", "GradAlign", "ELLE", "NuAT"]:
                     delta, reg, _ = attack(model, images, labels, upper_limit, lower_limit, mu, std, **attack_params)
