@@ -32,6 +32,11 @@ def get_attack_params(args):
             "alpha": args.epsilon,
             "norm": args.attack_norm # Linf or L2
         },
+        "FGM": {
+            "epsilon": args.epsilon,
+            "alpha": args.epsilon,
+            "norm": args.attack_norm # Linf or L2
+        },
         "FGSM-RS": {
             "epsilon": args.epsilon,
             "alpha": 1.25 * args.epsilon,
