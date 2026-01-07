@@ -1,4 +1,5 @@
 from .fgsm import fgsm
+from .fgm import fgm
 from .trades import trades
 from .fgsm_rs import fgsm_rs
 from .grad_align import grad_align
@@ -27,6 +28,8 @@ def get_attack(attack_name: str):
             return None
         case "FGSM":
             return fgsm
+        case "FGM":
+            return fgm
         case "TRADES":
             return trades
         case "FGSM-RS":
