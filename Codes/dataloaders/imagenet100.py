@@ -4,6 +4,7 @@ import torchvision.transforms as transforms
 from datasets import load_dataset
 from dataloaders.index_dataset import IndexDataset
 from PIL import Image
+import os
 
 
 # Wrap HF dataset in a PyTorch Dataset
@@ -19,10 +20,16 @@ class HFDatasetWrapper(Dataset):
         item = self.ds[idx]
         img = item["image"]
         label = item["label"]
-        # The HF dataset returns PIL images already, but double check
+
+        # FORCE RGB (fix grayscale images)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
         if self.transform:
             img = self.transform(img)
+
         return img, label
+
         
 
 def get_loaders(args, index_dataset: bool, device):
@@ -91,7 +98,8 @@ def get_loaders(args, index_dataset: bool, device):
     ])
 
     # Load via Hugging Face datasets
-    ds = load_dataset("ilee0022/ImageNet100")
+    ds = load_dataset("ilee0022/ImageNet100", verification_mode="no_checks")
+    # ds = load_dataset("ilee0022/ImageNet100", cache_dir="./imagenet100_cache")
     train_ds = ds["train"]
     test_ds = ds["test"]
     # val_ds = ds["validation"]
