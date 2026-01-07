@@ -9,6 +9,10 @@ attack_params_dict = {
         "epsilon": 8 / 255,
         "alpha": 16/ 255
     },
+    "FGM": {
+        "epsilon": 1 / 2,
+        "alpha": 1/ 1
+    },
     "FGSM-RS": {
         "epsilon": 8 / 255,
         "alpha": 10/ 255,
