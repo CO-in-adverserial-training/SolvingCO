@@ -18,6 +18,11 @@ attack_params_dict = {
         "alpha": 10/ 255,
         "k": 1.0
     },
+    "FGM-RS": {
+        "epsilon": 1.0,
+        "alpha": 1.25,
+        "k": 1.0
+    },
     "NFGSM": {
         "epsilon": 8 / 255,
         "alpha": 8 / 255,
