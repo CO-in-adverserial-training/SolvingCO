@@ -42,6 +42,11 @@ def get_attack_params(args):
             "alpha": 1.25 * args.epsilon,
             "k": 1.0
         },
+        "FGM-RS": {
+            "epsilon": args.epsilon,
+            "alpha": 1.25 * args.epsilon,
+            "k": 1.0
+        },
         "NFGSM": {
             "epsilon": args.epsilon,
             "alpha": args.epsilon,
