@@ -11,11 +11,14 @@ from huggingface_hub import login, hf_hub_download
 class Normalize(nn.Module):
     def __init__(self, mean, std):
         super(Normalize, self).__init__()
-        self.mean = mean.squeeze()
-        self.std = std.squeeze()
+        # Convert to tensor (if not already) and reshape to (1, C, 1, 1)
+        # register_buffer ensures these tensors move to the correct device with the model
+        self.register_buffer('mean', torch.as_tensor(mean).view(1, -1, 1, 1))
+        self.register_buffer('std', torch.as_tensor(std).view(1, -1, 1, 1))
 
     def forward(self, x):
-        return (x - self.mean.type_as(x)[None, :, None, None]) / self.std.type_as(x)[None, :, None, None]
+        # Broadcasting handles the (B, C, H, W) math automatically
+        return (x - self.mean) / self.std
         
 
 def parse_args():
@@ -41,8 +44,11 @@ def parse_args():
 
 
 def download_weights(args):
-    login(token="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")
-    repo_id = 'SolvingCO/CatastrophicOverfitting'
+    login(token="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")
+    if args.dataset in ["CIFAR10", "CIFAR100", "PathMNIST"]:
+        repo_id = 'SolvingCO/CatastrophicOverfitting'
+    if args.dataset in ["TinyImageNet", "ImageNet100", "TissueMNIST"]:
+        repo_id = 'SolvingCO2/CatastrophicOverfitting'
     path = f"{args.dataset}/{args.model}/{args.attack}/final_checkpoints_{args.seed}/model030.pt"
     local_file = hf_hub_download(repo_id=repo_id, filename=path, repo_type="model")
     return local_file
@@ -75,6 +81,7 @@ def main():
     # load attack    
     from autoattack import AutoAttack
     log_path = f'{args.root_path}/Results/{args.dataset}/{args.model}/{args.attack}/raw_results_{args.seed}/{args.log_path}'
+    args.epsilon = 0.01176470588235294117647058823529 if args.dataset == "TissueMNIST" else args.epsilon # Epsilon = 3/255 for TissueMNIST
     adversary = AutoAttack(model, norm=args.norm, eps=args.epsilon , log_path=log_path)
     # set the number of classes
     adversary.fab.n_target_classes = min(num_classes - 1, adversary.fab.n_target_classes)
